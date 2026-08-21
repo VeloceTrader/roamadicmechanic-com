@@ -238,21 +238,30 @@ return parseApiResponse_(text, res);
 async function loadTickets(){
 try {
 await window.rmAuthReady;
-const [jobsResult, invoicesResult, partsResult] = await Promise.all([
+const [jobsResult, balancesResult, invoiceLinksResult, paymentsResult, partsResult] = await Promise.all([
 window.rmSupabase.from('dashboard_jobs').select('*').order('job_number', { ascending:false }),
 window.rmSupabase.from('dashboard_invoice_balances').select('*'),
+window.rmSupabase.from('invoices').select('id,job_id,status'),
+window.rmSupabase.from('payments').select('invoice_id,amount,paid_at'),
 window.rmSupabase.from('job_parts').select('job_id,description,part_number,quantity,unit_cost,unit_price')
 ]);
 if (jobsResult.error) throw jobsResult.error;
-if (invoicesResult.error) throw invoicesResult.error;
+if (balancesResult.error) throw balancesResult.error;
+if (invoiceLinksResult.error) throw invoiceLinksResult.error;
+if (paymentsResult.error) throw paymentsResult.error;
 if (partsResult.error) throw partsResult.error;
-const invoiceByNumber = new Map((invoicesResult.data||[]).map(x=>[x.display_number,x]));
+const balanceByInvoiceId = new Map((balancesResult.data||[]).map(x=>[x.id,x]));
+const invoiceByJobId = new Map((invoiceLinksResult.data||[]).filter(x=>x.job_id).map(x=>[x.job_id,x]));
+const paymentsByInvoiceId = new Map();
+(paymentsResult.data||[]).forEach(function(p){ if(!paymentsByInvoiceId.has(p.invoice_id)) paymentsByInvoiceId.set(p.invoice_id,[]); paymentsByInvoiceId.get(p.invoice_id).push(p); });
 const partsByJob = new Map();
 (partsResult.data||[]).forEach(function(p){ if(!partsByJob.has(p.job_id)) partsByJob.set(p.job_id,[]); partsByJob.get(p.job_id).push(p); });
 tickets = (jobsResult.data||[]).map(function(j){
-const inv=invoiceByNumber.get(j.display_number)||{};
+const invoiceLink=invoiceByJobId.get(j.id);
+const inv=invoiceLink ? (balanceByInvoiceId.get(invoiceLink.id)||{}) : {};
+const invoicePayments=invoiceLink ? (paymentsByInvoiceId.get(invoiceLink.id)||[]) : [];
 const type=j.job_type==='oil_change'?'oilchange':j.job_type==='inspection'?'inspection':String(j.display_number||'').startsWith('EST-')?'estimate':'invoice';
-return { id:j.id, number:j.display_number, type:type, status:['completed','invoiced','cancelled'].includes(j.status)?'done':'open', customer:j.customer_name||'', phone:j.phone||'', vehicle:[j.year,j.make,j.model].filter(Boolean).join(' '), vin:j.vin||'', plate:j.license_plate||'', mileage:j.mileage||'', amount:inv.invoice_total!=null?Number(inv.invoice_total):Number(j.parts_total||0)+Number(j.labor_total||0), paid:Number(inv.paid_total||0), balance:Number(inv.balance_due||0), cost:(partsByJob.get(j.id)||[]).reduce((n,p)=>n+Number(p.unit_cost||0)*Number(p.quantity||1),0), notes:'', parts:(partsByJob.get(j.id)||[]).map(p=>[p.description,p.part_number].filter(Boolean).join(' · ')), scheduledAt:j.scheduled_at||'', timerRunning:!!j.timer_running, secondsLogged:Number(j.actual_job_hours||0)*3600 };
+return { id:j.id, number:j.display_number, type:type, status:['completed','invoiced','cancelled'].includes(j.status)?'done':'open', customer:j.customer_name||'', phone:j.phone||'', vehicle:[j.year,j.make,j.model].filter(Boolean).join(' '), vin:j.vin||'', plate:j.license_plate||'', mileage:j.mileage||'', amount:inv.invoice_total!=null?Number(inv.invoice_total):Number(j.parts_total||0)+Number(j.labor_total||0), hasInvoice:!!invoiceLink, amountPaid:Number(inv.paid_total||0), balance:Number(inv.balance_due||0), payments:invoicePayments, lastPaymentDate:invoicePayments.reduce((latest,p)=>!latest||new Date(p.paid_at)>new Date(latest)?p.paid_at:latest,''), cost:(partsByJob.get(j.id)||[]).reduce((n,p)=>n+Number(p.unit_cost||0)*Number(p.quantity||1),0), notes:'', parts:(partsByJob.get(j.id)||[]).map(p=>[p.description,p.part_number].filter(Boolean).join(' · ')), scheduledAt:j.scheduled_at||'', timerRunning:!!j.timer_running, secondsLogged:Number(j.actual_job_hours||0)*3600 };
 });
 window.rmTickets = tickets;
 $('#create-msg').textContent = '';
@@ -475,7 +484,7 @@ const d=new Date(value), now=new Date();
 return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
 }
 function hasBalance(t){
-return Number(t.amount)>0 && Math.max(0,Number(t.amount)-Number(t.amountPaid||0))>0;
+return (t.hasInvoice || t.type==='owed') && Number(t.amount)>0 && Math.max(0,Number(t.amount)-Number(t.amountPaid||0))>0;
 }
 function matchesSearch(t,query){
 const q=String(query||'').trim().toLowerCase(); if(!q)return true;
@@ -593,18 +602,17 @@ const needsPayment = tickets.filter(hasBalance);
 const totalHours = tickets.reduce((s,t)=>s+elapsed(t),0)/3600;
 const weekAgo = Date.now() - 7*24*3600*1000;
 const profitWeek = tickets.reduce((s,t)=>{
-if(!t.lastPaymentDate) return s;
-const paidTime = new Date(t.lastPaymentDate).getTime();
-if(isNaN(paidTime) || paidTime < weekAgo) return s;
-return s + (Number(t.amountPaid)||0) - (Number(t.cost)||0);
+const paidThisWeek=(t.payments||[]).filter(p=>new Date(p.paid_at).getTime()>=weekAgo).reduce((n,p)=>n+Number(p.amount||0),0);
+if(!paidThisWeek) return s;
+return s + paidThisWeek - (Number(t.cost)||0);
 },0);
 // "Invoiced" covers every billable job type (invoice, oil change, inspection) --
 // anything that's real completed/active work, not just tickets literally typed "invoice".
 // Estimates (not yet committed work) and owed-balance tracking are intentionally excluded.
-const invoiced = tickets.filter(t=>['invoice','oilchange','inspection'].includes(t.type)&&t.amount).reduce((s,t)=>s+Number(t.amount),0);
+const invoiced = tickets.filter(t=>t.hasInvoice&&t.amount).reduce((s,t)=>s+Number(t.amount),0);
 const estimated = tickets.filter(t=>t.type==='estimate'&&t.amount).reduce((s,t)=>s+Number(t.amount),0);
 const collected = tickets.reduce((s,t)=>s+(Number(t.amountPaid)||0),0);
-const outstanding = tickets.reduce((s,t)=>{
+const outstanding = tickets.filter(t=>t.hasInvoice||t.type==='owed').reduce((s,t)=>{
 const amt = Number(t.amount)||0, paid = Number(t.amountPaid)||0;
 return s + Math.max(0, amt - paid);
 },0);
