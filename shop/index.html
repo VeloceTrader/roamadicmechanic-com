@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roamadic Mechanic</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icons/hub/favicon.png">
-<link rel="apple-touch-icon" href="icons/hub/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/icons/hub/favicon.png">
+<link rel="apple-touch-icon" href="/icons/hub/apple-touch-icon.png">
 <meta name="theme-color" content="#1c3a52">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -170,16 +170,16 @@ navigator.serviceWorker.register('sw.js').catch(function () {});
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
-<script src="supabase-auth.js?v=5"></script>
+<script src="supabase-auth.js?v=6"></script>
 <script>
 (function(){
 // Same shared backend URL used by invoice/estimate/oil-change/inspection.
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx7wI_uamzamAxBJ6BoFUmnLR4OAqk3tH0SyKh43Zozr7NdYf0m-gq2-7mYj5loSFGSWw/exec";
 const TYPES = {
-invoice: { label:'Invoice', color:'var(--gold)', stub:'INV', page:'invoice/' },
-estimate: { label:'Estimate', color:'var(--est)', stub:'EST', page:'estimate/' },
-oilchange: { label:'Oil Change', color:'var(--oil)', stub:'OIL', page:'oil-change/' },
-inspection: { label:'Inspection', color:'var(--insp)', stub:'INSP', page:'vehicle-inspection/' },
+invoice: { label:'Invoice', color:'var(--gold)', stub:'INV', page:'invoice-live/' },
+estimate: { label:'Estimate', color:'var(--est)', stub:'EST', page:'estimate-live/' },
+oilchange: { label:'Oil Change', color:'var(--oil)', stub:'OIL', page:'oil-change-live/' },
+inspection: { label:'Inspection', color:'var(--insp)', stub:'INSP', page:'vehicle-inspection-live/' },
 owed: { label:'Owed Balance', color:'var(--warn)', stub:'OWED', page:null },
 };
 let tickets = [];
@@ -718,4 +718,5 @@ function setupMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecogn
 <script src="/shop/dashboard-redesign.js?v=2"></script>
 </body>
 </html>
+
 
