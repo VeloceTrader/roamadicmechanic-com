@@ -13,7 +13,7 @@
   window.rmAuthReady = new Promise(function (resolve) { resolveReady = resolve; });
 
   const style = document.createElement('style');
-  style.textContent = '.rm-auth{position:fixed;inset:0;z-index:1000;background:#eee8da;display:flex;align-items:center;justify-content:center;padding:18px}.rm-auth-card{width:min(420px,100%);background:#fff;border:1px solid #ddd6c6;border-radius:16px;padding:24px;box-shadow:0 18px 50px rgba(18,40,59,.18)}.rm-auth-card h2{color:#1c3a52;margin:0 0 6px}.rm-auth-card p{color:#6b7280;font-size:13px;line-height:1.45}.rm-auth-card label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#6b7280;margin:14px 0 5px}.rm-auth-card input{width:100%;padding:12px;border:1px solid #ddd6c6;border-radius:8px;background:#f6f1e6;font-size:15px}.rm-auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.rm-auth-msg{min-height:20px;margin-top:12px;font-size:12px}.rm-signout{position:absolute;right:16px;top:16px;background:#fff;border:1px solid #ddd6c6;border-radius:8px;padding:8px 11px;color:#1c3a52;font-weight:700;cursor:pointer}';
+  style.textContent = '.rm-auth{position:fixed;inset:0;z-index:10000;background:#eee8da;display:flex;align-items:center;justify-content:center;padding:18px}.rm-auth-card{width:min(420px,100%);background:#fff;border:1px solid #ddd6c6;border-radius:16px;padding:24px;box-shadow:0 18px 50px rgba(18,40,59,.18)}.rm-auth-card h2{color:#1c3a52;margin:0 0 6px}.rm-auth-card p{color:#6b7280;font-size:13px;line-height:1.45}.rm-auth-card label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#6b7280;margin:14px 0 5px}.rm-auth-card input{width:100%;padding:12px;border:1px solid #ddd6c6;border-radius:8px;background:#f6f1e6;font-size:16px}.rm-auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.rm-auth-msg{min-height:20px;margin-top:12px;font-size:13px;font-weight:700}.rm-auth-msg.success{color:#2e7d4f;background:#dcefe1;border-radius:8px;padding:10px}.rm-password-overlay{background:rgba(18,40,59,.82)!important}.rm-password-help{background:#f6f1e6;border-radius:8px;padding:10px;margin-top:10px!important}.rm-show-password{display:flex!important;align-items:center;gap:8px;text-transform:none!important;font-size:13px!important;cursor:pointer}.rm-show-password input{width:auto!important}.rm-signout{position:absolute;right:16px;top:16px;background:#fff;border:1px solid #ddd6c6;border-radius:8px;padding:8px 11px;color:#1c3a52;font-weight:700;cursor:pointer}';
   document.head.appendChild(style);
 
   function showLogin(message) {
@@ -122,21 +122,35 @@
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'rm-password-change';
-      modal.className = 'rm-auth';
-      modal.innerHTML = '<div class="rm-auth-card"><h2>Choose a new password</h2><p>Use at least 12 characters. Save it in Google Password Manager when prompted.</p><label>New password</label><input id="rm-new-password" type="password" autocomplete="new-password"><button class="btn btn-primary btn-wide" id="rm-save-password" style="margin-top:16px">Save New Password</button><button class="btn btn-ghost btn-wide" id="rm-cancel-password" style="margin-top:8px">Cancel</button><div class="rm-auth-msg" id="rm-password-msg"></div></div>';
+      modal.className = 'rm-auth rm-password-overlay';
+      modal.innerHTML = '<div class="rm-auth-card" role="dialog" aria-modal="true" aria-labelledby="rm-password-title"><h2 id="rm-password-title">Set your phone login password</h2><p class="rm-password-help">Enter the same strong password in both boxes. Nothing changes until you press <b>Save New Password</b>.</p><label for="rm-new-password">New password</label><input id="rm-new-password" type="password" autocomplete="new-password"><label for="rm-confirm-password">Confirm new password</label><input id="rm-confirm-password" type="password" autocomplete="new-password"><label class="rm-show-password"><input id="rm-show-password" type="checkbox"> Show passwords</label><button class="btn btn-primary btn-wide" id="rm-save-password" style="margin-top:16px">Save New Password</button><button class="btn btn-ghost btn-wide" id="rm-cancel-password" style="margin-top:8px">Cancel</button><div class="rm-auth-msg" id="rm-password-msg" aria-live="polite"></div></div>';
       document.body.appendChild(modal);
       modal.querySelector('#rm-cancel-password').onclick = function () { modal.style.display = 'none'; };
+      modal.querySelector('#rm-show-password').onchange = function () {
+        const type = this.checked ? 'text' : 'password';
+        modal.querySelector('#rm-new-password').type = type;
+        modal.querySelector('#rm-confirm-password').type = type;
+      };
       modal.querySelector('#rm-save-password').onclick = async function () {
         const password = modal.querySelector('#rm-new-password').value;
+        const confirmation = modal.querySelector('#rm-confirm-password').value;
         const msg = modal.querySelector('#rm-password-msg');
+        msg.classList.remove('success');
         if (password.length < 12) { msg.textContent = 'Use at least 12 characters.'; return; }
+        if (password !== confirmation) { msg.textContent = 'The two passwords do not match. Please enter the same password in both boxes.'; return; }
         msg.textContent = 'Saving…';
         const result = await sb.auth.updateUser({ password: password });
+        if (result.error) { msg.textContent = result.error.message; return; }
         modal.querySelector('#rm-new-password').value = '';
-        msg.textContent = result.error ? result.error.message : 'Password changed. You can now use it on your phone.';
+        modal.querySelector('#rm-confirm-password').value = '';
+        msg.classList.add('success');
+        msg.textContent = 'Password changed successfully. You can now use it to sign in on your phone.';
       };
+      modal.querySelector('#rm-confirm-password').addEventListener('keydown', function (e) { if (e.key === 'Enter') modal.querySelector('#rm-save-password').click(); });
     }
     modal.style.display = 'flex';
+    modal.querySelector('#rm-password-msg').textContent = '';
+    modal.querySelector('#rm-password-msg').classList.remove('success');
     modal.querySelector('#rm-new-password').focus();
   }
 
