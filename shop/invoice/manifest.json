@@ -1,0 +1,38 @@
+{
+  "name": "Roamadic Mechanic - Invoice",
+  "short_name": "Invoice",
+  "description": "Create and print customer invoices for Roamadic Mechanic.",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "background_color": "#eee8da",
+  "theme_color": "#2f7d4f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/invoice/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/invoice/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/invoice/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/invoice/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

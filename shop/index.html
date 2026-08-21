@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roamadic Mechanic</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/hub/favicon.png">
+<link rel="apple-touch-icon" href="icons/hub/apple-touch-icon.png">
+<meta name="theme-color" content="#1c3a52">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roamadic Mechanic">
+<style>
+:root{
+--navy:#1c3a52;
+--navy-dark:#12283b;
+--gold:#c99a3e;
+--gold-light:#e7c983;
+--cream:#f6f1e6;
+--page:#eee8da;
+--ink:#23262b;
+--muted:#6b7280;
+--line:#ddd6c6;
+--est:#b58a52;
+--oil:#4c7a8c;
+--insp:#5f7d52;
+--ok:#2e7d4f;
+--warn:#b3541e;
+}
+*{box-sizing:border-box;}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+background:var(--page);
+color:var(--ink);
+padding:24px 16px 60px;
+}
+.wrap{max-width:640px;margin:0 auto;}
+.header{text-align:center;margin-bottom:18px;}
+.header img{width:72px;height:72px;object-fit:contain;}
+.header h1{font-size:20px;color:var(--navy);letter-spacing:.04em;margin:8px 0 2px;}
+.header p{color:var(--muted);font-size:12.5px;margin:0;}
+.tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px;margin:18px 0;}
+.tab{flex:1;text-align:center;padding:9px 6px;font-size:12.5px;font-weight:700;letter-spacing:.02em;color:var(--muted);background:transparent;border:none;border-radius:7px;cursor:pointer;}
+.tab.active{background:var(--navy);color:#fff;}
+.panel{display:none;}
+.panel.active{display:block;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px;}
+.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+.stat .n{font-size:22px;font-weight:800;color:var(--navy);line-height:1;}
+.stat .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:5px;}
+.section-title{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px;}
+.btn{font-weight:700;font-size:13px;border:none;border-radius:8px;padding:11px 16px;cursor:pointer;}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-ghost{background:#fff;color:var(--navy);border:1px solid var(--line);}
+.btn-gold{background:var(--gold);color:#33260a;}
+.btn-danger{background:transparent;color:#a83b2a;border:1px solid #a83b2a;}
+.btn-sm{padding:11px 14px;font-size:13px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;}
+.btn-wide{width:100%;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.form{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;}
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;font-weight:700;}
+.field input, .field textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:10px;font-size:14px;font-family:inherit;background:var(--cream);}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.two-col{display:flex;gap:10px;}.two-col .field{flex:1;margin-bottom:0;}
+.type-opt{border:1px solid var(--line);background:var(--cream);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;font-weight:700;font-size:12.5px;color:var(--muted);}
+.type-opt.sel{border-color:var(--tc,var(--gold));color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--tc,var(--gold));background:#fff;}.recent{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}.recent-chip{flex-shrink:0;background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;cursor:pointer;}.recent-chip:active{background:var(--gold-light);}.input-row{display:flex;gap:8px;align-items:stretch;}.input-row input, .input-row textarea{flex:1;min-width:0;}.mic-btn{flex-shrink:0;width:44px;border:1px solid var(--line);border-radius:7px;background:var(--cream);font-size:18px;cursor:pointer;line-height:1;}.mic-btn.listening{background:var(--warn);border-color:var(--warn);animation:pulse 1s infinite;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+.ticket{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:11px;cursor:pointer;}
+.ticket:active{background:var(--cream);}
+.stub{width:42px;flex-shrink:0;background:var(--tc,var(--gold));display:flex;align-items:center;justify-content:center;border-right:2px dashed rgba(0,0,0,.25);}
+.stub span{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:800;font-size:10.5px;letter-spacing:.1em;color:#fff;}
+.t-body{flex:1;padding:12px 14px;}
+.t-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.t-num{font-weight:800;font-size:14px;color:var(--navy);}
+.t-status{font-size:9px;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:20px;font-weight:800;}
+.t-status.open{background:#fdeacb;color:var(--warn);}
+.t-status.done{background:#dcefe1;color:var(--ok);}
+.t-cust{font-weight:700;font-size:13.5px;margin-top:4px;}
+.t-veh, .t-notes{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.t-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+.timer{font-variant-numeric:tabular-nums;font-size:17px;font-weight:800;color:var(--navy);}
+.timer.running{color:var(--warn);}
+.t-controls{display:flex;gap:8px;flex-wrap:wrap;}
+.amount{font-size:11.5px;color:var(--muted);margin-top:6px;}
+.amount b{color:var(--ink);}
+.empty{text-align:center;color:var(--muted);font-size:12.5px;padding:26px 10px;border:1px dashed var(--line);border-radius:10px;background:#fff;}
+.filters{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;}
+.filter{padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.filter.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.sync-msg{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;}
+.sync-msg.warn{color:var(--warn);}
+.loading{text-align:center;color:var(--muted);padding:40px;font-size:12.5px;}
+.t-status.paid{background:#dcefe1;color:var(--ok);}
+.t-status.partial{background:#fdeacb;color:var(--warn);}
+.t-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.modal-overlay{position:fixed;inset:0;background:rgba(18,40,59,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+.modal-box{background:#fff;border-radius:14px 14px 0 0;padding:16px;width:100%;max-width:640px;max-height:78vh;overflow-y:auto;}
+@media (min-width:640px){.modal-overlay{align-items:center;}.modal-box{border-radius:14px;}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:800;color:var(--navy);font-size:15px;}
+.btn-close{border:none;background:var(--cream);border-radius:8px;width:30px;height:30px;font-size:14px;cursor:pointer;color:var(--muted);}
+.contact-item{padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer;}
+.contact-item:active{background:var(--cream);}
+.contact-name{font-weight:700;font-size:13.5px;}
+.contact-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.owed-bar-collapsed{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#a83b2a;color:#fff;border-radius:10px;padding:13px 16px;margin-bottom:8px;cursor:pointer;}
+.owed-bar-collapsed .owed-bar-name{font-weight:800;font-size:14px;}
+.owed-bar-collapsed .owed-bar-vehicle{font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:10px;}
+.owed-bar-expanded{background:#fff;border:1px solid #a83b2a;border-left:6px solid #a83b2a;border-radius:10px;padding:13px 16px;margin-bottom:11px;}
+.owed-bar-expanded .owed-bar-header{display:flex;justify-content:space-between;align-items:baseline;cursor:pointer;margin-bottom:6px;}
+.owed-bar-expanded .owed-bar-name{font-weight:800;font-size:14px;color:var(--ink);}
+.owed-bar-expanded .owed-bar-vehicle{font-size:12.5px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="header">
+<img src="icons/hub/icon-192.png" alt="Roamadic Mechanic">
+<h1>ROAMADIC MECHANIC</h1>
+<p>Mobile Repair &bull; On-The-Go Service</p>
+</div>
+<div class="tabs">
+<button class="tab active" data-tab="dash">Dashboard</button>
+<button class="tab" data-tab="tickets">Tickets</button>
+</div>
+<div id="loading" class="loading">Loading tickets…</div>
+<div id="panels" style="display:none;">
+<div class="panel active" id="panel-dash">
+<button class="btn btn-primary btn-wide" id="dash-new-ticket-btn" style="margin-bottom:16px;">+ New Ticket</button>
+<div class="field"><input id="dash-search" type="search" placeholder="Search customer, vehicle, job #, part…" autocomplete="off"></div>
+<div class="stats" id="stats"></div>
+<div class="section-title">Priority Queue</div>
+<div id="dash-open"></div>
+</div>
+<div class="panel" id="panel-new">
+<div class="form">
+<div class="field"><label>Job Type</label><div class="type-grid" id="type-grid"></div></div>
+<div class="field"><label>Find Customer</label><div class="input-row"><input id="contacts-search" placeholder="Search name or phone…" autocomplete="off"><button type="button" class="btn btn-ghost" id="contacts-btn" style="flex-shrink:0;">📇 Contacts</button></div></div>
+<div class="recent" id="recent-customers"></div><div class="field"><label>Customer Name</label><div class="input-row"><input id="f-customer" placeholder="Jane Smith" autocomplete="name"><button type="button" class="mic-btn" data-target="f-customer" title="Speak">🎤</button></div></div>
+<div class="field"><label>Phone</label><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567"></div>
+<div class="field" id="f-address-wrap"><label>Service Address</label><div class="input-row"><input id="f-address" placeholder="123 Main St, Anytown" autocomplete="street-address"><button type="button" class="mic-btn" data-target="f-address" title="Speak">🎤</button></div></div>
+<div class="field" id="f-vehicle-wrap"><label>Vehicle (Year / Make / Model)</label><div class="input-row"><input id="f-vehicle" placeholder="2018 Honda Civic"><button type="button" class="mic-btn" data-target="f-vehicle" title="Speak">🎤</button></div></div><div class="field" id="f-extra-wrap"><div class="two-col"><div class="field"><label>VIN</label><input id="f-vin" placeholder="Optional" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()"></div><div class="field"><label>Plate</label><input id="f-plate" placeholder="Optional" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()"></div></div><div class="two-col" style="margin-top:8px;"><div class="field"><label>Mileage</label><input id="f-mileage" placeholder="Optional" inputmode="numeric"></div><div class="field"><label>Engine Size</label><input id="f-engine" placeholder="Optional"></div></div></div>
+<div class="field" id="f-amount-wrap"><label>Amount ($)</label><input id="f-amount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+<div class="field"><label>Parts Cost ($) <span style="color:var(--muted);font-weight:400;text-transform:none;">&mdash; optional, for profit tracking</span></label><input id="f-cost" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+<div class="field"><label>Notes</label><div class="input-row"><textarea id="f-notes" rows="2" placeholder="Job details..."></textarea><button type="button" class="mic-btn" data-target="f-notes" title="Speak">🎤</button></div></div>
+<button class="btn btn-primary btn-wide" id="create-btn">Create Ticket</button>
+<div class="sync-msg" id="create-msg"></div>
+</div>
+</div>
+<div class="panel" id="panel-tickets">
+<div class="field"><input id="ticket-search" type="search" placeholder="Search customer, vehicle, job #, part…" autocomplete="off"></div>
+<div class="filters" id="filters"></div>
+<div id="ticket-list"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="contacts-modal">
+<div class="modal-box">
+<div class="modal-head"><span>Contacts</span><button type="button" class="btn-close" id="contacts-close">✕</button></div>
+<div class="field"><input id="contacts-modal-search" placeholder="Search name or phone…" autocomplete="off"></div>
+<div id="contacts-list"></div>
+</div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('sw.js').catch(function () {});
+});
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.102.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="supabase-auth.js?v=1"></script>
+<script>
+(function(){
+// Same shared backend URL used by invoice/estimate/oil-change/inspection.
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx7wI_uamzamAxBJ6BoFUmnLR4OAqk3tH0SyKh43Zozr7NdYf0m-gq2-7mYj5loSFGSWw/exec";
+const TYPES = {
+invoice: { label:'Invoice', color:'var(--gold)', stub:'INV', page:'invoice/' },
+estimate: { label:'Estimate', color:'var(--est)', stub:'EST', page:'estimate/' },
+oilchange: { label:'Oil Change', color:'var(--oil)', stub:'OIL', page:'oil-change/' },
+inspection: { label:'Inspection', color:'var(--insp)', stub:'INSP', page:'vehicle-inspection/' },
+owed: { label:'Owed Balance', color:'var(--warn)', stub:'OWED', page:null },
+};
+let tickets = [];
+let selectedType = 'invoice';
+let activeFilter = 'all';
+let activeSearch = '';
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtCurrency(n){
+  return (Number(n)||0).toLocaleString('en-US', { style:'currency', currency:'USD' });
+}
+function fmtTime(sec){
+const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=Math.floor(sec%60);
+return [h,m,s].map((v,i)=> i===0?String(v):String(v).padStart(2,'0')).join(':');
+}
+function elapsed(t){
+let s = Number(t.secondsLogged)||0;
+if (t.timerRunning === true && t.timerStartedAt){
+s += (Date.now() - new Date(t.timerStartedAt).getTime())/1000;
+}
+return s;
+}
+function parseApiResponse_(text, res){
+if (!res.ok){
+throw new Error('server returned HTTP ' + res.status + (text ? (': ' + text.slice(0,120)) : ''));
+}
+try{
+return JSON.parse(text);
+}catch(parseErr){
+// Apps Script serves an HTML page (not JSON) when the script throws an uncaught
+// error, hits a quota limit, or the deployment needs re-authorizing -- surface that
+// instead of a bare "Unexpected token '<'" parse error.
+throw new Error('unexpected response from shop log (not JSON): ' + text.slice(0,120).replace(/\s+/g,' '));
+}
+}
+async function apiGet(params){
+// Apps Script Web App GET responses can get cached (by Google's infra and/or the
+// browser) for a short window, which was causing reads to return a write that's
+// one request stale. A unique cache-busting param on every GET call, plus
+// cache:'no-store', forces a fresh read every time.
+const withCacheBust = Object.assign({}, params, { _: Date.now() + '_' + Math.random().toString(36).slice(2) });
+const res = await fetch(SHEET_API_URL + '?' + new URLSearchParams(withCacheBust).toString(), { cache: 'no-store' });
+const text = await res.text();
+return parseApiResponse_(text, res);
+}
+async function apiPost(payload){
+const res = await fetch(SHEET_API_URL, {
+method:'POST',
+headers:{'Content-Type':'text/plain;charset=utf-8'},
+body: JSON.stringify(payload)
+});
+const text = await res.text();
+return parseApiResponse_(text, res);
+}
+async function loadTickets(){
+try {
+await window.rmAuthReady;
+const [jobsResult, invoicesResult, partsResult] = await Promise.all([
+window.rmSupabase.from('dashboard_jobs').select('*').order('job_number', { ascending:false }),
+window.rmSupabase.from('dashboard_invoice_balances').select('*'),
+window.rmSupabase.from('job_parts').select('job_id,description,part_number,quantity,unit_cost,unit_price')
+]);
+if (jobsResult.error) throw jobsResult.error;
+if (invoicesResult.error) throw invoicesResult.error;
+if (partsResult.error) throw partsResult.error;
+const invoiceByNumber = new Map((invoicesResult.data||[]).map(x=>[x.display_number,x]));
+const partsByJob = new Map();
+(partsResult.data||[]).forEach(function(p){ if(!partsByJob.has(p.job_id)) partsByJob.set(p.job_id,[]); partsByJob.get(p.job_id).push(p); });
+tickets = (jobsResult.data||[]).map(function(j){
+const inv=invoiceByNumber.get(j.display_number)||{};
+const type=j.job_type==='oil_change'?'oilchange':j.job_type==='inspection'?'inspection':String(j.display_number||'').startsWith('EST-')?'estimate':'invoice';
+return { id:j.id, number:j.display_number, type:type, status:['completed','invoiced','cancelled'].includes(j.status)?'done':'open', customer:j.customer_name||'', phone:j.phone||'', vehicle:[j.year,j.make,j.model].filter(Boolean).join(' '), vin:j.vin||'', plate:j.license_plate||'', mileage:j.mileage||'', amount:inv.invoice_total!=null?Number(inv.invoice_total):Number(j.parts_total||0)+Number(j.labor_total||0), paid:Number(inv.paid_total||0), balance:Number(inv.balance_due||0), cost:(partsByJob.get(j.id)||[]).reduce((n,p)=>n+Number(p.unit_cost||0)*Number(p.quantity||1),0), notes:'', parts:(partsByJob.get(j.id)||[]).map(p=>[p.description,p.part_number].filter(Boolean).join(' · ')), scheduledAt:j.scheduled_at||'', timerRunning:!!j.timer_running, secondsLogged:Number(j.actual_job_hours||0)*3600 };
+});
+window.rmTickets = tickets;
+$('#create-msg').textContent = '';
+} catch(e){
+$('#loading').textContent = 'Could not reach the shop log — check your connection and reload.';
+}
+}
+async function createTicket(){
+const customer = $('#f-customer').value.trim();
+const phone = $('#f-phone').value.trim();
+const address = $('#f-address').value.trim();
+const vehicle = $('#f-vehicle').value.trim();const vin = $('#f-vin').value.trim();const plate = $('#f-plate').value.trim();const mileage = $('#f-mileage').value.trim();const engine = $('#f-engine').value.trim();
+const amount = $('#f-amount').value;
+const cost = $('#f-cost').value;
+const notes = $('#f-notes').value.trim();
+if (selectedType === 'owed'){
+if (!phone && !customer){ $('#f-phone').focus(); return; }
+} else if (!customer){ $('#f-customer').focus(); return; }
+$('#create-btn').disabled = true;
+$('#create-msg').textContent = 'Saving…';
+try {
+const res = await apiPost({ action:'createTicket', type:selectedType, customer, phone, address, vehicle, vin, plate, mileage, engine, notes, amount, cost });
+if (res.status !== 'ok') throw new Error(res.message||'failed');
+$('#f-customer').value=''; $('#f-phone').value=''; $('#f-address').value=''; $('#f-vehicle').value=''; $('#f-vin').value=''; $('#f-plate').value=''; $('#f-mileage').value=''; $('#f-engine').value=''; $('#f-amount').value=''; $('#f-cost').value=''; $('#f-notes').value='';
+await loadTickets();
+switchTab('tickets');
+render();
+} catch(e){
+$('#create-msg').textContent = 'Could not save: ' + (e && e.message ? e.message : 'unknown error') + ' -- try again.';
+} finally {
+$('#create-btn').disabled = false;
+}
+}
+async function startTimer(id){
+const t = tickets.find(x=>x.id===id); if(!t || t.timerRunning) return;
+t.timerRunning = true; t.timerStartedAt = new Date().toISOString();
+render();
+await apiPost({ action:'updateTicket', id, timerRunning:true, timerStartedAt:t.timerStartedAt });
+}
+async function pauseTimer(id){
+const t = tickets.find(x=>x.id===id); if(!t || !t.timerRunning) return;
+const secs = elapsed(t);
+t.secondsLogged = secs; t.timerRunning = false; t.timerStartedAt = '';
+render();
+await apiPost({ action:'updateTicket', id, secondsLogged:secs, timerRunning:false, timerStartedAt:'' });
+}
+async function stopTimer(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const secs = elapsed(t);
+t.secondsLogged = secs; t.timerRunning = false; t.timerStartedAt = ''; t.status = 'done';
+render();
+await apiPost({ action:'updateTicket', id, secondsLogged:secs, timerRunning:false, timerStartedAt:'', status:'done' });
+}
+async function editTime(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const currentMins = Math.round(elapsed(t) / 60);
+const input = prompt('Minutes logged for this job:', currentMins);
+if(input === null) return;
+const mins = parseFloat(input);
+if(isNaN(mins) || mins < 0) return;
+const secs = mins * 60;
+t.secondsLogged = secs; t.timerRunning = false; t.timerStartedAt = '';
+render();
+await apiPost({ action:'updateTicket', id, secondsLogged:secs, timerRunning:false, timerStartedAt:'' });
+}
+async function editCost(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const current = Number(t.cost)||0;
+const input = prompt('Parts cost for this job:', current ? current.toFixed(2) : '');
+if(input === null) return;
+const n = parseFloat(input);
+if(isNaN(n) || n < 0) return;
+t.cost = n;
+render();
+await apiPost({ action:'updateTicket', id, cost:n });
+}
+async function editSchedule(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const current = t.scheduledAt ? new Date(t.scheduledAt) : null;
+const defaultStr = current ? (current.toLocaleDateString() + ' ' + current.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})) : '';
+const input = prompt('Scheduled date & time (e.g. 8/21/2026 10:00 AM) -- leave blank to clear:', defaultStr);
+if(input === null) return;
+if(input.trim() === ''){
+t.scheduledAt = '';
+render();
+await apiPost({ action:'updateTicket', id, scheduledAt:'' });
+return;
+}
+const parsed = new Date(input);
+if(isNaN(parsed.getTime())){ alert('Could not understand that date/time. Try a format like 8/21/2026 10:00 AM'); return; }
+const iso = parsed.toISOString();
+t.scheduledAt = iso;
+render();
+await apiPost({ action:'updateTicket', id, scheduledAt:iso });
+}
+async function logPayment(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const amount = Number(t.amount) || 0;
+const paidSoFar = Number(t.amountPaid) || 0;
+const balance = Math.max(0, amount - paidSoFar);
+const input = prompt('Payment amount received' + (balance ? (' (balance: $' + balance.toFixed(2) + ')') : '') + ':', balance ? balance.toFixed(2) : '');
+if(input === null) return;
+const n = parseFloat(input);
+if(isNaN(n) || n <= 0) return;
+const newPaid = paidSoFar + n;
+t.amountPaid = newPaid;
+const payload = { action:'updateTicket', id, amountPaid:newPaid, lastPaymentAmount:n, lastPaymentDate:new Date().toISOString() };
+if(amount - newPaid <= 0){ t.status = 'done'; payload.status = 'done'; }
+render();
+await apiPost(payload);
+}
+async function markPaid(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+const amount = Number(t.amount) || 0;
+if (amount <= 0) return;
+const now = new Date().toISOString();
+t.amountPaid = amount;
+const payload = { action:'updateTicket', id, amountPaid:amount, lastPaymentAmount:amount, lastPaymentDate:now };
+t.status = 'done'; payload.status = 'done';
+render();
+await apiPost(payload);
+}
+async function convertToOwed(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+if(!confirm('Move this ticket to Owed Balance tracking?')) return;
+t.type = 'owed'; t.status = 'open'; render();
+await apiPost({ action:'updateTicket', id, type:'owed', status:'open' });
+}
+async function reopenTicket(id){
+const t = tickets.find(x=>x.id===id); if(!t) return;
+t.status = 'open'; render();
+await apiPost({ action:'updateTicket', id, status:'open' });
+}
+async function deleteTicket(id){
+tickets = tickets.filter(x=>x.id!==id); render();
+await apiPost({ action:'deleteTicket', id });
+}
+function openInApp(t){
+const meta = TYPES[t.type];
+if (!meta.page) return;
+const url = meta.page + '?customer=' + encodeURIComponent(t.customer||'') + '&phone=' + encodeURIComponent(t.phone||'') + '&address=' + encodeURIComponent(t.address||'') + '&vehicle=' + encodeURIComponent(t.vehicle||'') + '&ticket=' + encodeURIComponent(t.id);
+window.location.href = url;
+}
+let expandedOwed = new Set();
+function toggleOwedExpand(id){
+if(expandedOwed.has(id)) expandedOwed.delete(id); else expandedOwed.add(id);
+render();
+}
+function compactOwedBar(t){
+const isExpanded = expandedOwed.has(t.id);
+const amount = Number(t.amount)||0;
+const paidAmt = Number(t.amountPaid)||0;
+const balance = Math.max(0, amount-paidAmt);
+if(!isExpanded){
+return `
+<div class="ticket owed-bar-collapsed" data-id="${t.id}">
+<span class="owed-bar-name">${esc(t.customer)||'(no name)'}</span>
+<span class="owed-bar-vehicle">${esc(t.vehicle)||''}</span>
+</div>`;
+}
+const paymentBtns = balance > 0
+? `<button class="btn btn-sm btn-gold" data-act="markpaid">✓ Mark Paid</button><button class="btn btn-sm btn-ghost" data-act="logpayment">💵 Partial</button>`
+: '';
+return `
+<div class="ticket owed-bar-expanded" data-id="${t.id}">
+<div class="owed-bar-header">
+<span class="owed-bar-name">${esc(t.customer)||'(no name)'}</span>
+<span class="owed-bar-vehicle">${esc(t.vehicle)||''}</span>
+</div>
+${t.phone ? `<div class="t-veh">${esc(t.phone)}</div>` : ''}
+${t.notes ? `<div class="t-notes">${esc(t.notes)}</div>` : ''}
+<div class="amount">Amount: <b>${amount.toFixed(2)}</b>${paidAmt>0?` &middot; Paid: <b>${paidAmt.toFixed(2)}</b>`:''} &middot; Balance: <b>${balance.toFixed(2)}</b></div>
+<div class="t-row">
+<div class="t-controls">
+${paymentBtns}
+<button class="btn btn-sm btn-danger" data-act="delete">✕</button>
+</div>
+</div>
+</div>`;
+}
+function sortTicketsForDisplay(list){
+const owed = list.filter(t => t.type === 'owed');
+const estimates = list.filter(t => t.type === 'estimate');
+const rest = list.filter(t => t.type !== 'owed' && t.type !== 'estimate');
+rest.sort((a,b) => {
+const aT = a.scheduledAt ? new Date(a.scheduledAt).getTime() : Infinity;
+const bT = b.scheduledAt ? new Date(b.scheduledAt).getTime() : Infinity;
+return aT - bT;
+});
+return [...owed, ...rest, ...estimates];
+}
+function savedLineItems(t){
+if(!t || !t.formData) return [];
+try{
+const data = typeof t.formData === 'string' ? JSON.parse(t.formData) : t.formData;
+return ['services','parts'].flatMap(kind => (Array.isArray(data[kind]) ? data[kind] : []).map(row => ({
+kind: kind === 'parts' ? 'Part' : 'Labor',
+desc: String(row && row.desc || '').trim(),
+partnum: String(row && row.partnum || '').trim(),
+qty: Number(row && row.qty) || 0,
+rate: Number(row && row.rate) || 0
+}))).filter(row => row.desc || row.partnum);
+}catch(e){
+return [];
+}
+}
+function lineItemsSummary(t){
+const rows = savedLineItems(t);
+if(!rows.length) return '';
+return `<div class="t-notes" style="margin-top:7px;">${rows.map(row => {
+const ref = row.partnum ? ` #${esc(row.partnum)}` : '';
+const qty = row.qty && row.qty !== 1 ? ` × ${row.qty}` : '';
+const price = row.rate ? ` — ${fmtCurrency(row.rate * (row.qty || 1))}` : '';
+return `<div><b>${row.kind}:</b> ${esc(row.desc)}${ref}${qty}${price}</div>`;
+}).join('')}</div>`;
+}
+function isToday(value){
+if(!value) return false;
+const d=new Date(value), now=new Date();
+return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+}
+function hasBalance(t){
+return Number(t.amount)>0 && Math.max(0,Number(t.amount)-Number(t.amountPaid||0))>0;
+}
+function matchesSearch(t,query){
+const q=String(query||'').trim().toLowerCase(); if(!q)return true;
+const parts=savedLineItems(t).map(x=>[x.desc,x.partnum].join(' ')).join(' ');
+return [t.number,t.customer,t.phone,t.address,t.vehicle,t.vin,t.plate,t.notes,parts].join(' ').toLowerCase().includes(q);
+}
+function ticketCard(t){
+const meta = TYPES[t.type] || TYPES.invoice;
+const secs = elapsed(t);
+const isDone = t.status === 'done';
+const amount = Number(t.amount) || 0;
+const paidAmt = Number(t.amountPaid) || 0;
+const balance = Math.max(0, amount - paidAmt);
+const hasBalance = amount > 0 && balance > 0;
+const paymentBadge = amount > 0 ? (balance <= 0 ? `<div class="t-status paid">Paid</div>` : (paidAmt > 0 ? `<div class="t-status partial">Partial</div>` : '')) : '';
+const paymentBtns = hasBalance
+? `<button class="btn btn-sm btn-gold" data-act="markpaid">✓ Mark Paid</button><button class="btn btn-sm btn-ghost" data-act="logpayment">💵 Partial</button>`
+: '';
+const costBtn = meta.page ? `<button class="btn btn-sm btn-ghost" data-act="editcost">\uD83D\uDCB2 Cost</button>` : '';
+const scheduleBtn = meta.page ? `<button class="btn btn-sm btn-ghost" data-act="editschedule">📅 ${t.scheduledAt ? 'Reschedule' : 'Schedule'}</button>` : '';
+let controls;
+if(!isDone){
+if(meta.page){
+const timerBtns = t.type !== 'estimate' ? `
+<button class="btn btn-sm ${t.timerRunning?'btn-ghost':'btn-primary'}" data-act="${t.timerRunning?'pause':'start'}">${t.timerRunning?'⏸ Pause':'▶ Start'}</button>
+<button class="btn btn-sm btn-ghost" data-act="edittime">✎ Time</button>` : '';
+controls = `
+${timerBtns}
+<button class="btn btn-sm btn-gold" data-act="stop">✓ Finish</button>
+<button class="btn btn-sm btn-ghost" data-act="open">Open ${meta.label} &rarr;</button>
+${costBtn}
+${scheduleBtn}
+${paymentBtns}`;
+} else {
+controls = hasBalance
+? paymentBtns
+: `<button class="btn btn-sm btn-gold" data-act="stop">Mark Done</button>`;
+}
+} else {
+controls = costBtn + scheduleBtn + paymentBtns
++ (hasBalance && t.type !== 'owed' ? `<button class="btn btn-sm btn-ghost" data-act="convertowed">&rarr; Mark as Owed</button>` : '')
++ `<button class="btn btn-sm btn-ghost" data-act="reopen">Reopen</button>`;
+}
+return `
+<div class="ticket" style="--tc:${meta.color}" data-id="${t.id}">
+<div class="stub"><span>${meta.stub}</span></div>
+<div class="t-body">
+<div class="t-top">
+<div class="t-num">${esc(t.number)}</div>
+<div class="t-badges"><div class="t-status ${isDone?'done':'open'}">${isDone?'Done':'Open'}</div>${paymentBadge}</div>
+</div>
+<div class="t-cust">${esc(t.customer) || '<span style="color:var(--muted);font-weight:400;">(no name)</span>'}</div>
+${t.phone ? `<div class="t-veh">${esc(t.phone)}</div>` : ''}
+${t.address ? `<div class="t-veh">${esc(t.address)}</div>` : ''}
+${t.vehicle ? `<div class="t-veh">${esc(t.vehicle)}</div>` : ''}${(t.vin||t.plate||t.mileage||t.engine) ? `<div class="t-notes">${[t.vin?('VIN '+esc(t.vin)):'',t.plate?('Plate '+esc(t.plate)):'',t.mileage?(esc(t.mileage)+' mi'):'',t.engine?esc(t.engine):''].filter(Boolean).join(' · ')}</div>` : ''}
+${t.scheduledAt ? `<div class="t-notes">📅 ${esc(new Date(t.scheduledAt).toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}))}</div>` : ''}
+${t.notes ? `<div class="t-notes">${esc(t.notes)}</div>` : ''}
+${lineItemsSummary(t)}
+${amount ? `<div class="amount">Amount: <b>$${amount.toFixed(2)}</b>${paidAmt>0?` &middot; Paid: <b>$${paidAmt.toFixed(2)}</b> &middot; Balance: <b>$${balance.toFixed(2)}</b>`:''}</div>` : ''}
+<div class="t-row">
+${t.type !== 'estimate' ? `<div class="timer ${t.timerRunning?'running':''}">${fmtTime(secs)}</div>` : '<div></div>'}
+<div class="t-controls">
+${controls}
+${t.recordUrl ? `<a class="btn btn-sm btn-ghost" href="${esc(t.recordUrl)}" target="_blank" rel="noopener">📁 Record</a>` : ''}
+<button class="btn btn-sm btn-danger" data-act="delete">✕</button>
+</div>
+</div>
+</div>
+</div>`;
+}
+function renderRecent(){const wrap=document.querySelector('#recent-customers');if(!wrap)return;const seen=new Map();tickets.forEach(t=>{if(!t.customer)return;const key=String(t.phone||t.customer).toLowerCase();seen.set(key,t);});const recents=Array.from(seen.values()).slice(-6).reverse();wrap.innerHTML=recents.map(t=>'<div class="recent-chip" data-id="'+t.id+'">'+esc(t.customer)+'</div>').join('');}
+// ---- Contacts: every unique customer seen in the shop log (the Sheet), most-recent first.
+// No phone-contacts API here — browser support for reading a phone's native address book is
+// spotty (basically Android Chrome only), so this pulls from ticket history instead, which
+// works the same everywhere and is already the data you have. ----
+function uniqueContacts(){
+const seen = {};
+tickets.forEach((t, idx)=>{
+if(!t.customer && !t.phone) return;
+const key = String(t.phone || t.customer).toLowerCase();
+seen[key] = { t, idx };
+});
+return Object.values(seen).sort((a,b)=>b.idx-a.idx).map(x=>x.t);
+}
+function renderContactsList(filter){
+const list = uniqueContacts();
+const q = (filter||'').trim().toLowerCase();
+const filtered = q ? list.filter(t => (t.customer||'').toLowerCase().includes(q) || (t.phone||'').toLowerCase().includes(q)) : list;
+$('#contacts-list').innerHTML = filtered.length ? filtered.map(t => `
+<div class="contact-item" data-id="${t.id}">
+<div class="contact-name">${esc(t.customer) || '<span style="color:var(--muted);font-weight:400;">(no name)</span>'}</div>
+${t.phone ? `<div class="contact-sub">${esc(t.phone)}</div>` : ''}
+${t.vehicle ? `<div class="contact-sub">${esc(t.vehicle)}</div>` : ''}
+</div>`).join('') : `<div class="empty">No contacts yet — they'll show up here once you've created a ticket for them.</div>`;
+}
+function openContacts(){
+$('#contacts-modal').style.display = 'flex';
+$('#contacts-modal-search').value = $('#contacts-search') ? $('#contacts-search').value : '';
+renderContactsList($('#contacts-modal-search').value);
+setTimeout(()=>$('#contacts-modal-search').focus(), 50);
+}
+function closeContacts(){ $('#contacts-modal').style.display = 'none'; }
+function pickContact(t){
+$('#f-customer').value = t.customer || '';
+$('#f-phone').value = t.phone || '';
+$('#f-address').value = t.address || '';
+$('#f-vehicle').value = t.vehicle || '';
+closeContacts();
+switchTab('new');
+}
+function render(){renderRecent();
+const open = tickets.filter(t=>t.status==='open');
+const today = open.filter(t=>isToday(t.scheduledAt));
+const needsPayment = tickets.filter(hasBalance);
+const totalHours = tickets.reduce((s,t)=>s+elapsed(t),0)/3600;
+const weekAgo = Date.now() - 7*24*3600*1000;
+const profitWeek = tickets.reduce((s,t)=>{
+if(!t.lastPaymentDate) return s;
+const paidTime = new Date(t.lastPaymentDate).getTime();
+if(isNaN(paidTime) || paidTime < weekAgo) return s;
+return s + (Number(t.amountPaid)||0) - (Number(t.cost)||0);
+},0);
+// "Invoiced" covers every billable job type (invoice, oil change, inspection) --
+// anything that's real completed/active work, not just tickets literally typed "invoice".
+// Estimates (not yet committed work) and owed-balance tracking are intentionally excluded.
+const invoiced = tickets.filter(t=>['invoice','oilchange','inspection'].includes(t.type)&&t.amount).reduce((s,t)=>s+Number(t.amount),0);
+const estimated = tickets.filter(t=>t.type==='estimate'&&t.amount).reduce((s,t)=>s+Number(t.amount),0);
+const collected = tickets.reduce((s,t)=>s+(Number(t.amountPaid)||0),0);
+const outstanding = tickets.reduce((s,t)=>{
+const amt = Number(t.amount)||0, paid = Number(t.amountPaid)||0;
+return s + Math.max(0, amt - paid);
+},0);
+$('#stats').innerHTML = `
+<div class="stat"><div class="n">${open.length}</div><div class="l">Open</div></div>
+<div class="stat" data-stat-filter="today" style="cursor:pointer;"><div class="n">${today.length}</div><div class="l">Today</div></div>
+<div class="stat" data-stat-filter="unpaid" style="cursor:pointer;"><div class="n">${needsPayment.length}</div><div class="l">Needs Payment</div></div>
+<div class="stat" style="grid-column:1/-1;text-align:center;"><div class="n">${fmtCurrency(profitWeek)}</div><div class="l">Gross Profit This Week</div></div>
+<div class="stat" data-stat-filter="estimate" style="cursor:pointer;"><div class="n">${fmtCurrency(estimated)}</div><div class="l">Estimated</div></div>
+<div class="stat"><div class="n">${fmtCurrency(invoiced)}</div><div class="l">Invoiced</div></div>
+<div class="stat"><div class="n">${fmtCurrency(outstanding)}</div><div class="l">Outstanding</div></div>
+<div class="stat"><div class="n">${fmtCurrency(collected)}</div><div class="l">Collected</div></div>`;
+const dashOpen=sortTicketsForDisplay(open.filter(t=>matchesSearch(t,activeSearch)));
+$('#dash-open').innerHTML = dashOpen.length ? dashOpen.map(t => t.type==='owed' ? compactOwedBar(t) : ticketCard(t)).join('')
+: `<div class="empty">${activeSearch?'No open jobs match your search.':'No open jobs. Create one from "New Ticket".'}</div>`;
+$('#type-grid').innerHTML = Object.entries(TYPES).map(([k,m])=>
+`<div class="type-opt ${selectedType===k?'sel':''}" style="--tc:${m.color}" data-type="${k}">${m.label}</div>`).join('');
+$('#f-amount-wrap').style.display = (selectedType==='invoice'||selectedType==='estimate'||selectedType==='owed') ? 'block' : 'none';
+$('#f-vehicle-wrap').style.display = (selectedType==='owed') ? 'none' : 'block';
+$('#f-address-wrap').style.display = (selectedType==='owed') ? 'none' : 'block';$('#f-extra-wrap').style.display = (selectedType==='owed') ? 'none' : 'block';
+const flist = ['all','today','unpaid','open','done',...Object.keys(TYPES)];
+$('#filters').innerHTML = flist.map(f=>{
+const label = f==='all'?'All':f==='today'?'Today':f==='unpaid'?'Needs Payment':f==='open'?'Open':f==='done'?'Done':TYPES[f].label;
+return `<div class="filter ${activeFilter===f?'active':''}" data-filter="${f}">${label}</div>`;
+}).join('');
+let filtered = tickets;
+if (activeFilter==='today') filtered = tickets.filter(t=>isToday(t.scheduledAt));
+else if (activeFilter==='unpaid') filtered = tickets.filter(hasBalance);
+else if (activeFilter==='open') filtered = tickets.filter(t=>t.status==='open');
+else if (activeFilter==='done') filtered = tickets.filter(t=>t.status==='done');
+else if (TYPES[activeFilter]) filtered = tickets.filter(t=>t.type===activeFilter);
+filtered = filtered.filter(t=>matchesSearch(t,activeSearch));
+$('#ticket-list').innerHTML = filtered.length ? sortTicketsForDisplay(filtered).map(t => t.type==='owed' ? compactOwedBar(t) : ticketCard(t)).join('')
+: `<div class="empty">No tickets match this filter.</div>`;
+bindTicketEvents();
+window.dispatchEvent(new CustomEvent('rm:dashboard-rendered', { detail:{ tickets:tickets, activeFilter:activeFilter } }));
+}
+function bindTicketEvents(){
+$$('.ticket').forEach(card=>{
+const id = card.dataset.id;
+$$('button[data-act]', card).forEach(btn=>{
+btn.onclick = () => {
+const act = btn.dataset.act;
+const t = tickets.find(x=>x.id===id);
+if (act==='start') startTimer(id);
+else if (act==='pause') pauseTimer(id);
+else if (act==='stop') stopTimer(id);
+else if (act==='edittime') editTime(id);
+else if (act==='logpayment') logPayment(id);
+else if (act==='markpaid') markPaid(id);
+else if (act==='editcost') editCost(id);
+else if (act==='editschedule') editSchedule(id);
+else if (act==='convertowed') convertToOwed(id);
+else if (act==='reopen') reopenTicket(id);
+else if (act==='open') openInApp(t);
+else if (act==='delete'){ if(confirm('Delete this ticket?')) deleteTicket(id); }
+};
+});
+});
+}
+function switchTab(name){
+$$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+$$('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+}
+$$('.tab').forEach(tab=> tab.onclick = () => switchTab(tab.dataset.tab));
+$('#create-btn').onclick = createTicket;
+$('#dash-new-ticket-btn').onclick = () => switchTab('new');
+function updateSearch(value,source){
+activeSearch=value||'';
+const other=source==='dash'?$('#ticket-search'):$('#dash-search'); if(other)other.value=activeSearch;
+render();
+}
+$('#dash-search').addEventListener('input',e=>updateSearch(e.target.value,'dash'));
+$('#ticket-search').addEventListener('input',e=>updateSearch(e.target.value,'tickets'));
+$('#contacts-btn').onclick = openContacts;
+$('#contacts-close').onclick = closeContacts;
+$('#contacts-search').addEventListener('focus', openContacts);
+$('#contacts-modal-search').addEventListener('input', e => renderContactsList(e.target.value));
+document.addEventListener('click', e=>{
+const typeOpt = e.target.closest('.type-opt');
+if (typeOpt){ selectedType = typeOpt.dataset.type; render(); }
+const filt = e.target.closest('.filter');
+if (filt){ activeFilter = filt.dataset.filter; render(); }
+const statFilterEl = e.target.closest('[data-stat-filter]');
+if (statFilterEl){ switchTab('tickets'); activeFilter = statFilterEl.dataset.statFilter; render(); }const chip=e.target.closest('.recent-chip');if(chip){const t=tickets.find(x=>x.id===chip.dataset.id);if(t){$('#f-customer').value=t.customer||'';$('#f-phone').value=t.phone||'';$('#f-address').value=t.address||'';$('#f-vehicle').value=t.vehicle||'';}}
+const citem = e.target.closest('.contact-item');
+if (citem){ const t=tickets.find(x=>x.id===citem.dataset.id); if(t) pickContact(t); }
+if (e.target.id === 'contacts-modal'){ closeContacts(); }
+// Tap anywhere on a ticket card (outside its action buttons) to open the job page --
+// or, for owed-balance bars, to expand/collapse instead.
+const ticketCardEl = e.target.closest('.ticket');
+if (ticketCardEl && !e.target.closest('button')){
+const t = tickets.find(x=>x.id===ticketCardEl.dataset.id);
+if (t){
+if (t.type === 'owed') toggleOwedExpand(t.id);
+else openInApp(t);
+}
+}
+});
+(async function init(){
+await window.rmAuthReady;
+await loadTickets();
+$('#loading').style.display = 'none';
+$('#panels').style.display = 'block';
+render();
+function setupMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$$('.mic-btn').forEach(b=>b.style.display='none');return;}$$('.mic-btn').forEach(btn=>{let recog=null;let listening=false;btn.onclick=()=>{const field=document.getElementById(btn.dataset.target);if(listening){recog&&recog.stop();return;}recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=1;recog.onstart=()=>{listening=true;btn.classList.add('listening');};recog.onend=()=>{listening=false;btn.classList.remove('listening');};recog.onerror=()=>{listening=false;btn.classList.remove('listening');};recog.onresult=(e)=>{const transcript=e.results[0][0].transcript;const sep=field.value&&!/\s$/.test(field.value)?' ':'';field.value=(field.value||'')+sep+transcript;};recog.start();};});}setupMic();setInterval(()=>{ if (tickets.some(t=>t.timerRunning)) render(); }, 1000);
+})();
+})();
+</script>
+<script src="/shop/rm-enhancements.js?v=6"></script>
+</body>
+</html>
