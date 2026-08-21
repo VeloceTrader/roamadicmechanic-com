@@ -105,6 +105,39 @@
       const header = document.querySelector('.header');
       if (header) header.appendChild(enroll);
     }
+    if (!document.getElementById('rm-change-password')) {
+      const change = document.createElement('button');
+      change.id = 'rm-change-password';
+      change.className = 'btn btn-ghost btn-wide';
+      change.style.marginTop = '8px';
+      change.textContent = 'Change password';
+      change.onclick = showPasswordChange;
+      const header = document.querySelector('.header');
+      if (header) header.appendChild(change);
+    }
+  }
+
+  function showPasswordChange() {
+    let modal = document.getElementById('rm-password-change');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'rm-password-change';
+      modal.className = 'rm-auth';
+      modal.innerHTML = '<div class="rm-auth-card"><h2>Choose a new password</h2><p>Use at least 12 characters. Save it in Google Password Manager when prompted.</p><label>New password</label><input id="rm-new-password" type="password" autocomplete="new-password"><button class="btn btn-primary btn-wide" id="rm-save-password" style="margin-top:16px">Save New Password</button><button class="btn btn-ghost btn-wide" id="rm-cancel-password" style="margin-top:8px">Cancel</button><div class="rm-auth-msg" id="rm-password-msg"></div></div>';
+      document.body.appendChild(modal);
+      modal.querySelector('#rm-cancel-password').onclick = function () { modal.style.display = 'none'; };
+      modal.querySelector('#rm-save-password').onclick = async function () {
+        const password = modal.querySelector('#rm-new-password').value;
+        const msg = modal.querySelector('#rm-password-msg');
+        if (password.length < 12) { msg.textContent = 'Use at least 12 characters.'; return; }
+        msg.textContent = 'Saving…';
+        const result = await sb.auth.updateUser({ password: password });
+        modal.querySelector('#rm-new-password').value = '';
+        msg.textContent = result.error ? result.error.message : 'Password changed. You can now use it on your phone.';
+      };
+    }
+    modal.style.display = 'flex';
+    modal.querySelector('#rm-new-password').focus();
   }
 
   async function authenticate(create) {
