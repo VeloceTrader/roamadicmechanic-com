@@ -13,7 +13,7 @@
   window.rmAuthReady = new Promise(function (resolve) { resolveReady = resolve; });
 
   const style = document.createElement('style');
-  style.textContent = '.rm-auth{position:fixed;inset:0;z-index:10000;background:#eee8da;display:flex;align-items:center;justify-content:center;padding:18px}.rm-auth-card{width:min(420px,100%);background:#fff;border:1px solid #ddd6c6;border-radius:16px;padding:24px;box-shadow:0 18px 50px rgba(18,40,59,.18)}.rm-auth-card h2{color:#1c3a52;margin:0 0 6px}.rm-auth-card p{color:#6b7280;font-size:13px;line-height:1.45}.rm-auth-card label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#6b7280;margin:14px 0 5px}.rm-auth-card input{width:100%;padding:12px;border:1px solid #ddd6c6;border-radius:8px;background:#f6f1e6;font-size:16px}.rm-auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.rm-auth-msg{min-height:20px;margin-top:12px;font-size:13px;font-weight:700}.rm-auth-msg.success{color:#2e7d4f;background:#dcefe1;border-radius:8px;padding:10px}.rm-password-overlay{background:rgba(18,40,59,.82)!important}.rm-password-help{background:#f6f1e6;border-radius:8px;padding:10px;margin-top:10px!important}.rm-show-password{display:flex!important;align-items:center;gap:8px;text-transform:none!important;font-size:13px!important;cursor:pointer}.rm-show-password input{width:auto!important}.rm-signout{position:absolute;right:16px;top:16px;background:#fff;border:1px solid #ddd6c6;border-radius:8px;padding:8px 11px;color:#1c3a52;font-weight:700;cursor:pointer}';
+  style.textContent = '.rm-auth{position:fixed;inset:0;z-index:10000;background:#eee8da;display:flex;align-items:center;justify-content:center;padding:18px}.rm-auth-card{width:min(420px,100%);background:#fff;border:1px solid #ddd6c6;border-radius:16px;padding:24px;box-shadow:0 18px 50px rgba(18,40,59,.18)}.rm-auth-card h2{color:#1c3a52;margin:0 0 6px}.rm-auth-card p{color:#6b7280;font-size:13px;line-height:1.45}.rm-auth-card label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#6b7280;margin:14px 0 5px}.rm-auth-card input{width:100%;padding:12px;border:1px solid #ddd6c6;border-radius:8px;background:#f6f1e6;font-size:16px}.rm-auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.rm-auth-msg{min-height:20px;margin-top:12px;font-size:13px;font-weight:700}.rm-auth-msg.success{color:#2e7d4f;background:#dcefe1;border-radius:8px;padding:10px}.rm-password-overlay{background:rgba(18,40,59,.82)!important}.rm-password-help{background:#f6f1e6;border-radius:8px;padding:10px;margin-top:10px!important}.rm-show-password{display:flex!important;align-items:center;gap:8px;text-transform:none!important;font-size:13px!important;cursor:pointer}.rm-show-password input{width:auto!important}.rm-account{width:min(640px,calc(100% - 32px));margin:28px auto 8px;color:#6b7280;font-size:12px}.rm-account summary{cursor:pointer;text-align:center;padding:10px;font-weight:700}.rm-account-actions{display:grid;gap:8px;padding:8px 0 16px}.rm-signout{background:#fff;border:1px solid #ddd6c6;border-radius:8px;padding:11px 16px;color:#1c3a52;font-weight:700;cursor:pointer;width:100%}';
   document.head.appendChild(style);
 
   function showLogin(message) {
@@ -81,20 +81,13 @@
   function hideLogin() {
     const gate = document.getElementById('rm-auth');
     if (gate) gate.style.display = 'none';
-    if (!document.getElementById('rm-signout')) {
-      const button = document.createElement('button');
-      button.id = 'rm-signout';
-      button.className = 'rm-signout';
-      button.textContent = 'Sign out';
-      button.onclick = async function () { await sb.auth.signOut(); location.reload(); };
-      document.body.appendChild(button);
-    }
-    if (!document.getElementById('rm-register-passkey')) {
-      const enroll = document.createElement('button');
-      enroll.id = 'rm-register-passkey';
-      enroll.className = 'btn btn-ghost btn-wide';
-      enroll.style.marginTop = '8px';
-      enroll.textContent = 'Register fingerprint / this device';
+    if (!document.getElementById('rm-account')) {
+      const account = document.createElement('details');
+      account.id = 'rm-account';
+      account.className = 'rm-account';
+      account.innerHTML = '<summary>Account</summary><div class="rm-account-actions"><button class="btn btn-ghost btn-wide" id="rm-register-passkey">Register fingerprint / this device</button><button class="btn btn-ghost btn-wide" id="rm-change-password">Change password</button><button class="rm-signout" id="rm-signout">Sign out</button></div>';
+      document.body.appendChild(account);
+      const enroll = account.querySelector('#rm-register-passkey');
       enroll.onclick = async function () {
         enroll.disabled = true;
         enroll.textContent = 'Waiting for device security…';
@@ -102,18 +95,9 @@
         enroll.disabled = false;
         enroll.textContent = result.error ? 'Passkey setup failed — try again' : 'Fingerprint / passkey registered';
       };
-      const header = document.querySelector('.header');
-      if (header) header.appendChild(enroll);
-    }
-    if (!document.getElementById('rm-change-password')) {
-      const change = document.createElement('button');
-      change.id = 'rm-change-password';
-      change.className = 'btn btn-ghost btn-wide';
-      change.style.marginTop = '8px';
-      change.textContent = 'Change password';
+      const change = account.querySelector('#rm-change-password');
       change.onclick = showPasswordChange;
-      const header = document.querySelector('.header');
-      if (header) header.appendChild(change);
+      account.querySelector('#rm-signout').onclick = async function () { await sb.auth.signOut(); location.reload(); };
     }
   }
 
@@ -185,4 +169,5 @@
   sb.auth.onAuthStateChange(function (event) { if (event === 'PASSWORD_RECOVERY') setTimeout(showRecovery, 0); });
   sb.auth.getSession().then(function (result) { authorize(result.data.session); });
 })();
+
 
