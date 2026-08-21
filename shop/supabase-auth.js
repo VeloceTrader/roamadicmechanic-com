@@ -5,7 +5,7 @@
   const SUPABASE_URL = 'https://rnozbhxadrpkaxggjlks.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_lP6zq23Nqj22NAfQs0bMew_4cXvmtYS';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } }
   });
   window.rmSupabase = sb;
 
@@ -22,16 +22,25 @@
       gate = document.createElement('div');
       gate.id = 'rm-auth';
       gate.className = 'rm-auth';
-      gate.innerHTML = '<div class="rm-auth-card"><h2>Shop Dashboard</h2><p>Private access for Roamadic Mechanic.</p><label>Email</label><input id="rm-auth-email" type="email" autocomplete="username" readonly><label>Password</label><input id="rm-auth-password" type="password" autocomplete="current-password"><div class="rm-auth-actions"><button class="btn btn-primary" id="rm-signin">Sign In</button><button class="btn btn-ghost" id="rm-signup">Create Account</button></div><button class="btn btn-ghost btn-wide" id="rm-reset" style="margin-top:8px">Reset Password</button><div class="rm-auth-msg" id="rm-auth-msg"></div></div>';
+      gate.innerHTML = '<div class="rm-auth-card"><h2>Shop Dashboard</h2><p>Private access for Roamadic Mechanic.</p><button class="btn btn-primary btn-wide" id="rm-passkey-signin">Sign in with fingerprint / passkey</button><label>Email</label><input id="rm-auth-email" type="email" autocomplete="username" readonly><label>Password</label><input id="rm-auth-password" type="password" autocomplete="current-password"><div class="rm-auth-actions"><button class="btn btn-primary" id="rm-signin">Sign In</button><button class="btn btn-ghost" id="rm-signup">Create Account</button></div><button class="btn btn-ghost btn-wide" id="rm-reset" style="margin-top:8px">Reset Password</button><div class="rm-auth-msg" id="rm-auth-msg"></div></div>';
       document.body.appendChild(gate);
       gate.querySelector('#rm-auth-email').value = OWNER_EMAIL;
       gate.querySelector('#rm-signin').onclick = function () { authenticate(false); };
       gate.querySelector('#rm-signup').onclick = function () { authenticate(true); };
       gate.querySelector('#rm-reset').onclick = requestReset;
+      gate.querySelector('#rm-passkey-signin').onclick = signInWithPasskey;
       gate.querySelector('#rm-auth-password').addEventListener('keydown', function (e) { if (e.key === 'Enter') authenticate(false); });
     }
     gate.style.display = 'flex';
     gate.querySelector('#rm-auth-msg').textContent = message || '';
+  }
+
+  async function signInWithPasskey() {
+    const msg = document.getElementById('rm-auth-msg');
+    msg.textContent = 'Waiting for your fingerprint or device unlock…';
+    const result = await sb.auth.signInWithPasskey();
+    if (result.error) { msg.textContent = result.error.message; return; }
+    await authorize(result.data.session);
   }
 
   async function requestReset() {
@@ -47,6 +56,7 @@
     gate.querySelector('#rm-signin').style.display = 'none';
     gate.querySelector('#rm-signup').style.display = 'none';
     gate.querySelector('#rm-reset').style.display = 'none';
+    gate.querySelector('#rm-passkey-signin').style.display = 'none';
     const actions = gate.querySelector('.rm-auth-actions');
     actions.style.gridTemplateColumns = '1fr';
     let button = document.getElementById('rm-set-password');
@@ -78,6 +88,22 @@
       button.textContent = 'Sign out';
       button.onclick = async function () { await sb.auth.signOut(); location.reload(); };
       document.body.appendChild(button);
+    }
+    if (!document.getElementById('rm-register-passkey')) {
+      const enroll = document.createElement('button');
+      enroll.id = 'rm-register-passkey';
+      enroll.className = 'btn btn-ghost btn-wide';
+      enroll.style.marginTop = '8px';
+      enroll.textContent = 'Register fingerprint / this device';
+      enroll.onclick = async function () {
+        enroll.disabled = true;
+        enroll.textContent = 'Waiting for device security…';
+        const result = await sb.auth.registerPasskey();
+        enroll.disabled = false;
+        enroll.textContent = result.error ? 'Passkey setup failed — try again' : 'Fingerprint / passkey registered';
+      };
+      const header = document.querySelector('.header');
+      if (header) header.appendChild(enroll);
     }
   }
 
