@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oil Change Record - Roamadic Mechanic</title>
+<style>
+:root{
+  --navy:#1c3a52;
+  --navy-dark:#12283b;
+  --gold:#c99a3e;
+  --gold-light:#e7c983;
+  --red:#9b3a2e;
+  --cream:#f6f1e6;
+  --page:#eee8da;
+  --ink:#23262b;
+  --muted:#6b7280;
+  --line:#ddd6c6;
+  --ok:#2f7d4f;
+  --warn:#a9720f;
+  --bad:#b3392c;
+  --ok-bg:#e9f5ee;
+  --warn-bg:#fbf1de;
+  --bad-bg:#fbeae7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--page);
+  color:var(--ink);
+  padding:24px 12px 60px;
+  line-height:1.45;
+}
+.sheet{
+  max-width:900px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+.topbar{
+  height:6px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 60%,var(--gold) 100%);
+}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:26px 32px 20px;
+  border-bottom:2px solid var(--navy);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  flex-shrink:0;
+}
+.brand-text h1{
+  margin:0;
+  font-size:22px;
+  letter-spacing:.04em;
+  color:var(--navy);
+  font-weight:800;
+}
+.brand-text p{
+  margin:3px 0 0;
+  font-size:12.5px;
+  color:var(--muted);
+  letter-spacing:.02em;
+}
+.doc-meta{
+  text-align:right;
+}
+.doc-meta .doc-title{
+  font-size:24px;
+  font-weight:800;
+  color:var(--navy);
+  letter-spacing:.06em;
+  margin:0 0 8px;
+}
+.doc-meta .field-row{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  align-items:center;
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.doc-meta .field-row input{
+  text-align:right;
+}
+.body-pad{
+  padding:26px 32px 32px;
+}
+.section-title{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--navy);
+  border-bottom:2px solid var(--gold);
+  padding-bottom:6px;
+  margin:28px 0 14px;
+}
+.section-title:first-child{margin-top:0;}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.field{
+  margin-bottom:12px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+input,select,textarea{
+  width:100%;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:8px 10px;
+  background:#fdfcf9;
+}
+input:focus,select:focus,textarea:focus{
+  outline:2px solid var(--gold-light);
+  outline-offset:0;
+  border-color:var(--gold);
+}
+textarea{resize:vertical;min-height:64px;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:4px;
+}
+th{
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#fff;
+  background:var(--navy);
+  padding:9px 10px;
+}
+th:first-child{border-top-left-radius:6px;}
+th:last-child{border-top-right-radius:6px;}
+td{
+  padding:6px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+td input{border:1px solid transparent;background:transparent;padding:6px;}
+td input:focus{background:#fdfcf9;border-color:var(--gold);}
+.num{text-align:right;}
+.row-actions{text-align:center;width:34px;}
+.icon-btn{
+  border:none;
+  background:none;
+  color:var(--bad);
+  font-size:16px;
+  cursor:pointer;
+  padding:4px;
+  border-radius:4px;
+}
+.icon-btn:hover{background:var(--bad-bg);}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  font-weight:700;
+  font-size:13px;
+  padding:9px 16px;
+  border-radius:7px;
+  cursor:pointer;
+}
+.btn:hover{background:var(--navy);color:#fff;}
+.btn-primary{
+  background:var(--navy);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--navy-dark);}
+.btn-gold{
+  border-color:var(--gold);
+  color:var(--navy);
+  background:var(--gold-light);
+}
+.btn-gold:hover{background:var(--gold);}
+.actions-bar{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.totals{
+  margin-left:auto;
+  width:100%;
+  max-width:320px;
+}
+.totals-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 0;
+  font-size:14px;
+  border-bottom:1px solid var(--line);
+}
+.totals-row.grand{
+  border-bottom:none;
+  border-top:2px solid var(--navy);
+  margin-top:4px;
+  padding-top:12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--navy);
+}
+.totals-row input{
+  width:90px;
+  text-align:right;
+}
+.totals-wrap{display:flex;justify-content:flex-end;margin-top:6px;}
+.checklist{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 22px;
+}
+.checklist-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:14px;
+  padding:4px 0;
+}
+.checklist-item input[type=checkbox]{
+  width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);
+}
+.status-group{
+  display:flex;
+  border:1px solid var(--line);
+  border-radius:7px;
+  overflow:hidden;
+  width:fit-content;
+}
+.status-group button{
+  border:none;
+  background:#fdfcf9;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  color:var(--muted);
+  border-right:1px solid var(--line);
+}
+.status-group button:last-child{border-right:none;}
+.status-group button.active[data-v="ok"]{background:var(--ok-bg);color:var(--ok);}
+.status-group button.active[data-v="advisory"]{background:var(--warn-bg);color:var(--warn);}
+.status-group button.active[data-v="attention"]{background:var(--bad-bg);color:var(--bad);}
+.insp-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+}
+.insp-row:last-child{border-bottom:none;}
+.insp-label{font-size:14px;}
+.insp-note{
+  width:100%;
+  margin-top:4px;
+}
+.insp-note input{font-size:12.5px;padding:5px 8px;}
+.footer-note{
+  margin-top:26px;
+  padding-top:18px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.contact-bar{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12.5px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.contact-bar b{color:var(--gold-light);}
+.sig-row{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:24px;
+  margin-top:8px;
+}
+.sig-line{
+  border-bottom:1px solid var(--ink);
+  height:34px;
+}
+.sig-caption{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.photo-block{padding:10px 0 4px;}
+.btn-photo{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;border:1px solid var(--line);border-radius:7px;
+  padding:9px 16px;font-size:12.5px;font-weight:700;color:var(--navy);
+  cursor:pointer;
+}
+.btn-photo:active{background:var(--cream);}
+.photo-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.photo-grid:not(:empty){margin-top:8px;}
+.photo-thumb{
+  position:relative;width:84px;height:84px;border-radius:6px;overflow:hidden;
+  border:1px solid var(--line);background:#f2f1ee;flex-shrink:0;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb.att-thumb-pdf{display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;}
+.photo-thumb.att-thumb-pdf a{font-size:10px;color:var(--navy);text-decoration:none;word-break:break-word;line-height:1.3;}
+.photo-thumb .remove-photo{
+  position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;line-height:18px;
+  text-align:center;padding:0;cursor:pointer;
+}
+.att-print-page{display:none;}
+@media (max-width:640px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .header{flex-direction:column;align-items:flex-start;}
+  .doc-meta{text-align:left;width:100%;}
+  .doc-meta .field-row{justify-content:space-between;}
+  .checklist{grid-template-columns:1fr;}
+  .contact-bar{flex-direction:column;align-items:flex-start;}
+}
+@media print{
+  @page{size:letter;margin:9mm;}
+  body{background:#fff;padding:0;font-size:12px;}
+  .sheet{box-shadow:none;border-radius:0;max-width:100%;}
+  .no-print{display:none !important;}
+  input,select,textarea{border:none;border-bottom:1px solid #999;border-radius:0;background:transparent;padding:2px;}
+  th{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .topbar,.contact-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .status-group button.active{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .icon-btn,.row-actions{display:none;}
+  .header{padding:12px 20px 10px;}
+  .body-pad{padding:10px 20px 14px;}
+  .section-title{margin:10px 0 6px;font-size:10.5px;padding-bottom:3px;}
+  .field{margin-bottom:5px;}
+  .field label{margin-bottom:2px;}
+  .grid-2,.grid-3,.grid-4{gap:8px;}
+  .checklist{gap:1px 16px;}
+  .insp-row{padding:3px 0;}
+  textarea{min-height:30px;}
+  .sig-row{margin-top:4px;}
+  .sig-line{height:12px;}
+  .footer-note{margin-top:4px;padding-top:4px;}
+  .contact-bar{padding:5px 20px;}
+  .doc-meta .doc-title{font-size:18px;margin-bottom:4px;}
+  .topbar{height:3px;}
+  .doc-meta .field-row{margin-bottom:1px;}
+  .section-title{margin:7px 0 4px;}
+  .checklist{gap:0 16px;}
+  .insp-row{padding:2px 0;}
+  .field{margin-bottom:3px;}
+  .contact-bar{font-size:11px;}
+  #attachments-grid .photo-thumb{display:none;}
+  .att-print-page{display:block;page-break-before:always;padding:24px 0;}
+  .att-print-page img{max-width:100%;display:block;margin:0 auto;}
+  .att-print-label{font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;}
+  /* Collapse each Good/Warning/Needs Attention row to a single colored bubble so the
+     printed page stays compact -- full three-button rows only make sense on-screen
+     where they're tappable. */
+  .status-group{border:none;width:auto;}
+  .status-group button{display:none;}
+  .status-group button.active{
+    display:inline-block;
+    width:13px;height:13px;
+    border-radius:50%;
+    padding:0;
+    font-size:0;
+    line-height:0;
+    border:1px solid rgba(0,0,0,.25);
+  }
+  .status-group button.active[data-v="ok"]{background:var(--ok);}
+  .status-group button.active[data-v="advisory"]{background:var(--warn);}
+  .status-group button.active[data-v="attention"]{background:var(--bad);}
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module">
+  // Used to turn attached PDF scans into images (see "Attachments" below) so they show up
+  // in the printed/PDF copy. If this fails to load (no signal at the job site), attaching
+  // still works — it just falls back to an "open PDF" link instead of an inline image.
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.worker.min.mjs';
+  window.pdfjsLib = pdfjsLib;
+  window.dispatchEvent(new Event('pdfjs-ready'));
+</script>
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" href="/icons/hub/favicon.png">
+<link rel="apple-touch-icon" href="/icons/hub/apple-touch-icon.png">
+<meta name="theme-color" content="#1c3a52">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roamadic Mechanic">
+</head>
+<body>
+<a href="../" class="rm-menu-back" style="display:flex;align-items:center;gap:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;color:#fff;background:#1c3a52;text-decoration:none;padding:8px 14px;">&larr; All Tools</a>
+<style>@media print{.rm-menu-back{display:none !important;}}</style>
+<div class="sheet">
+
+  <div class="topbar"></div>
+  <div class="header">
+    <div class="brand">
+      <img src="/icons/hub/icon-512.png" alt="Roamadic Mechanic logo">
+      <div class="brand-text">
+        <h1>ROAMADIC MECHANIC</h1>
+        <p>Mobile Repair &bull; On-The-Go Service</p>
+      </div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-title">OIL CHANGE RECORD</div>
+      
+      <div class="field-row"><span>Service #</span><input type="text" id="serviceNum" value="1001" style="width:90px" onchange="syncOilChangeNum(this.value)"></div>
+      <div class="field-row no-print" style="justify-content:flex-end;"><span id="syncStatus" style="font-style:italic;color:var(--muted);"></span></div>
+
+      <div class="field-row"><span>Date</span><input type="date" id="serviceDate" value="" style="width:150px"></div>
+
+    </div>
+  </div>
+
+
+  <div class="body-pad">
+
+    <div class="grid-2">
+      <div>
+        <div class="field"><label>Customer Name</label><input type="text" id="customerName" placeholder="Full name" onblur="toTitleCaseField(this)"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="customerPhone" placeholder="(555) 123-4567"></div>
+      </div>
+      <div class="field"><label>Service Address</label><input type="text" id="serviceAddress" placeholder="123 Main St, Anytown" onblur="geocodeFromAddressField()"></div>
+      <div class="section-title no-print">Booking / Service Location</div>
+    <div class="field no-print">
+      <label class="no-print">Tap the map to drop a pin at the service location</label>
+      <div id="locationMap" class="no-print" style="height:280px;border:1px solid var(--line);border-radius:8px;"></div>
+      <div id="locationSummary" style="font-size:12.5px;color:var(--muted);margin-top:6px;">No location pinned yet.</div>
+      <a id="navigateBtn" class="btn btn-sm btn-ghost no-print" href="#" target="_blank" rel="noopener" style="display:none;margin-top:8px;">🧭 Navigate</a>
+    </div>
+
+    <div>
+        <div class="grid-4">
+          <div class="field"><label>Year</label><input type="text" id="vehYear" placeholder="2018"></div>
+          <div class="field"><label>Make</label><input type="text" id="vehMake" placeholder="Honda" onblur="toTitleCaseField(this)"></div>
+          <div class="field"><label>Model</label><input type="text" id="vehModel" placeholder="Civic" onblur="toTitleCaseField(this)"></div>
+          <div class="field"><label>Mileage at Service</label><input type="text" id="serviceMileage" placeholder="62,340" oninput="recalcNextService()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Oil &amp; Filter</div>
+    <div class="grid-4">
+      <div class="field"><label>Oil Brand</label><input type="text" id="oilBrand" placeholder="Mobil 1" onblur="toTitleCaseField(this)"></div>
+      <div class="field"><label>Oil Weight</label>
+        <select id="oilWeight">
+          <option>-- Select --</option>
+          <option>0W-16</option>
+          <option>0W-20</option>
+          <option>5W-20</option>
+          <option>5W-30</option>
+          <option>5W-40</option>
+          <option>10W-30</option>
+          <option>10W-40</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Oil Type</label>
+        <select id="oilType">
+          <option>-- Select --</option>
+          <option>Full Synthetic</option>
+          <option>Synthetic Blend</option>
+          <option>Conventional</option>
+          <option>High Mileage</option>
+        </select>
+      </div>
+      <div class="field"><label>Quantity (qts)</label><input type="number" id="oilQty" min="0" step="0.5" placeholder="5" oninput="recalcOilPrice()"></div>
+    </div>
+    <div class="field"><label>Filter Brand / Part #</label><input type="text" id="filterBrand" value="WIX" placeholder="WIX" onblur="toTitleCaseField(this)"></div>
+
+    <div class="grid-2">
+      <div class="field" style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:7px;padding-bottom:9px;">
+          <input type="checkbox" id="airFilterAdd" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);" onchange="recalcOilPrice()">
+          <label style="margin:0;text-transform:none;font-size:13px;color:var(--ink);font-weight:500;" for="airFilterAdd">Air filter replaced</label>
+        </div>
+        <input type="number" id="airFilterPrice" placeholder="Price" min="0" step="0.01" style="width:76px;" oninput="recalcOilPrice()">
+        <input type="text" id="airFilterPartNum" placeholder="Part #" style="width:100px;">
+      </div>
+      <div class="field" style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:7px;padding-bottom:9px;">
+          <input type="checkbox" id="cabinFilterAdd" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);" onchange="recalcOilPrice()">
+          <label style="margin:0;text-transform:none;font-size:13px;color:var(--ink);font-weight:500;" for="cabinFilterAdd">Cabin filter replaced</label>
+        </div>
+        <input type="number" id="cabinFilterPrice" placeholder="Price" min="0" step="0.01" style="width:76px;" oninput="recalcOilPrice()">
+        <input type="text" id="cabinFilterPartNum" placeholder="Part #" style="width:100px;">
+      </div>
+    </div>
+    <div class="field"><label>Tax Rate (%) &mdash; service location</label><input type="number" id="taxRate" value="0" min="0" step="0.01" oninput="recalcOilPrice()" onchange="saveDefaultTaxRate(this.value)"></div>
+    <div class="field no-print" id="oilPriceBreakdown" style="font-size:12.5px;color:var(--muted);margin-top:-6px;"></div>
+
+    <div class="section-title">Fluids &amp; Multi-Point Check</div>
+    <div class="checklist" id="fluids-checklist">
+      <div class="insp-row"><span class="insp-label">Coolant</span><div class="status-group" data-item="fluid-coolant"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Brake Fluid <span style="color:var(--muted);font-weight:400;">(moisture %)</span></span><div style="display:flex;align-items:center;gap:10px;"><input type="number" id="brakeFluidMoisture" placeholder="%" step="0.1" min="0" style="width:60px;text-align:center;"><div class="status-group" data-item="fluid-brake"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Power Steering Fluid</span><div class="status-group" data-item="fluid-ps"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Washer Fluid</span><div class="status-group" data-item="fluid-washer"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Transmission Fluid</span><div class="status-group" data-item="fluid-trans"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Air filter inspected</span><div class="status-group" data-item="mp-airfilter"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Belts &amp; hoses inspected</span><div class="status-group" data-item="mp-belts"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Battery terminals inspected</span><div class="status-group" data-item="mp-battery"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Tire pressure checked/adjusted</span><div class="status-group" data-item="mp-tires"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Exterior lights checked</span><div class="status-group" data-item="mp-lights"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+      
+      <div class="insp-row"><span class="insp-label">Oil leak check under vehicle</span><div class="status-group" data-item="mp-leak"><button type="button" data-v="ok" onclick="setStatus(this)">Good</button><button type="button" data-v="advisory" onclick="setStatus(this)">Warning</button><button type="button" data-v="attention" onclick="setStatus(this)">Needs Attention</button></div></div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-fluidsmp')" style="display:none">
+        📷 Add Photos
+      </label>
+      <span class="no-print" style="font-size:11px;color:var(--muted);margin-left:8px;">Photos of fluids, filters, belts, etc. found during the inspection.</span>
+      <div class="photo-grid" id="photos-fluidsmp"></div>
+    </div>
+
+    <div class="section-title">Suggested Service By</div>
+    <div class="field"><label>Suggested Service By (mileage)</label><input type="text" id="nextServiceMileage" placeholder="67,340"></div>
+
+    <div class="section-title">Technician Notes</div>
+    <div class="field"><textarea id="techNotes" placeholder="Any observations, recommendations, or issues found during service..."></textarea></div>
+
+    <div class="grid-2">
+      <div class="field"><label>Price Charged</label><input type="text" id="priceCharged" placeholder="0.00"></div>
+      <div class="field"><label>Technician Name</label><input type="text" id="techName" value="Robert Allen"></div>
+    </div>
+
+    <div class="section-title">Attachments</div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*,application/pdf" multiple onchange="addAttachments(this)" style="display:none">
+        📎 Attach Scan / Photo
+      </label>
+      <span class="no-print" style="font-size:11px;color:var(--muted);margin-left:8px;">Photos or PDFs (a scanned form, registration, etc.) &mdash; PDFs are converted to images so they show up on the printed copy.</span>
+      <div class="photo-grid" id="attachments-grid"></div>
+    </div>
+
+    <div class="sig-row">
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Technician Signature</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Date</div>
+      </div>
+    </div>
+
+    <div class="actions-bar no-print" style="margin-top:18px;">
+      <button class="btn" onclick="saveOilChangeForm()">Save</button>
+      <button class="btn btn-primary" onclick="finalizeAndPrint()">Print</button>
+    </div>
+    <div id="saveStatus" class="no-print" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  
+  <div class="contact-bar no-print-color">
+    <div><b>Phone:</b> [Your Phone Number] &nbsp;|&nbsp; <b>Email:</b> [your@email.com]</div>
+    <div>Serving [Your Service Area] &bull; Est. 2016</div>
+  </div>
+
+
+</div>
+<script>
+// ---- Service numbering: Google Sheet ("Oil Changes" tab) is the source of truth, local
+// storage is the offline fallback. Same shared backend as the Invoice/Estimate. ----
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx7wI_uamzamAxBJ6BoFUmnLR4OAqk3tH0SyKh43Zozr7NdYf0m-gq2-7mYj5loSFGSWw/exec";
+
+const OIL_SEQ_KEY = 'roamadic_oilchange_seq';
+const OIL_SEQ_START = 1001;
+function localNextOilChangeNumber(){
+  try{
+    const stored = localStorage.getItem(OIL_SEQ_KEY);
+    return stored ? (parseInt(stored, 10) + 1) : OIL_SEQ_START;
+  }catch(e){
+    return OIL_SEQ_START;
+  }
+}
+function rememberOilChangeNumber(n){
+  try{ localStorage.setItem(OIL_SEQ_KEY, String(n)); }catch(e){}
+}
+function syncOilChangeNum(val){
+  const n = parseInt(val, 10);
+  if(!isNaN(n)) rememberOilChangeNumber(n);
+}
+function isSheetConfigured(){
+  return SHEET_API_URL && SHEET_API_URL.indexOf('PASTE_YOUR') === -1;
+}
+async function loadOilChangeNumber(){
+  if(_currentTicketId) return;
+  const statusEl = document.getElementById('syncStatus');
+  const fallback = localNextOilChangeNumber();
+  if(!isSheetConfigured()){
+    document.getElementById('serviceNum').value = fallback;
+    statusEl.textContent = 'not connected to Drive log';
+    return;
+  }
+  try{
+    const res = await fetch(SHEET_API_URL + '?action=next&doc=oilchange', {method:'GET'});
+    if(!res.ok){
+      throw new Error('HTTP ' + res.status);
+    }
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(parseErr){
+      throw new Error('non-JSON response: "' + text.slice(0,80).replace(/\s+/g,' ') + '"');
+    }
+    if(data && data.nextNumber){
+      document.getElementById('serviceNum').value = data.nextNumber;
+      statusEl.textContent = 'synced with Drive log';
+      statusEl.style.color = 'var(--ok)';
+      statusEl.style.fontStyle = 'normal';
+    }else{
+      throw new Error('response missing nextNumber: ' + text.slice(0,80));
+    }
+  }catch(e){
+    console.warn('Oil Change Drive sync failed:', e.message);
+    document.getElementById('serviceNum').value = fallback;
+    statusEl.textContent = 'offline — using local #, will re-sync next time';
+    statusEl.style.color = 'var(--warn)';
+    statusEl.style.fontStyle = 'normal';
+  }
+}
+function logOilChangeToSheet(){
+  if(!isSheetConfigured()) return Promise.resolve(false);
+  const payload = {
+    doc: 'oilchange',
+    number: document.getElementById('serviceNum').value,
+    date: document.getElementById('serviceDate').value,
+    customer: document.getElementById('customerName').value,
+    vehicle: [document.getElementById('vehYear').value, document.getElementById('vehMake').value, document.getElementById('vehModel').value].filter(Boolean).join(' '),
+    total: document.getElementById('priceCharged').value
+  };
+  return fetch(SHEET_API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  }).then(function(){ return true; })
+    .catch(function(){ return false; });
+}
+// ---- Title Case formatting for name/address-style fields ----
+function toTitleCase(str){
+  if(!str) return str;
+  const smallWords = ['a','an','and','the','of','for','in','on','at','to'];
+  return str.toLowerCase().split(/\s+/).map(function(w, i){
+    if(!w) return w;
+    if(i > 0 && smallWords.indexOf(w) !== -1) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(' ');
+}
+function toTitleCaseField(el){
+  el.value = toTitleCase(el.value);
+}
+
+// ---- Oil change pricing: $125 base (covers up to 5 qts) + $8.99/qt for extra capacity,
+// plus optional air/cabin filter add-ons and a tax rate for the service location. ----
+const OIL_BASE_PRICE = 125;
+const OIL_BASE_QTS = 5;
+const OIL_EXTRA_QT_RATE = 8.99;
+function recalcOilPrice(){
+  const qtyField = document.getElementById('oilQty');
+  const qty = parseFloat(qtyField.value);
+  const breakdown = document.getElementById('oilPriceBreakdown');
+  const airOn = document.getElementById('airFilterAdd').checked;
+  const cabinOn = document.getElementById('cabinFilterAdd').checked;
+  const airPrice = parseFloat(document.getElementById('airFilterPrice').value) || 0;
+  const cabinPrice = parseFloat(document.getElementById('cabinFilterPrice').value) || 0;
+  const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+
+  if(isNaN(qty) || qty <= 0){
+    breakdown.textContent = '';
+    return;
+  }
+  const extraQts = Math.max(0, qty - OIL_BASE_QTS);
+  const extraCost = extraQts * OIL_EXTRA_QT_RATE;
+  const extrasCost = (airOn ? airPrice : 0) + (cabinOn ? cabinPrice : 0);
+  const subtotal = OIL_BASE_PRICE + extraCost + extrasCost;
+  const taxAmt = subtotal * (taxRate / 100);
+  const total = subtotal + taxAmt;
+  document.getElementById('priceCharged').value = total.toFixed(2);
+
+  const parts = ['Base $' + OIL_BASE_PRICE.toFixed(2) + ' (up to ' + OIL_BASE_QTS + ' qts)'];
+  if(extraQts > 0) parts.push(extraQts.toFixed(1) + ' extra qt(s) x $' + OIL_EXTRA_QT_RATE.toFixed(2) + ' = $' + extraCost.toFixed(2));
+  if(airOn) parts.push('Air filter $' + airPrice.toFixed(2));
+  if(cabinOn) parts.push('Cabin filter $' + cabinPrice.toFixed(2));
+  if(taxRate > 0) parts.push('Tax ' + taxRate.toFixed(2) + '% = $' + taxAmt.toFixed(2));
+  breakdown.textContent = parts.join('  +  ') + '   |   Total: $' + total.toFixed(2);
+}
+// Tax rate is remembered locally (same key used by Invoice/Estimate) so you only have to
+// type it once per service area — no live tax-lookup API needed at the job site.
+const TAX_RATE_KEY = 'roamadic_default_tax_rate';
+function saveDefaultTaxRate(val){
+  const n = parseFloat(val);
+  if(!isNaN(n) && n > 0) localStorage.setItem(TAX_RATE_KEY, n);
+}
+function loadDefaultTaxRate(){
+  const saved = localStorage.getItem(TAX_RATE_KEY);
+  const field = document.getElementById('taxRate');
+  if(saved && field && (!field.value || field.value === '0')){
+    field.value = saved;
+    recalcOilPrice();
+  }
+}
+
+// ---- Next suggested service = mileage at service + 5,000, unless the tech has already typed a value ----
+let _nextServiceManuallyEdited = false;
+function recalcNextService(){
+  const mileageField = document.getElementById('serviceMileage');
+  const nextField = document.getElementById('nextServiceMileage');
+  if(_nextServiceManuallyEdited) return;
+  const digitsOnly = (mileageField.value || '').replace(/[^0-9.]/g, '');
+  const mileage = parseFloat(digitsOnly);
+  if(isNaN(mileage)) { nextField.value = ''; return; }
+  const next = Math.round(mileage + 5000);
+  nextField.value = next.toLocaleString('en-US');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  const nextField = document.getElementById('nextServiceMileage');
+  if(nextField){
+    nextField.addEventListener('input', function(){ _nextServiceManuallyEdited = true; });
+  }
+});
+
+// ---- Good / OK / Needs Attention status buttons (fluids + multi-point check) ----
+function setStatus(btn){
+  const group = btn.closest('.status-group');
+  const wasActive = btn.classList.contains('active');
+  Array.from(group.querySelectorAll('button')).forEach(function(b){ b.classList.remove('active'); });
+  // Tapping an already-selected status again clears it, so an accidental tap can be backed
+  // out of without having to pick a different (also wrong) status just to move on.
+  if(!wasActive) btn.classList.add('active');
+}
+function getStatusValue(itemKey){
+  const group = document.querySelector('.status-group[data-item="' + itemKey + '"]');
+  if(!group) return '';
+  const active = group.querySelector('button.active');
+  return active ? active.getAttribute('data-v') : '';
+}
+function setStatusValue(itemKey, value){
+  const group = document.querySelector('.status-group[data-item="' + itemKey + '"]');
+  if(!group || !value) return;
+  const btn = group.querySelector('button[data-v="' + value + '"]');
+  if(btn) setStatus(btn);
+}
+const STATUS_ITEM_KEYS = ['fluid-coolant','fluid-brake','fluid-ps','fluid-washer','fluid-trans',
+  'mp-tires','mp-airfilter','mp-belts','mp-lights','mp-battery','mp-leak'];
+
+// Quick evidence photos for the inspection checklist (thumbnails only, same pattern as
+// the vehicle-inspection sheet's per-section photo buttons) -- separate from the
+// Attachments section below, which is for scanned documents/PDFs that print as full pages.
+function addPhotos(input, targetId){
+  const grid = document.getElementById(targetId);
+  Array.from(input.files || []).forEach(function(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.alt = 'Inspection photo';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-photo no-print';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.onclick = function(){ thumb.remove(); };
+      thumb.appendChild(img);
+      thumb.appendChild(removeBtn);
+      grid.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+// ---- Pin-drop location map (Leaflet) ----
+let _locationMap, _locationMarker, _pinLat = null, _pinLng = null;
+function initLocationMap(){
+  const mapEl = document.getElementById('locationMap');
+  if(!mapEl || typeof L === 'undefined') return;
+  _locationMap = L.map('locationMap').setView([39.5, -98.35], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(_locationMap);
+  // Prefer the actual job address (from the ticket) over the device's live GPS position --
+  // this map is for the customer's location, not wherever the tech happens to be standing
+  // when the form loads. Only fall back to device location if no address is known yet.
+  const addr = val('serviceAddress') || _serviceAddressFromTicket;
+  if(addr){
+    geocodeServiceAddress_(addr);
+  } else if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+    }, function(){ /* ignore denial, keep default view */ });
+  }
+  _locationMap.on('click', function(e){
+    dropPin(e.latlng.lat, e.latlng.lng);
+  });
+}
+async function geocodeServiceAddress_(address){
+  try{
+    const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address));
+    const results = await res.json();
+    if(results && results[0]){
+      const lat = parseFloat(results[0].lat), lng = parseFloat(results[0].lon);
+      dropPin(lat, lng);
+      _locationMap.setView([lat, lng], 14);
+    } else if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+      }, function(){});
+    }
+  }catch(e){
+    console.warn('Could not geocode service address:', e);
+  }
+}
+function geocodeFromAddressField(){
+  const addr = val('serviceAddress');
+  if(addr) geocodeServiceAddress_(addr);
+}
+function dropPin(lat, lng){
+  _pinLat = lat; _pinLng = lng;
+  if(_locationMarker){ _locationMap.removeLayer(_locationMarker); }
+  _locationMarker = L.marker([lat, lng]).addTo(_locationMap);
+  document.getElementById('locationSummary').textContent =
+    'Pinned location: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+  const navBtn = document.getElementById('navigateBtn');
+  if(navBtn){
+    navBtn.href = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+    navBtn.style.display = 'inline-block';
+  }
+}
+
+// ---- Form persistence (localStorage) ----
+// Scoped per-ticket (falls back to a generic key when opened without a ticket link) so a
+// draft from one customer's job never bleeds into a different ticket's blank form.
+function oilFormStorageKey(){
+  return 'roamadic_oilchange_form_draft' + (_currentTicketId ? (':' + _currentTicketId) : '');
+}
+function saveOilChangeForm(){
+  const data = {
+    serviceNum: val('serviceNum'), serviceDate: val('serviceDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'), serviceAddress: val('serviceAddress'),
+    vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+    serviceMileage: val('serviceMileage'),
+    oilBrand: val('oilBrand'), oilWeight: val('oilWeight'), oilType: val('oilType'), oilQty: val('oilQty'),
+    filterBrand: val('filterBrand'),
+    nextServiceMileage: val('nextServiceMileage'),
+    airFilterAdd: document.getElementById('airFilterAdd').checked, airFilterPrice: val('airFilterPrice'), airFilterPartNum: val('airFilterPartNum'),
+    cabinFilterAdd: document.getElementById('cabinFilterAdd').checked, cabinFilterPrice: val('cabinFilterPrice'), cabinFilterPartNum: val('cabinFilterPartNum'),
+    taxRate: val('taxRate'), brakeFluidMoisture: val('brakeFluidMoisture'),
+    techNotes: val('techNotes'), priceCharged: val('priceCharged'), techName: val('techName'),
+    pinLat: _pinLat, pinLng: _pinLng,
+    statuses: STATUS_ITEM_KEYS.reduce(function(acc, key){ acc[key] = getStatusValue(key); return acc; }, {})
+  };
+  try{
+    localStorage.setItem(oilFormStorageKey(), JSON.stringify(data));
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'Saved ' + new Date().toLocaleTimeString();
+    statusEl.style.color = 'var(--ok)';
+    // Also push the current form state to the permanent Drive record (if this page was
+    // opened from a ticket), so hitting Save keeps that record current -- not just this
+    // browser's local draft. Fire-and-forget: local save has already succeeded either way.
+    saveRecordToBackend();
+  }catch(e){
+    document.getElementById('saveStatus').textContent = 'Could not save: ' + e.message;
+  }
+}
+function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function setVal(id, v){ const el = document.getElementById(id); if(el && v !== undefined && v !== null) el.value = v; }
+// Used only for fields "New Ticket" may have already prefilled via the URL — a saved draft
+// should never silently clobber a value that just came in from the ticket link.
+function setValIfEmpty(id, v){ const el = document.getElementById(id); if(el && !el.value && v !== undefined && v !== null) el.value = v; }
+async function fetchBackendFormData_(){
+  if(!_currentTicketId) return null;
+  try{
+    if(window.rmSupabase && /^[0-9a-f-]{36}$/i.test(_currentTicketId)){
+      await window.rmAuthReady;
+      const result = await window.rmSupabase.from('jobs').select('source_payload').eq('id', _currentTicketId).maybeSingle();
+      if(result.error) throw result.error;
+      if(result.data && result.data.source_payload && result.data.source_payload.formData){
+        return result.data.source_payload.formData;
+      }
+    }
+    const res = await fetch(SHEET_API_URL + '?action=tickets&_=' + Date.now() + '_' + Math.random().toString(36).slice(2), { cache: 'no-store' });
+    const json = await res.json();
+    const t = (json.tickets||[]).find(function(x){ return x.id === _currentTicketId; });
+    if(t && t.formData){
+      return JSON.parse(t.formData);
+    }
+  }catch(e){
+    console.warn('Could not load saved form data from backend:', e);
+  }
+  return null;
+}
+async function loadOilChangeForm(){
+  let data = await fetchBackendFormData_();
+  if(!data){
+    let raw;
+    try{ raw = localStorage.getItem(oilFormStorageKey()); }catch(e){ return; }
+    if(!raw) return;
+    try{ data = JSON.parse(raw); }catch(e){ return; }
+  }
+  setValIfEmpty('customerName', data.customerName);
+  setValIfEmpty('customerPhone', data.customerPhone);
+  setValIfEmpty('serviceAddress', data.serviceAddress);
+  setValIfEmpty('vehYear', data.vehYear);
+  setValIfEmpty('vehMake', data.vehMake);
+  setValIfEmpty('vehModel', data.vehModel);
+  setVal('serviceMileage', data.serviceMileage);
+  setVal('oilBrand', data.oilBrand);
+  if(data.oilWeight) setVal('oilWeight', data.oilWeight);
+  if(data.oilType) setVal('oilType', data.oilType);
+  setVal('oilQty', data.oilQty);
+  setVal('filterBrand', data.filterBrand);
+  if(data.nextServiceMileage){ setVal('nextServiceMileage', data.nextServiceMileage); _nextServiceManuallyEdited = true; }
+  if(data.airFilterAdd) document.getElementById('airFilterAdd').checked = true;
+  setVal('airFilterPrice', data.airFilterPrice);
+  setVal('airFilterPartNum', data.airFilterPartNum);
+  if(data.cabinFilterAdd) document.getElementById('cabinFilterAdd').checked = true;
+  setVal('cabinFilterPrice', data.cabinFilterPrice);
+  setVal('cabinFilterPartNum', data.cabinFilterPartNum);
+  setVal('taxRate', data.taxRate);
+  setVal('brakeFluidMoisture', data.brakeFluidMoisture);
+  setVal('techNotes', data.techNotes);
+  setVal('priceCharged', data.priceCharged);
+  if(data.techName) setVal('techName', data.techName);
+  if(data.statuses){
+    STATUS_ITEM_KEYS.forEach(function(key){ setStatusValue(key, data.statuses[key]); });
+  }
+  if(data.pinLat != null && data.pinLng != null && _locationMap){
+    dropPin(data.pinLat, data.pinLng);
+    _locationMap.setView([data.pinLat, data.pinLng], 13);
+  }
+  recalcOilPrice();
+}
+
+// ---- Attachments: scan/attach a photo or PDF so it becomes part of this record. PDFs are
+// rasterized into images (via pdf.js, loaded in <head>) so they show up on the printed/PDF
+// copy the same way a photo does. If pdf.js can't load (no signal at the job site), a PDF
+// still attaches — it just shows as an "open PDF" link instead of an inline image. Not
+// included in the Save draft: scans can be large enough to blow past localStorage's quota,
+// so Print/finalize (which doesn't depend on localStorage) is the safe way to keep one with
+// the record.
+function escAtt(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function blobToDataUrl(blob){
+  return new Promise(function(resolve, reject){
+    const r = new FileReader();
+    r.onload = function(){ resolve(r.result); };
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+let _pdfjsReadyPromise = null;
+function ensurePdfJs(){
+  if(window.pdfjsLib) return Promise.resolve(true);
+  if(_pdfjsReadyPromise) return _pdfjsReadyPromise;
+  _pdfjsReadyPromise = new Promise(function(resolve){
+    let done = false;
+    window.addEventListener('pdfjs-ready', function(){ if(!done){ done = true; resolve(true); } }, { once:true });
+    setTimeout(function(){ if(!done){ done = true; resolve(!!window.pdfjsLib); } }, 7000);
+  });
+  return _pdfjsReadyPromise;
+}
+async function renderPdfToImages(file){
+  const arrayBuf = await file.arrayBuffer();
+  const ok = await ensurePdfJs();
+  if(!ok || !window.pdfjsLib){
+    const dataUrl = await blobToDataUrl(new Blob([arrayBuf], { type:'application/pdf' }));
+    return [{ kind:'pdf-raw', name:file.name, dataUrl:dataUrl }];
+  }
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuf }).promise;
+  const images = [];
+  for(let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+    images.push({ kind:'image', name: file.name + (pdf.numPages > 1 ? ' (p.' + p + ')' : ''), dataUrl: canvas.toDataURL('image/jpeg', 0.85) });
+  }
+  return images;
+}
+function renderAttachment(item){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return;
+  if(item.kind === 'pdf-raw'){
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb att-thumb-pdf';
+    const link = document.createElement('a');
+    link.href = item.dataUrl; link.target = '_blank'; link.rel = 'noopener';
+    link.innerHTML = '📄<br>' + escAtt(item.name);
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.onclick = function(){ thumb.remove(); };
+    thumb.appendChild(link); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+  } else {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    const img = document.createElement('img');
+    img.src = item.dataUrl; img.alt = item.name;
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    const printPage = document.createElement('div');
+    printPage.className = 'att-print-page';
+    const printLabel = document.createElement('div');
+    printLabel.className = 'att-print-label';
+    printLabel.textContent = item.name;
+    const printImg = document.createElement('img');
+    printImg.src = item.dataUrl;
+    printPage.appendChild(printLabel); printPage.appendChild(printImg);
+    removeBtn.onclick = function(){ thumb.remove(); printPage.remove(); };
+    thumb.appendChild(img); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+    grid.appendChild(printPage);
+  }
+}
+async function addAttachments(input){
+  const files = Array.from(input.files || []);
+  for(const file of files){
+    try{
+      if(file.type === 'application/pdf' || /\.pdf$/i.test(file.name)){
+        const items = await renderPdfToImages(file);
+        items.forEach(renderAttachment);
+      } else {
+        const dataUrl = await blobToDataUrl(file);
+        renderAttachment({ kind:'image', name:file.name, dataUrl:dataUrl });
+      }
+    }catch(e){
+      console.warn('Could not attach', file.name, e);
+      alert('Could not attach "' + file.name + '": ' + e.message);
+    }
+  }
+  input.value = '';
+}
+function printDoc(){ window.print(); }let _currentTicketId = '';
+let _serviceAddressFromTicket = '';
+function prefillFromTicket(){const params=new URLSearchParams(window.location.search);const customer=params.get('customer');const phone=params.get('phone');const vehicle=params.get('vehicle');_currentTicketId=params.get('ticket')||'';_serviceAddressFromTicket=params.get('address')||'';if(customer)document.getElementById('customerName').value=customer;if(phone)document.getElementById('customerPhone').value=phone;if(_serviceAddressFromTicket)document.getElementById('serviceAddress').value=_serviceAddressFromTicket;if(vehicle){const parts=vehicle.trim().split(/\s+/).filter(Boolean);if(parts.length&&/^\d{4}$/.test(parts[0]))document.getElementById('vehYear').value=parts.shift();if(parts.length)document.getElementById('vehMake').value=parts.shift();if(parts.length)document.getElementById('vehModel').value=parts.join(' ');}}
+// ---- Permanent record: on Print/Finalize, save a snapshot of this form (plus any
+// attached scans) to a private Drive folder linked to the ticket, so it survives after
+// this tab is closed -- unlike the on-screen Attachments, which only exist for this
+// session. No-op if this page wasn't opened from a ticket (no _currentTicketId). ----
+function collectAttachmentsForRecord(){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return [];
+  const out = [];
+  Array.from(grid.querySelectorAll('.photo-thumb')).forEach(function(thumb){
+    if(thumb.classList.contains('att-thumb-pdf')){
+      const link = thumb.querySelector('a');
+      if(link) out.push({ name: (link.textContent||'attachment.pdf').trim(), dataUrl: link.href });
+    } else {
+      const img = thumb.querySelector('img');
+      if(img) out.push({ name: img.alt || 'attachment', dataUrl: img.src });
+    }
+  });
+  return out;
+}
+function buildFormSnapshotForRecord(){
+  return {
+    serviceNum: val('serviceNum'), serviceDate: val('serviceDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'), serviceAddress: val('serviceAddress'),
+    vehicle: [val('vehYear'), val('vehMake'), val('vehModel')].filter(Boolean).join(' '),
+    serviceMileage: val('serviceMileage'),
+    oilBrand: val('oilBrand'), oilWeight: val('oilWeight'), oilType: val('oilType'), oilQty: val('oilQty'),
+    filterBrand: val('filterBrand'), nextServiceMileage: val('nextServiceMileage'),
+    airFilterAdd: document.getElementById('airFilterAdd').checked, airFilterPrice: val('airFilterPrice'), airFilterPartNum: val('airFilterPartNum'),
+    cabinFilterAdd: document.getElementById('cabinFilterAdd').checked, cabinFilterPrice: val('cabinFilterPrice'), cabinFilterPartNum: val('cabinFilterPartNum'),
+    taxRate: val('taxRate'), brakeFluidMoisture: val('brakeFluidMoisture'),
+    techNotes: val('techNotes'), priceCharged: val('priceCharged'), techName: val('techName'),
+    statuses: STATUS_ITEM_KEYS.map(function(k){ return k + '=' + getStatusValue(k); }).join(', ')
+  };
+}
+async function saveRecordToBackend(){
+  if(!_currentTicketId) return;
+  try{
+    // The structured data (matching localStorage's shape) is what lets the form correctly
+    // repopulate itself when reopened -- the human-readable summary is only for the Drive .txt file.
+    const structuredData = {
+      serviceNum: val('serviceNum'), serviceDate: val('serviceDate'),
+      customerName: val('customerName'), customerPhone: val('customerPhone'), serviceAddress: val('serviceAddress'),
+      vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+      serviceMileage: val('serviceMileage'),
+      oilBrand: val('oilBrand'), oilWeight: val('oilWeight'), oilType: val('oilType'), oilQty: val('oilQty'),
+      filterBrand: val('filterBrand'),
+      nextServiceMileage: val('nextServiceMileage'),
+      airFilterAdd: document.getElementById('airFilterAdd').checked, airFilterPrice: val('airFilterPrice'), airFilterPartNum: val('airFilterPartNum'),
+      cabinFilterAdd: document.getElementById('cabinFilterAdd').checked, cabinFilterPrice: val('cabinFilterPrice'), cabinFilterPartNum: val('cabinFilterPartNum'),
+      taxRate: val('taxRate'), brakeFluidMoisture: val('brakeFluidMoisture'),
+      techNotes: val('techNotes'), priceCharged: val('priceCharged'), techName: val('techName'),
+      pinLat: _pinLat, pinLng: _pinLng,
+      statuses: STATUS_ITEM_KEYS.reduce(function(acc, key){ acc[key] = getStatusValue(key); return acc; }, {})
+    };
+    await fetch(SHEET_API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action:'saveRecord',
+        id:_currentTicketId,
+        number: val('serviceNum'),
+        customer: val('customerName'),
+        formData: structuredData,
+        attachments: collectAttachmentsForRecord()
+      })
+    });
+  }catch(e){
+    console.warn('Could not save permanent record:', e);
+  }
+}
+async function finalizeAndPrint(){
+  const usedNumber = document.getElementById('serviceNum').value;
+  await logOilChangeToSheet();
+  rememberOilChangeNumber(usedNumber);
+  await saveRecordToBackend();
+  printDoc();
+}
+window.onload = function(){
+  prefillFromTicket();
+  loadOilChangeNumber();loadDefaultTaxRate();
+  const d = new Date();
+  document.getElementById('serviceDate').value = d.toISOString().slice(0,10);
+  initLocationMap();
+  loadOilChangeForm();
+};
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('../sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="/shop/rm-enhancements.js?v=6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="../supabase-auth.js?v=6"></script>
+</body>
+</html>
+
