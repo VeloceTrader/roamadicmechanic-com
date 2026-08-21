@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roamadic-mechanic-v14';
+const CACHE_NAME = 'roamadic-mechanic-v20';
 const ASSETS = [
   './',
   './index.html',
@@ -59,6 +59,13 @@ self.addEventListener('activate', function (event) {
 // stuck showing an old version indefinitely even though the SW "revalidates" every load.
 self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
+  // Always fetch full HTML navigations directly. Some mobile browsers can retain the
+  // response's compression header when restoring a large cached document, then decode
+  // its body a second time and display binary-looking text instead of the ticket form.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then(function (cached) {
       const networkFetch = fetch(event.request, { cache: 'no-store' }).then(function (response) {
@@ -72,4 +79,5 @@ self.addEventListener('fetch', function (event) {
     })
   );
 });
+
 
