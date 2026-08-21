@@ -238,30 +238,35 @@ return parseApiResponse_(text, res);
 async function loadTickets(){
 try {
 await window.rmAuthReady;
-const [jobsResult, balancesResult, invoiceLinksResult, paymentsResult, partsResult] = await Promise.all([
+const [jobsResult, balancesResult, invoiceLinksResult, paymentsResult, partsResult, customersResult] = await Promise.all([
 window.rmSupabase.from('dashboard_jobs').select('*').order('job_number', { ascending:false }),
 window.rmSupabase.from('dashboard_invoice_balances').select('*'),
 window.rmSupabase.from('invoices').select('id,job_id,status'),
 window.rmSupabase.from('payments').select('invoice_id,amount,paid_at'),
-window.rmSupabase.from('job_parts').select('job_id,description,part_number,quantity,unit_cost,unit_price')
+window.rmSupabase.from('job_parts').select('job_id,description,part_number,quantity,unit_cost,unit_price'),
+window.rmSupabase.from('customers').select('id,address_line1,address_line2,city,state,postal_code')
 ]);
 if (jobsResult.error) throw jobsResult.error;
 if (balancesResult.error) throw balancesResult.error;
 if (invoiceLinksResult.error) throw invoiceLinksResult.error;
 if (paymentsResult.error) throw paymentsResult.error;
 if (partsResult.error) throw partsResult.error;
+if (customersResult.error) throw customersResult.error;
 const balanceByInvoiceId = new Map((balancesResult.data||[]).map(x=>[x.id,x]));
 const invoiceByJobId = new Map((invoiceLinksResult.data||[]).filter(x=>x.job_id).map(x=>[x.job_id,x]));
 const paymentsByInvoiceId = new Map();
 (paymentsResult.data||[]).forEach(function(p){ if(!paymentsByInvoiceId.has(p.invoice_id)) paymentsByInvoiceId.set(p.invoice_id,[]); paymentsByInvoiceId.get(p.invoice_id).push(p); });
 const partsByJob = new Map();
 (partsResult.data||[]).forEach(function(p){ if(!partsByJob.has(p.job_id)) partsByJob.set(p.job_id,[]); partsByJob.get(p.job_id).push(p); });
+const addressByCustomerId = new Map((customersResult.data||[]).map(function(c){
+  return [c.id, [c.address_line1,c.address_line2,c.city,c.state,c.postal_code].filter(Boolean).join(', ')];
+}));
 tickets = (jobsResult.data||[]).map(function(j){
 const invoiceLink=invoiceByJobId.get(j.id);
 const inv=invoiceLink ? (balanceByInvoiceId.get(invoiceLink.id)||{}) : {};
 const invoicePayments=invoiceLink ? (paymentsByInvoiceId.get(invoiceLink.id)||[]) : [];
 const type=j.job_type==='oil_change'?'oilchange':j.job_type==='inspection'?'inspection':String(j.display_number||'').startsWith('EST-')?'estimate':'invoice';
-return { id:j.id, number:j.display_number, type:type, status:['completed','invoiced','cancelled'].includes(j.status)?'done':'open', customer:j.customer_name||'', phone:j.phone||'', vehicle:[j.year,j.make,j.model].filter(Boolean).join(' '), vin:j.vin||'', plate:j.license_plate||'', mileage:j.mileage||'', amount:inv.invoice_total!=null?Number(inv.invoice_total):Number(j.parts_total||0)+Number(j.labor_total||0), hasInvoice:!!invoiceLink, amountPaid:Number(inv.paid_total||0), balance:Number(inv.balance_due||0), payments:invoicePayments, lastPaymentDate:invoicePayments.reduce((latest,p)=>!latest||new Date(p.paid_at)>new Date(latest)?p.paid_at:latest,''), cost:(partsByJob.get(j.id)||[]).reduce((n,p)=>n+Number(p.unit_cost||0)*Number(p.quantity||1),0), notes:'', parts:(partsByJob.get(j.id)||[]).map(p=>[p.description,p.part_number].filter(Boolean).join(' · ')), scheduledAt:j.scheduled_at||'', timerRunning:!!j.timer_running, secondsLogged:Number(j.actual_job_hours||0)*3600 };
+return { id:j.id, number:j.display_number, type:type, status:['completed','invoiced','cancelled'].includes(j.status)?'done':'open', customer:j.customer_name||'', phone:j.phone||'', address:addressByCustomerId.get(j.customer_id)||'', vehicle:[j.year,j.make,j.model].filter(Boolean).join(' '), vin:j.vin||'', plate:j.license_plate||'', mileage:j.mileage||'', amount:inv.invoice_total!=null?Number(inv.invoice_total):Number(j.parts_total||0)+Number(j.labor_total||0), hasInvoice:!!invoiceLink, amountPaid:Number(inv.paid_total||0), balance:Number(inv.balance_due||0), payments:invoicePayments, lastPaymentDate:invoicePayments.reduce((latest,p)=>!latest||new Date(p.paid_at)>new Date(latest)?p.paid_at:latest,''), cost:(partsByJob.get(j.id)||[]).reduce((n,p)=>n+Number(p.unit_cost||0)*Number(p.quantity||1),0), notes:'', parts:(partsByJob.get(j.id)||[]).map(p=>[p.description,p.part_number].filter(Boolean).join(' · ')), scheduledAt:j.scheduled_at||'', timerRunning:!!j.timer_running, secondsLogged:Number(j.actual_job_hours||0)*3600 };
 });
 window.rmTickets = tickets;
 $('#create-msg').textContent = '';
