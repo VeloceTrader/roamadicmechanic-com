@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roamadic-mechanic-v10';
+const CACHE_NAME = 'roamadic-mechanic-v11';
 const ASSETS = [
   './',
   './index.html',
