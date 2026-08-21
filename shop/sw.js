@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roamadic-mechanic-v9';
+const CACHE_NAME = 'roamadic-mechanic-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -71,3 +71,4 @@ self.addEventListener('fetch', function (event) {
     })
   );
 });
+
