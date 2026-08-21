@@ -1,10 +1,11 @@
-const CACHE_NAME = 'roamadic-mechanic-v11';
+const CACHE_NAME = 'roamadic-mechanic-v12';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './rm-enhancements.js',
   './supabase-auth.js',
+  './dashboard-redesign.js',
   './invoice/',
   './invoice/index.html',
   './estimate/',
