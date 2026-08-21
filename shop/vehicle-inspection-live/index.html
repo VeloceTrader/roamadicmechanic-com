@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Inspection - Roamadic Mechanic</title>
+<style>
+:root{
+  --navy:#1c3a52;
+  --navy-dark:#12283b;
+  --gold:#c99a3e;
+  --gold-light:#e7c983;
+  --red:#9b3a2e;
+  --cream:#f6f1e6;
+  --page:#eee8da;
+  --ink:#23262b;
+  --muted:#6b7280;
+  --line:#ddd6c6;
+  --ok:#2f7d4f;
+  --warn:#a9720f;
+  --bad:#b3392c;
+  --ok-bg:#e9f5ee;
+  --warn-bg:#fbf1de;
+  --bad-bg:#fbeae7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--page);
+  color:var(--ink);
+  padding:24px 12px 60px;
+  line-height:1.45;
+}
+.sheet{
+  max-width:900px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+.topbar{
+  height:6px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 60%,var(--gold) 100%);
+}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:26px 32px 20px;
+  border-bottom:2px solid var(--navy);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  flex-shrink:0;
+}
+.brand-text h1{
+  margin:0;
+  font-size:22px;
+  letter-spacing:.04em;
+  color:var(--navy);
+  font-weight:800;
+}
+.brand-text p{
+  margin:3px 0 0;
+  font-size:12.5px;
+  color:var(--muted);
+  letter-spacing:.02em;
+}
+.doc-meta{
+  text-align:right;
+}
+.doc-meta .doc-title{
+  font-size:24px;
+  font-weight:800;
+  color:var(--navy);
+  letter-spacing:.06em;
+  margin:0 0 8px;
+}
+.doc-meta .field-row{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  align-items:center;
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.doc-meta .field-row input{
+  text-align:right;
+}
+.body-pad{
+  padding:26px 32px 32px;
+}
+.section-title{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--navy);
+  border-bottom:2px solid var(--gold);
+  padding-bottom:6px;
+  margin:28px 0 14px;
+}
+.section-title:first-child{margin-top:0;}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.field{
+  margin-bottom:12px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+input,select,textarea{
+  width:100%;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:8px 10px;
+  background:#fdfcf9;
+}
+input:focus,select:focus,textarea:focus{
+  outline:2px solid var(--gold-light);
+  outline-offset:0;
+  border-color:var(--gold);
+}
+textarea{resize:vertical;min-height:64px;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:4px;
+}
+th{
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#fff;
+  background:var(--navy);
+  padding:9px 10px;
+}
+th:first-child{border-top-left-radius:6px;}
+th:last-child{border-top-right-radius:6px;}
+td{
+  padding:6px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+td input{border:1px solid transparent;background:transparent;padding:6px;}
+td input:focus{background:#fdfcf9;border-color:var(--gold);}
+.num{text-align:right;}
+.row-actions{text-align:center;width:34px;}
+.icon-btn{
+  border:none;
+  background:none;
+  color:var(--bad);
+  font-size:16px;
+  cursor:pointer;
+  padding:4px;
+  border-radius:4px;
+}
+.icon-btn:hover{background:var(--bad-bg);}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  font-weight:700;
+  font-size:13px;
+  padding:9px 16px;
+  border-radius:7px;
+  cursor:pointer;
+}
+.btn:hover{background:var(--navy);color:#fff;}
+.btn-primary{
+  background:var(--navy);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--navy-dark);}
+.btn-gold{
+  border-color:var(--gold);
+  color:var(--navy);
+  background:var(--gold-light);
+}
+.btn-gold:hover{background:var(--gold);}
+.actions-bar{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.totals{
+  margin-left:auto;
+  width:100%;
+  max-width:320px;
+}
+.totals-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 0;
+  font-size:14px;
+  border-bottom:1px solid var(--line);
+}
+.totals-row.grand{
+  border-bottom:none;
+  border-top:2px solid var(--navy);
+  margin-top:4px;
+  padding-top:12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--navy);
+}
+.totals-row input{
+  width:90px;
+  text-align:right;
+}
+.totals-wrap{display:flex;justify-content:flex-end;margin-top:6px;}
+.checklist{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 22px;
+}
+.checklist-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:14px;
+  padding:4px 0;
+}
+.checklist-item input[type=checkbox]{
+  width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);
+}
+.status-group{
+  display:flex;
+  border:1px solid var(--line);
+  border-radius:7px;
+  overflow:hidden;
+  width:fit-content;
+}
+.status-group button{
+  border:none;
+  background:#fdfcf9;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  color:var(--muted);
+  border-right:1px solid var(--line);
+}
+.status-group button:last-child{border-right:none;}
+.status-group button.active[data-v="ok"]{background:var(--ok-bg);color:var(--ok);}
+.status-group button.active[data-v="advisory"]{background:var(--warn-bg);color:var(--warn);}
+.status-group button.active[data-v="attention"]{background:var(--bad-bg);color:var(--bad);}
+.insp-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+}
+.insp-row:last-child{border-bottom:none;}
+.insp-label{font-size:14px;}
+.insp-note{
+  width:100%;
+  margin-top:4px;
+}
+.insp-note input{font-size:12.5px;padding:5px 8px;}
+.photo-block{padding:10px 0 4px;}
+.btn-photo{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;border:1px solid var(--line);border-radius:7px;
+  padding:7px 14px;font-size:12.5px;font-weight:700;color:var(--navy);
+  cursor:pointer;
+}
+.btn-photo:active{background:var(--cream);}
+.photo-grid{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.photo-grid:not(:empty){margin-top:8px;}
+.photo-thumb{
+  position:relative;width:84px;height:84px;border-radius:6px;overflow:hidden;
+  border:1px solid var(--line);background:#f2f1ee;flex-shrink:0;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb .remove-photo{
+  position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;line-height:18px;
+  text-align:center;padding:0;cursor:pointer;
+}
+.footer-note{
+  margin-top:26px;
+  padding-top:18px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.contact-bar{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12.5px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.contact-bar b{color:var(--gold-light);}
+.sig-row{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:24px;
+  margin-top:8px;
+}
+.sig-line{
+  border-bottom:1px solid var(--ink);
+  height:34px;
+}
+.sig-caption{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.photo-thumb.att-thumb-pdf{display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;}
+.photo-thumb.att-thumb-pdf a{font-size:10px;color:var(--navy);text-decoration:none;word-break:break-word;line-height:1.3;}
+.att-print-page{display:none;}
+@media (max-width:640px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .header{flex-direction:column;align-items:flex-start;}
+  .doc-meta{text-align:left;width:100%;}
+  .doc-meta .field-row{justify-content:space-between;}
+  .checklist{grid-template-columns:1fr;}
+  .contact-bar{flex-direction:column;align-items:flex-start;}
+}
+@media print{
+  @page{size:letter;margin:9mm;}
+  body{background:#fff;padding:0;font-size:12px;}
+  .sheet{box-shadow:none;border-radius:0;max-width:100%;}
+  .no-print{display:none !important;}
+  input,select,textarea{border:none;border-bottom:1px solid #999;border-radius:0;background:transparent;padding:2px;}
+  th{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .topbar,.contact-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .status-group button.active{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .icon-btn,.row-actions{display:none;}
+  .header{padding:10px 20px 8px;}
+  .body-pad{padding:8px 20px 12px;}
+  .section-title{margin:8px 0 5px;font-size:10.5px;padding-bottom:3px;}
+  .field{margin-bottom:4px;}
+  .field label{margin-bottom:2px;}
+  .grid-2,.grid-3,.grid-4{gap:8px;}
+  .insp-row{padding:3px 0;}
+  textarea{min-height:26px;}
+  .sig-row{margin-top:6px;}
+  .sig-line{height:16px;}
+  .footer-note{margin-top:6px;padding-top:5px;}
+  .contact-bar{padding:6px 20px;}
+  .doc-meta .doc-title{font-size:17px;margin-bottom:4px;}
+}
+
+@media print{
+  /* Collapse each Good/Warning/Needs Attention row to a single colored bubble so the
+     printed page stays compact -- full three-button rows only make sense on-screen
+     where they're tappable. */
+  .status-group button:not(.active){display:none;}
+  .status-group{border:none;width:auto;}
+  .status-group button.active{
+    display:inline-block;
+    width:13px;height:13px;
+    border-radius:50%;
+    padding:0;
+    font-size:0;
+    line-height:0;
+    border:1px solid rgba(0,0,0,.25);
+  }
+  .status-group button.active[data-v="ok"]{background:var(--ok);}
+  .status-group button.active[data-v="advisory"]{background:var(--warn);}
+  .status-group button.active[data-v="attention"]{background:var(--bad);}
+  #attachments-grid .photo-thumb{display:none;}
+  .att-print-page{display:block;page-break-before:always;padding:24px 0;}
+  .att-print-page img{max-width:100%;display:block;margin:0 auto;}
+  .att-print-label{font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;}
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module">
+  // Used to turn attached PDF scans into images (see "Attachments" below) so they show up
+  // in the printed/PDF copy. If this fails to load (no signal at the job site), attaching
+  // still works — it just falls back to an "open PDF" link instead of an inline image.
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.worker.min.mjs';
+  window.pdfjsLib = pdfjsLib;
+  window.dispatchEvent(new Event('pdfjs-ready'));
+</script>
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" href="/icons/hub/favicon.png">
+<link rel="apple-touch-icon" href="/icons/hub/apple-touch-icon.png">
+<meta name="theme-color" content="#1c3a52">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roamadic Mechanic">
+</head>
+<body>
+<a href="../" class="rm-menu-back" style="display:flex;align-items:center;gap:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;color:#fff;background:#1c3a52;text-decoration:none;padding:8px 14px;">&larr; All Tools</a>
+<style>@media print{.rm-menu-back{display:none !important;}}</style>
+<div class="sheet">
+
+  <div class="topbar"></div>
+  <div class="header">
+    <div class="brand">
+      <img src="/icons/hub/icon-512.png" alt="Roamadic Mechanic logo">
+      <div class="brand-text">
+        <h1>ROAMADIC MECHANIC</h1>
+        <p>Mobile Repair &bull; On-The-Go Service</p>
+      </div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-title">MULTI-POINT INSPECTION</div>
+      
+      <div class="field-row"><span>Inspection #</span><input type="text" id="inspectionNum" value="1001" style="width:90px" onchange="syncInspectionNum(this.value)"></div>
+      <div class="field-row no-print" style="justify-content:flex-end;"><span id="syncStatus" style="font-style:italic;color:var(--muted);"></span></div>
+
+      <div class="field-row"><span>Date</span><input type="date" id="inspectionDate" value="" style="width:150px"></div>
+
+    </div>
+  </div>
+
+
+  <div class="body-pad">
+
+    <div class="grid-2">
+      <div>
+        <div class="field"><label>Customer Name</label><input type="text" id="customerName" placeholder="Jane Smith"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="customerPhone" placeholder="(555) 123-4567"></div>
+      </div>
+
+    <div>
+        <div class="grid-3">
+          <div class="field"><label>Year</label><input type="text" id="vehYear" placeholder="2018"></div>
+          <div class="field"><label>Make</label><input type="text" id="vehMake" placeholder="Honda"></div>
+          <div class="field"><label>Model</label><input type="text" id="vehModel" placeholder="Civic"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>License Plate</label><input type="text" id="vehPlate" placeholder="ABC-1234"></div>
+          <div class="field"><label>Odometer</label><input type="text" id="odometer" placeholder="62,340"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title no-print">Booking / Service Location</div>
+    <div class="field no-print">
+      <label class="no-print">Tap the map to drop a pin at the service location</label>
+      <div id="locationMap" class="no-print" style="height:280px;border:1px solid var(--line);border-radius:8px;"></div>
+      <div id="locationSummary" style="font-size:12.5px;color:var(--muted);margin-top:6px;">No location pinned yet.</div>
+      <a id="navigateBtn" class="btn btn-sm btn-ghost no-print" href="#" target="_blank" rel="noopener" style="display:none;margin-top:8px;">🧭 Navigate</a>
+    </div>
+
+    <div style="display:flex;gap:18px;font-size:12px;color:var(--muted);margin:4px 0 8px;">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--ok);margin-right:5px;"></span>OK</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--warn);margin-right:5px;"></span>Advisory &mdash; monitor / service soon</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--bad);margin-right:5px;"></span>Needs Attention &mdash; recommend now</span>
+    </div>
+
+    <div class="section-title">Under Hood</div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Engine Oil Level & Condition</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Coolant Level & Condition</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Belts</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Hoses</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Battery & Terminals</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Air Filter</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Power Steering Fluid</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Windshield Washer Fluid</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-underhood')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-underhood"></div>
+    </div>
+<div class="section-title">Brakes</div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Front Brakes</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Rear Brakes</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Brake Fluid Level &amp; Condition <span style="color:var(--muted);font-weight:400;">(moisture %)</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="number" id="brakeFluidMoisture" placeholder="%" step="0.1" min="0" style="width:60px;text-align:center;">
+        <div class="status-group">
+          <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+          <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+          <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+        </div>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Parking Brake</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-brakes')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-brakes"></div>
+    </div>
+<div class="section-title">Tires & Wheels</div>
+    <div class="field no-print">
+      <label class="btn-photo no-print" style="display:inline-flex;">
+        <input type="file" accept="application/pdf" onchange="importTreadScan(this)" style="display:none">
+        📄 Import Tread Scan (PDF)
+      </label>
+      <span id="treadScanStatus" style="font-size:12px;color:var(--muted);margin-left:8px;"></span>
+    </div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Tread Depth &mdash; LF</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="text" id="treadLF" oninput="autoFlagTread(this)" placeholder="32nds" style="width:60px;text-align:center;">
+        <div class="status-group" data-item="tread-lf">
+          <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+          <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+          <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+        </div>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Tread Depth &mdash; RF</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="text" id="treadRF" oninput="autoFlagTread(this)" placeholder="32nds" style="width:60px;text-align:center;">
+        <div class="status-group" data-item="tread-rf">
+          <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+          <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+          <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+        </div>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Tread Depth &mdash; LR</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="text" id="treadLR" oninput="autoFlagTread(this)" placeholder="32nds" style="width:60px;text-align:center;">
+        <div class="status-group" data-item="tread-lr">
+          <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+          <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+          <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+        </div>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Tread Depth &mdash; RR</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="text" id="treadRR" oninput="autoFlagTread(this)" placeholder="32nds" style="width:60px;text-align:center;">
+        <div class="status-group" data-item="tread-rr">
+          <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+          <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+          <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+        </div>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Tire Pressure (all 4)</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Spare Tire / Jack Kit</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Wheel Alignment / Wear Pattern</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-tires')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-tires"></div>
+    </div>
+<div class="section-title">Lights & Electrical</div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Headlights</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Brake Lights</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Turn Signals & Hazards</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Dashboard Warning Lights</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Horn</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-lights')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-lights"></div>
+    </div>
+<div class="section-title">Suspension & Steering</div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Shocks / Struts</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Suspension Components</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Steering Linkage</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-suspension')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-suspension"></div>
+    </div>
+<div class="section-title">Under Vehicle</div>
+
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Exhaust System</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Visible Fluid Leaks</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="insp-row">
+      <div style="flex:1;min-width:0;">
+        <div class="insp-label">Undercarriage / Frame</div>
+      </div>
+      <div class="status-group">
+        <button type="button" data-v="ok" onclick="setStatus(this)">OK</button>
+        <button type="button" data-v="advisory" onclick="setStatus(this)">Advisory</button>
+        <button type="button" data-v="attention" onclick="setStatus(this)">Attention</button>
+      </div>
+    </div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*" multiple onchange="addPhotos(this, 'photos-undervehicle')" style="display:none">
+        + Add Photos
+      </label>
+      <div class="photo-grid" id="photos-undervehicle"></div>
+    </div>
+
+    <div class="section-title">Overall Notes &amp; Recommendations</div>
+    <div class="field"><textarea id="overallNotes" placeholder="Summarize findings and recommended next steps for the customer..." style="min-height:90px;"></textarea></div>
+
+    <div class="grid-2">
+      <div class="field"><label>Technician Name</label><input type="text" id="techName"></div>
+      <div class="field"><label>Next Inspection Due</label><input type="date" id="nextInspectionDue"></div>
+    </div>
+
+    <div class="section-title">Attachments</div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*,application/pdf" multiple onchange="addAttachments(this)" style="display:none">
+        📎 Attach Scan / Photo
+      </label>
+      <span class="no-print" style="font-size:11px;color:var(--muted);margin-left:8px;">Photos or PDFs (a prior report, signed form, etc.) &mdash; PDFs are converted to images so they show up on the printed copy.</span>
+      <div class="photo-grid" id="attachments-grid"></div>
+    </div>
+
+    <div class="sig-row">
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Technician Signature</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Date</div>
+      </div>
+    </div>
+
+    <div class="actions-bar no-print" style="margin-top:18px;">
+      <button class="btn" onclick="saveInspectionForm()">Save</button>
+      <button class="btn btn-primary" onclick="finalizeAndPrint()">Print / Save as PDF</button>
+    </div>
+    <div id="saveStatus" class="no-print" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  
+  <div class="contact-bar no-print-color">
+    <div><b>Phone:</b> [Your Phone Number] &nbsp;|&nbsp; <b>Email:</b> [your@email.com]</div>
+    <div>Serving [Your Service Area] &bull; Est. 2016</div>
+  </div>
+
+
+</div>
+<script>
+function autoFlagTread(input){
+  const v = parseFloat(input.value);
+  if(isNaN(v)) return;
+  const group = input.closest('.insp-row').querySelector('.status-group');
+  if(!group) return;
+  let level;
+  if(v <= 2) level = 'attention';
+  else if(v <= 4) level = 'advisory';
+  else level = 'ok';
+  const btn = group.querySelector('button[data-v="' + level + '"]');
+  if(btn) setStatus(btn);
+}
+async function importTreadScan(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('treadScanStatus');
+  statusEl.style.color = 'var(--muted)';
+  statusEl.textContent = 'Reading scan...';
+  try{
+    if(!window.pdfjsLib){
+      await new Promise(function(resolve){ window.addEventListener('pdfjs-ready', resolve, { once:true }); });
+    }
+    const buf = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+    const page = await pdf.getPage(1);
+    const content = await page.getTextContent();
+    const fullText = content.items.map(function(it){ return it.str; }).join(' ');
+    const matches = fullText.match(/\d+\/32(\s+\d+\/32){3}/g);
+    if(!matches || matches.length < 4){
+      statusEl.textContent = 'Could not find 4 tire readings in this PDF.';
+      statusEl.style.color = 'var(--red)';
+      return;
+    }
+    const positions = ['treadLF','treadRF','treadLR','treadRR'];
+    positions.forEach(function(id, i){
+      const nums = matches[i].split(/\s+/).map(function(s){ return parseInt(s, 10); });
+      const min = Math.min.apply(null, nums);
+      const el = document.getElementById(id);
+      if(el){ el.value = min; autoFlagTread(el); }
+    });
+    statusEl.textContent = 'Imported all 4 tires (lowest of 4 points each).';
+    statusEl.style.color = 'var(--ok)';
+  }catch(e){
+    statusEl.textContent = 'Could not read this PDF.';
+    statusEl.style.color = 'var(--red)';
+    console.warn('Tread scan import failed:', e);
+  }
+}
+function setStatus(btn){
+  const group = btn.parentElement;
+  const wasActive = btn.classList.contains('active');
+  group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  // Tapping an already-selected status again clears it, so an accidental tap can be backed
+  // out of without having to pick a different (also wrong) status just to move on.
+  if(!wasActive) btn.classList.add('active');
+}
+// Photos are embedded directly as data URLs (no server/upload involved) so they show
+// up in the printed/PDF version and still work with no signal at the job site.
+function addPhotos(input, targetId){
+  const grid = document.getElementById(targetId);
+  Array.from(input.files || []).forEach(function(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.alt = 'Inspection photo';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-photo no-print';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.onclick = function(){ thumb.remove(); };
+      thumb.appendChild(img);
+      thumb.appendChild(removeBtn);
+      grid.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+// ---- Inspection numbering: Google Sheet ("Inspections" tab) is the source of truth, local
+// storage is the offline fallback. Same shared backend as the Invoice/Estimate/Oil Change. ----
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx7wI_uamzamAxBJ6BoFUmnLR4OAqk3tH0SyKh43Zozr7NdYf0m-gq2-7mYj5loSFGSWw/exec";
+
+const INSP_SEQ_KEY = 'roamadic_inspection_seq';
+const INSP_SEQ_START = 1001;
+function localNextInspectionNumber(){
+  try{
+    const stored = localStorage.getItem(INSP_SEQ_KEY);
+    return stored ? (parseInt(stored, 10) + 1) : INSP_SEQ_START;
+  }catch(e){
+    return INSP_SEQ_START;
+  }
+}
+function rememberInspectionNumber(n){
+  try{ localStorage.setItem(INSP_SEQ_KEY, String(n)); }catch(e){}
+}
+function syncInspectionNum(val){
+  const n = parseInt(val, 10);
+  if(!isNaN(n)) rememberInspectionNumber(n);
+}
+function isSheetConfigured(){
+  return SHEET_API_URL && SHEET_API_URL.indexOf('PASTE_YOUR') === -1;
+}
+async function loadInspectionNumber(){
+  if(_currentTicketId) return;
+  const statusEl = document.getElementById('syncStatus');
+  const fallback = localNextInspectionNumber();
+  if(!isSheetConfigured()){
+    document.getElementById('inspectionNum').value = fallback;
+    statusEl.textContent = 'not connected to Drive log';
+    return;
+  }
+  try{
+    const res = await fetch(SHEET_API_URL + '?action=next&doc=inspection', {method:'GET'});
+    if(!res.ok){
+      throw new Error('HTTP ' + res.status);
+    }
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(parseErr){
+      throw new Error('non-JSON response: "' + text.slice(0,80).replace(/\s+/g,' ') + '"');
+    }
+    if(data && data.nextNumber){
+      document.getElementById('inspectionNum').value = data.nextNumber;
+      statusEl.textContent = 'synced with Drive log';
+      statusEl.style.color = 'var(--ok)';
+      statusEl.style.fontStyle = 'normal';
+    }else{
+      throw new Error('response missing nextNumber: ' + text.slice(0,80));
+    }
+  }catch(e){
+    console.warn('Inspection Drive sync failed:', e.message);
+    document.getElementById('inspectionNum').value = fallback;
+    statusEl.textContent = 'offline — using local #, will re-sync next time';
+    statusEl.style.color = 'var(--warn)';
+    statusEl.style.fontStyle = 'normal';
+  }
+}
+function logInspectionToSheet(){
+  if(!isSheetConfigured()) return Promise.resolve(false);
+  const payload = {
+    doc: 'inspection',
+    number: document.getElementById('inspectionNum').value,
+    date: document.getElementById('inspectionDate').value,
+    customer: document.getElementById('customerName').value,
+    vehicle: [document.getElementById('vehYear').value, document.getElementById('vehMake').value, document.getElementById('vehModel').value].filter(Boolean).join(' '),
+    total: ''
+  };
+  return fetch(SHEET_API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  }).then(function(){ return true; })
+    .catch(function(){ return false; });
+}
+// ---- Attachments: scan/attach a photo or PDF so it becomes part of this record. PDFs are
+// rasterized into images (via pdf.js, loaded in <head>) so they show up on the printed/PDF
+// copy the same way a photo does. If pdf.js can't load (no signal at the job site), a PDF
+// still attaches — it just shows as an "open PDF" link instead of an inline image. Not
+// included in the Save draft: scans can be large enough to blow past localStorage's quota,
+// so Print/finalize (which doesn't depend on localStorage) is the safe way to keep one with
+// the record.
+function escAtt(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function blobToDataUrl(blob){
+  return new Promise(function(resolve, reject){
+    const r = new FileReader();
+    r.onload = function(){ resolve(r.result); };
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+let _pdfjsReadyPromise = null;
+function ensurePdfJs(){
+  if(window.pdfjsLib) return Promise.resolve(true);
+  if(_pdfjsReadyPromise) return _pdfjsReadyPromise;
+  _pdfjsReadyPromise = new Promise(function(resolve){
+    let done = false;
+    window.addEventListener('pdfjs-ready', function(){ if(!done){ done = true; resolve(true); } }, { once:true });
+    setTimeout(function(){ if(!done){ done = true; resolve(!!window.pdfjsLib); } }, 7000);
+  });
+  return _pdfjsReadyPromise;
+}
+async function renderPdfToImages(file){
+  const arrayBuf = await file.arrayBuffer();
+  const ok = await ensurePdfJs();
+  if(!ok || !window.pdfjsLib){
+    const dataUrl = await blobToDataUrl(new Blob([arrayBuf], { type:'application/pdf' }));
+    return [{ kind:'pdf-raw', name:file.name, dataUrl:dataUrl }];
+  }
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuf }).promise;
+  const images = [];
+  for(let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+    images.push({ kind:'image', name: file.name + (pdf.numPages > 1 ? ' (p.' + p + ')' : ''), dataUrl: canvas.toDataURL('image/jpeg', 0.85) });
+  }
+  return images;
+}
+function renderAttachment(item){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return;
+  if(item.kind === 'pdf-raw'){
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb att-thumb-pdf';
+    const link = document.createElement('a');
+    link.href = item.dataUrl; link.target = '_blank'; link.rel = 'noopener';
+    link.innerHTML = '📄<br>' + escAtt(item.name);
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.onclick = function(){ thumb.remove(); };
+    thumb.appendChild(link); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+  } else {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    const img = document.createElement('img');
+    img.src = item.dataUrl; img.alt = item.name;
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    const printPage = document.createElement('div');
+    printPage.className = 'att-print-page';
+    const printLabel = document.createElement('div');
+    printLabel.className = 'att-print-label';
+    printLabel.textContent = item.name;
+    const printImg = document.createElement('img');
+    printImg.src = item.dataUrl;
+    printPage.appendChild(printLabel); printPage.appendChild(printImg);
+    removeBtn.onclick = function(){ thumb.remove(); printPage.remove(); };
+    thumb.appendChild(img); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+    grid.appendChild(printPage);
+  }
+}
+async function addAttachments(input){
+  const files = Array.from(input.files || []);
+  for(const file of files){
+    try{
+      if(file.type === 'application/pdf' || /\.pdf$/i.test(file.name)){
+        const items = await renderPdfToImages(file);
+        items.forEach(renderAttachment);
+      } else {
+        const dataUrl = await blobToDataUrl(file);
+        renderAttachment({ kind:'image', name:file.name, dataUrl:dataUrl });
+      }
+    }catch(e){
+      console.warn('Could not attach', file.name, e);
+      alert('Could not attach "' + file.name + '": ' + e.message);
+    }
+  }
+  input.value = '';
+}
+function printDoc(){ window.print(); }let _currentTicketId = '';
+let _serviceAddressFromTicket = '';
+function prefillFromTicket(){const params=new URLSearchParams(window.location.search);_currentTicketId=params.get('ticket')||'';_serviceAddressFromTicket=params.get('address')||'';const customer=params.get('customer');const phone=params.get('phone');const vehicle=params.get('vehicle');if(customer)document.getElementById('customerName').value=customer;if(phone)document.getElementById('customerPhone').value=phone;if(vehicle){const parts=vehicle.trim().split(/\s+/).filter(Boolean);if(parts.length&&/^\d{4}$/.test(parts[0]))document.getElementById('vehYear').value=parts.shift();if(parts.length)document.getElementById('vehMake').value=parts.shift();if(parts.length)document.getElementById('vehModel').value=parts.join(' ');}}
+
+// ---- Form draft persistence (localStorage). Photos aren't included — they're embedded as
+// data URLs and can be large enough to blow past localStorage's quota. ----
+// Scoped per-ticket (falls back to a generic key when opened without a ticket link) so a
+// draft from one customer's inspection never bleeds into a different ticket's blank form.
+function inspFormStorageKey(){
+  return 'roamadic_inspection_form_draft' + (_currentTicketId ? (':' + _currentTicketId) : '');
+}
+function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function setVal(id, v){ const el = document.getElementById(id); if(el && v !== undefined && v !== null) el.value = v; }
+function setValIfEmpty(id, v){ const el = document.getElementById(id); if(el && !el.value && v !== undefined && v !== null) el.value = v; }
+function getAllStatusValues(){
+  const out = {};
+  document.querySelectorAll('.status-group').forEach(function(group, i){
+    const active = group.querySelector('button.active');
+    if(!active) return;
+    const key = group.dataset.item || ('group-' + i);
+    out[key] = active.getAttribute('data-v') || active.textContent.trim();
+  });
+  return out;
+}
+function setAllStatusValues(values){
+  if(!values) return;
+  document.querySelectorAll('.status-group').forEach(function(group, i){
+    const key = group.dataset.item || ('group-' + i);
+    const v = values[key];
+    if(!v) return;
+    const btn = group.querySelector('button[data-v="' + v + '"]') ||
+      Array.from(group.querySelectorAll('button')).find(function(b){ return b.textContent.trim() === v; });
+    if(btn) setStatus(btn);
+  });
+}
+// ---- Pin-drop location map (Leaflet) ----
+let _locationMap, _locationMarker, _pinLat = null, _pinLng = null;
+function initLocationMap(){
+  const mapEl = document.getElementById('locationMap');
+  if(!mapEl || typeof L === 'undefined') return;
+  _locationMap = L.map('locationMap').setView([39.5, -98.35], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(_locationMap);
+  // Prefer the actual job address (from the ticket) over the device's live GPS position --
+  // this map is for the customer's location, not wherever the tech happens to be standing
+  // when the form loads. Only fall back to device location if no address is known yet.
+  if(_serviceAddressFromTicket){
+    geocodeServiceAddress_(_serviceAddressFromTicket);
+  } else if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+    }, function(){ /* ignore denial, keep default view */ });
+  }
+  _locationMap.on('click', function(e){
+    dropPin(e.latlng.lat, e.latlng.lng);
+  });
+}
+async function geocodeServiceAddress_(address){
+  try{
+    const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address));
+    const results = await res.json();
+    if(results && results[0]){
+      const lat = parseFloat(results[0].lat), lng = parseFloat(results[0].lon);
+      dropPin(lat, lng);
+      _locationMap.setView([lat, lng], 14);
+    } else if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+      }, function(){});
+    }
+  }catch(e){
+    console.warn('Could not geocode service address:', e);
+  }
+}
+function dropPin(lat, lng){
+  _pinLat = lat; _pinLng = lng;
+  if(_locationMarker){ _locationMap.removeLayer(_locationMarker); }
+  _locationMarker = L.marker([lat, lng]).addTo(_locationMap);
+  document.getElementById('locationSummary').textContent =
+    'Pinned location: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+  const navBtn = document.getElementById('navigateBtn');
+  if(navBtn){
+    navBtn.href = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+    navBtn.style.display = 'inline-block';
+  }
+}
+
+function saveInspectionForm(){
+  const data = {
+    inspectionNum: val('inspectionNum'), inspectionDate: val('inspectionDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'),
+    vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+    vehPlate: val('vehPlate'), odometer: val('odometer'),
+    overallNotes: val('overallNotes'), techName: val('techName'), nextInspectionDue: val('nextInspectionDue'),
+    brakeFluidMoisture: val('brakeFluidMoisture'),
+    treadLF: val('treadLF'), treadRF: val('treadRF'), treadLR: val('treadLR'), treadRR: val('treadRR'),
+    statuses: getAllStatusValues()
+  };
+  try{
+    localStorage.setItem(inspFormStorageKey(), JSON.stringify(data));
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'Saved ' + new Date().toLocaleTimeString();
+    statusEl.style.color = 'var(--ok)';
+  }catch(e){
+    document.getElementById('saveStatus').textContent = 'Could not save: ' + e.message;
+  }
+}
+async function fetchBackendFormData_(){
+  if(!_currentTicketId) return null;
+  try{
+    if(window.rmSupabase && /^[0-9a-f-]{36}$/i.test(_currentTicketId)){
+      await window.rmAuthReady;
+      const result = await window.rmSupabase.from('jobs').select('source_payload').eq('id', _currentTicketId).maybeSingle();
+      if(result.error) throw result.error;
+      if(result.data && result.data.source_payload && result.data.source_payload.formData){
+        return result.data.source_payload.formData;
+      }
+    }
+    const res = await fetch(SHEET_API_URL + '?action=tickets&_=' + Date.now() + '_' + Math.random().toString(36).slice(2), { cache: 'no-store' });
+    const json = await res.json();
+    const t = (json.tickets||[]).find(function(x){ return x.id === _currentTicketId; });
+    if(t && t.formData){
+      return JSON.parse(t.formData);
+    }
+  }catch(e){
+    console.warn('Could not load saved form data from backend:', e);
+  }
+  return null;
+}
+async function loadInspectionForm(){
+  let data = await fetchBackendFormData_();
+  if(!data){
+    let raw;
+    try{ raw = localStorage.getItem(inspFormStorageKey()); }catch(e){ return; }
+    if(!raw) return;
+    try{ data = JSON.parse(raw); }catch(e){ return; }
+  }
+  setValIfEmpty('customerName', data.customerName); setValIfEmpty('customerPhone', data.customerPhone);
+  setValIfEmpty('vehYear', data.vehYear); setValIfEmpty('vehMake', data.vehMake); setValIfEmpty('vehModel', data.vehModel);
+  setVal('vehPlate', data.vehPlate); setVal('odometer', data.odometer);
+  setVal('overallNotes', data.overallNotes); setVal('techName', data.techName); setVal('nextInspectionDue', data.nextInspectionDue);
+  setVal('brakeFluidMoisture', data.brakeFluidMoisture);
+  setVal('treadLF', data.treadLF); setVal('treadRF', data.treadRF); setVal('treadLR', data.treadLR); setVal('treadRR', data.treadRR);
+  setAllStatusValues(data.statuses);
+}
+// ---- Permanent record: on Print/Finalize, save a snapshot of this form (plus any
+// attached scans) to a private Drive folder linked to the ticket, so it survives after
+// this tab is closed. No-op if this page wasn't opened from a ticket. ----
+function collectAttachmentsForRecord(){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return [];
+  const out = [];
+  Array.from(grid.querySelectorAll('.photo-thumb')).forEach(function(thumb){
+    if(thumb.classList.contains('att-thumb-pdf')){
+      const link = thumb.querySelector('a');
+      if(link) out.push({ name: (link.textContent||'attachment.pdf').trim(), dataUrl: link.href });
+    } else {
+      const img = thumb.querySelector('img');
+      if(img) out.push({ name: img.alt || 'attachment', dataUrl: img.src });
+    }
+  });
+  return out;
+}
+function summarizeInspectionForRecord(){
+  return Array.from(document.querySelectorAll('.insp-row')).map(function(row){
+    const labelEl = row.querySelector('.insp-label');
+    const activeBtn = row.querySelector('.status-group button.active');
+    if(!labelEl || !activeBtn) return '';
+    return labelEl.textContent.trim() + ': ' + activeBtn.textContent.trim();
+  }).filter(Boolean).join('; ');
+}
+function buildFormSnapshotForRecord(){
+  return {
+    inspectionNum: val('inspectionNum'), inspectionDate: val('inspectionDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'),
+    vehicle: [val('vehYear'), val('vehMake'), val('vehModel')].filter(Boolean).join(' '),
+    techName: val('techName'), overallNotes: val('overallNotes'),
+    inspectionResults: summarizeInspectionForRecord()
+  };
+}
+async function saveRecordToBackend(){
+  if(!_currentTicketId) return;
+  try{
+    // The structured data (matching localStorage's shape) is what lets the form correctly
+    // repopulate itself when reopened -- the human-readable summary is only for the Drive .txt file.
+    const structuredData = {
+      inspectionNum: val('inspectionNum'), inspectionDate: val('inspectionDate'),
+      customerName: val('customerName'), customerPhone: val('customerPhone'),
+      vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+      vehPlate: val('vehPlate'), odometer: val('odometer'),
+      overallNotes: val('overallNotes'), techName: val('techName'), nextInspectionDue: val('nextInspectionDue'),
+      brakeFluidMoisture: val('brakeFluidMoisture'),
+      treadLF: val('treadLF'), treadRF: val('treadRF'), treadLR: val('treadLR'), treadRR: val('treadRR'),
+      statuses: getAllStatusValues()
+    };
+    await fetch(SHEET_API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action:'saveRecord',
+        id:_currentTicketId,
+        number: val('inspectionNum'),
+        customer: val('customerName'),
+        formData: structuredData,
+        attachments: collectAttachmentsForRecord()
+      })
+    });
+  }catch(e){
+    console.warn('Could not save permanent record:', e);
+  }
+}
+async function finalizeAndPrint(){
+  const usedNumber = document.getElementById('inspectionNum').value;
+  await logInspectionToSheet();
+  rememberInspectionNumber(usedNumber);
+  await saveRecordToBackend();
+  printDoc();
+}
+window.onload = function(){
+  prefillFromTicket();
+  loadInspectionNumber();initLocationMap();loadInspectionForm();
+  const d = new Date();
+  document.getElementById('inspectionDate').value = d.toISOString().slice(0,10);
+};
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('../sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="/shop/rm-enhancements.js?v=6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="../supabase-auth.js?v=6"></script>
+</body>
+</html>
+
