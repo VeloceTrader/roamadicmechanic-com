@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice - Roamadic Mechanic</title>
+<style>
+:root{
+  --navy:#1c3a52;
+  --navy-dark:#12283b;
+  --gold:#c99a3e;
+  --gold-light:#e7c983;
+  --red:#9b3a2e;
+  --cream:#f6f1e6;
+  --page:#eee8da;
+  --ink:#23262b;
+  --muted:#6b7280;
+  --line:#ddd6c6;
+  --ok:#2f7d4f;
+  --warn:#a9720f;
+  --bad:#b3392c;
+  --ok-bg:#e9f5ee;
+  --warn-bg:#fbf1de;
+  --bad-bg:#fbeae7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--page);
+  color:var(--ink);
+  padding:24px 12px 60px;
+  line-height:1.45;
+}
+.sheet{
+  max-width:900px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+.topbar{
+  height:6px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 60%,var(--gold) 100%);
+}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:26px 32px 20px;
+  border-bottom:2px solid var(--navy);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  flex-shrink:0;
+}
+.brand-text h1{
+  margin:0;
+  font-size:22px;
+  letter-spacing:.04em;
+  color:var(--navy);
+  font-weight:800;
+}
+.brand-text p{
+  margin:3px 0 0;
+  font-size:12.5px;
+  color:var(--muted);
+  letter-spacing:.02em;
+}
+.doc-meta{
+  text-align:right;
+}
+.doc-meta .doc-title{
+  font-size:24px;
+  font-weight:800;
+  color:var(--navy);
+  letter-spacing:.06em;
+  margin:0 0 8px;
+}
+.doc-meta .field-row{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  align-items:center;
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.doc-meta .field-row input{
+  text-align:right;
+}
+.body-pad{
+  padding:26px 32px 32px;
+}
+.section-title{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--navy);
+  border-bottom:2px solid var(--gold);
+  padding-bottom:6px;
+  margin:28px 0 14px;
+}
+.section-title:first-child{margin-top:0;}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.field{
+  margin-bottom:12px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+input,select,textarea{
+  width:100%;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:8px 10px;
+  background:#fdfcf9;
+}
+input:focus,select:focus,textarea:focus{
+  outline:2px solid var(--gold-light);
+  outline-offset:0;
+  border-color:var(--gold);
+}
+textarea{resize:vertical;min-height:64px;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:4px;
+}
+th{
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#fff;
+  background:var(--navy);
+  padding:9px 10px;
+}
+th:first-child{border-top-left-radius:6px;}
+th:last-child{border-top-right-radius:6px;}
+td{
+  padding:6px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+td input{border:1px solid transparent;background:transparent;padding:6px;}
+td input:focus{background:#fdfcf9;border-color:var(--gold);}
+.num{text-align:right;}
+.row-actions{text-align:center;width:34px;}
+.icon-btn{
+  border:none;
+  background:none;
+  color:var(--bad);
+  font-size:20px;
+  cursor:pointer;
+  padding:8px;
+  border-radius:6px;
+  min-width:40px;
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.icon-btn:hover{background:var(--bad-bg);}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  font-weight:700;
+  font-size:13px;
+  padding:9px 16px;
+  border-radius:7px;
+  cursor:pointer;
+}
+.btn:hover{background:var(--navy);color:#fff;}
+.btn-primary{
+  background:var(--navy);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--navy-dark);}
+.btn-gold{
+  border-color:var(--gold);
+  color:var(--navy);
+  background:var(--gold-light);
+}
+.btn-gold:hover{background:var(--gold);}
+.actions-bar{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.totals{
+  margin-left:auto;
+  width:100%;
+  max-width:320px;
+}
+.totals-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 0;
+  font-size:14px;
+  border-bottom:1px solid var(--line);
+}
+.totals-row.grand{
+  border-bottom:none;
+  border-top:2px solid var(--navy);
+  margin-top:4px;
+  padding-top:12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--navy);
+}
+.totals-row input{
+  width:90px;
+  text-align:right;
+}
+.totals-wrap{display:flex;justify-content:flex-end;margin-top:6px;}
+.checklist{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 22px;
+}
+.checklist-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:14px;
+  padding:4px 0;
+}
+.checklist-item input[type=checkbox]{
+  width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);
+}
+.status-group{
+  display:flex;
+  border:1px solid var(--line);
+  border-radius:7px;
+  overflow:hidden;
+  width:fit-content;
+}
+.status-group button{
+  border:none;
+  background:#fdfcf9;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  color:var(--muted);
+  border-right:1px solid var(--line);
+}
+.status-group button:last-child{border-right:none;}
+.status-group button.active[data-v="ok"]{background:var(--ok-bg);color:var(--ok);}
+.status-group button.active[data-v="advisory"]{background:var(--warn-bg);color:var(--warn);}
+.status-group button.active[data-v="attention"]{background:var(--bad-bg);color:var(--bad);}
+.insp-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+}
+.insp-row:last-child{border-bottom:none;}
+.insp-label{font-size:14px;}
+.insp-note{
+  width:100%;
+  margin-top:4px;
+}
+.insp-note input{font-size:12.5px;padding:5px 8px;}
+.footer-note{
+  margin-top:26px;
+  padding-top:18px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.contact-bar{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12.5px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.contact-bar b{color:var(--gold-light);}
+.sig-row{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:24px;
+  margin-top:8px;
+}
+.sig-line{
+  border-bottom:1px solid var(--ink);
+  height:34px;
+}
+.sig-caption{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.photo-block{padding:10px 0 4px;}
+.btn-photo{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;border:1px solid var(--line);border-radius:7px;
+  padding:9px 16px;font-size:12.5px;font-weight:700;color:var(--navy);
+  cursor:pointer;
+}
+.btn-photo:active{background:var(--cream);}
+.photo-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.photo-grid:not(:empty){margin-top:8px;}
+.photo-thumb{
+  position:relative;width:84px;height:84px;border-radius:6px;overflow:hidden;
+  border:1px solid var(--line);background:#f2f1ee;flex-shrink:0;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb.att-thumb-pdf{display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;}
+.photo-thumb.att-thumb-pdf a{font-size:10px;color:var(--navy);text-decoration:none;word-break:break-word;line-height:1.3;}
+.photo-thumb .remove-photo{
+  position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;line-height:18px;
+  text-align:center;padding:0;cursor:pointer;
+}
+.att-print-page{display:none;}
+@media (max-width:640px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .header{flex-direction:column;align-items:flex-start;}
+  .doc-meta{text-align:left;width:100%;}
+  .doc-meta .field-row{justify-content:space-between;}
+  .checklist{grid-template-columns:1fr;}
+  .contact-bar{flex-direction:column;align-items:flex-start;}
+}
+@page{ size:letter; margin:0.25in; }
+@media print{
+  @page{size:letter;margin:8mm;}
+  html,body{background:#fff;padding:0;font-size:12px;}
+  .sheet{box-shadow:none;border-radius:0;max-width:100%;}
+  .no-print{display:none !important;}
+  input,select,textarea{border:none;border-bottom:1px solid #999;border-radius:0;background:transparent;padding:2px 1px;font-size:12px;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#999;}
+  input[type="date"]::-webkit-calendar-picker-indicator{display:none;}
+  select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:none;}
+  input::placeholder,textarea::placeholder{color:transparent;}
+  th{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .topbar,.contact-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .status-group button.active{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .icon-btn,.row-actions{display:none;}
+  .topbar{height:4px;}
+  .header{padding:6px 6px 4px;}
+  .brand{gap:10px;}
+  .brand img{width:38px;height:38px;}
+  .brand-text h1{font-size:14px;}
+  .brand-text p{font-size:9px;margin-top:0;}
+  .doc-meta .doc-title{font-size:16px;margin-bottom:2px;}
+  .doc-meta .field-row{font-size:9.5px;margin-bottom:0;}
+  .body-pad{padding:6px 6px 8px;}
+  .section-title{font-size:10px;margin:5px 0 3px;padding-bottom:1px;}
+  .grid-2{gap:10px;}
+  .grid-3,.grid-4{gap:8px;}
+  .field{margin-bottom:2px;}
+  .field label{font-size:9.5px;margin-bottom:1px;}
+  textarea{min-height:12px;}
+  th{padding:3px 5px;font-size:9px;}
+  td{padding:1px 4px;}
+  .totals-row{padding:2px 0;font-size:11px;}
+  .totals-row.grand{padding-top:4px;font-size:13px;}
+  .actions-bar{margin-top:4px;}
+  .sig-row{margin-top:2px;}
+  .sig-line{height:13px;}
+  .footer-note{margin-top:3px;padding-top:2px;font-size:8.5px;}
+  .contact-bar{padding:3px 10px;font-size:9px;}
+  .checklist-item{padding:2px 0;font-size:11px;}
+
+  /* Customer / vehicle fields: two panels side by side, like a paper form */
+  .info-block{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    background:#f2f1ee;
+    padding:8px 10px;
+  }
+  .info-block .grid-2{display:block;}
+  .info-panel{
+    display:flex;
+    align-items:stretch;
+  }
+  .info-panel-tab{
+    flex:0 0 56px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:flex-start;
+    text-align:right;
+    padding:2px 8px 2px 0;
+    font-weight:800;
+    font-size:9px;
+    line-height:1.3;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:#fff;
+  }
+  .info-panel:nth-child(1) .info-panel-tab{background:var(--navy);}
+  .info-panel:nth-child(2) .info-panel-tab{background:#8a8578;}
+  .info-panel-body{
+    flex:1;
+    padding-left:8px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .info-panel-body .field{
+    display:block;
+    margin:0 0 2px;
+  }
+  /* Customer panel: plain stacked values, no visible labels */
+  .info-panel:nth-child(1) .info-panel-body .field label{display:none;}
+  .info-panel:nth-child(1) .info-panel-body .field input{
+    display:block;
+    border:none;
+    background:transparent;
+    padding:0;
+    font-size:11px;
+    width:100%;
+  }
+  /* Vehicle panel: short bold label + value, each on its own line */
+  .info-panel:nth-child(2) .info-panel-body .field{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+  }
+  .info-panel:nth-child(2) .info-panel-body .field label{
+    text-transform:none;
+    font-weight:700;
+    color:var(--ink);
+    font-size:11px;
+    letter-spacing:0;
+    margin:0;
+    flex:0 0 44px;
+  }
+  .info-panel:nth-child(2) .info-panel-body .field label::after{content:":";}
+  .info-panel:nth-child(2) .info-panel-body .field input{
+    border:none;
+    background:transparent;
+    padding:0;
+    font-size:11px;
+    width:auto;
+  }
+  #attachments-grid .photo-thumb{display:none;}
+  .att-print-page{display:block;page-break-before:always;padding:24px 0;}
+  .att-print-page img{max-width:100%;display:block;margin:0 auto;}
+  .att-print-label{font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;}
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module">
+  // Used to turn attached PDF scans into images (see "Attachments" below) so they show up
+  // in the printed/PDF copy. If this fails to load (no signal at the job site), attaching
+  // still works — it just falls back to an "open PDF" link instead of an inline image.
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.2.108/pdf.worker.min.mjs';
+  window.pdfjsLib = pdfjsLib;
+  window.dispatchEvent(new Event('pdfjs-ready'));
+</script>
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" href="/icons/hub/favicon.png">
+<link rel="apple-touch-icon" href="/icons/hub/apple-touch-icon.png">
+<meta name="theme-color" content="#1c3a52">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roamadic Mechanic">
+</head>
+<body>
+<a href="../" class="rm-menu-back" style="display:flex;align-items:center;gap:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;color:#fff;background:#1c3a52;text-decoration:none;padding:8px 14px;">&larr; All Tools</a>
+<style>@media print{.rm-menu-back{display:none !important;}}</style>
+<div class="sheet">
+
+  <div class="topbar"></div>
+  <div class="header">
+    <div class="brand">
+      <img src="/icons/hub/icon-512.png" alt="Roamadic Mechanic logo">
+      <div class="brand-text">
+        <h1>ROAMADIC MECHANIC</h1>
+        <p>Mobile Repair &bull; On-The-Go Service</p>
+      </div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-title">INVOICE</div>
+      
+      <div class="field-row"><span>Invoice #</span><input type="text" id="invoiceNum" value="1001" style="width:90px" onchange="syncInvoiceNum(this.value)"></div>
+      <div class="field-row no-print" style="justify-content:flex-end;"><span id="syncStatus" style="font-style:italic;">checking Drive log&hellip;</span></div>
+    
+
+      <div class="field-row"><span>Date</span><input type="date" id="invoiceDate" value="" style="width:150px"></div>
+
+    </div>
+  </div>
+
+
+  <div class="body-pad">
+
+    <div class="grid-2 info-block">
+      <div class="info-panel">
+        <div class="info-panel-body">
+        <div class="field"><label>Customer Name</label><input type="text" id="customerName" placeholder="Jane Smith"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="customerPhone" placeholder="(555) 123-4567"></div>
+        <div class="field"><label>Email</label><input type="email" id="customerEmail" placeholder="jane@email.com"></div>
+        <div class="field"><label>Service Address</label><input type="text" id="serviceAddress" placeholder="123 Main St, Anytown" onblur="geocodeFromAddressField()"></div>
+        </div>
+      </div>
+
+    <div class="info-panel">
+        <div class="info-panel-body">
+        <div class="grid-2">
+          <div class="field"><label>Year</label><input type="text" id="vehYear" placeholder="2018"></div>
+          <div class="field"><label>Make</label><input type="text" id="vehMake" placeholder="Honda"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>Model</label><input type="text" id="vehModel" placeholder="Civic"></div>
+          <div class="field"><label>Plate</label><input type="text" id="vehPlate" placeholder="ABC-1234" style="text-transform:uppercase;" oninput="toUpper(this)"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>VIN</label><input type="text" id="vehVIN" placeholder="1HGCM82633A004352" style="text-transform:uppercase;" oninput="toUpper(this)"></div>
+          <div class="field"><label>Mileage</label><input type="text" id="vehMileage" placeholder="62,340"></div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title no-print">Booking / Service Location</div>
+    <div class="field no-print">
+      <label class="no-print">Tap the map to drop a pin at the service location</label>
+      <div id="locationMap" class="no-print" style="height:280px;border:1px solid var(--line);border-radius:8px;"></div>
+      <div id="locationSummary" style="font-size:12.5px;color:var(--muted);margin-top:6px;">No location pinned yet.</div>
+      <a id="navigateBtn" class="btn btn-sm btn-ghost no-print" href="#" target="_blank" rel="noopener" style="display:none;margin-top:8px;">🧭 Navigate</a>
+    </div>
+
+    <div class="section-title">Labor / Services</div>
+    <table id="services-table">
+      <thead>
+        <tr>
+          <th style="width:46%">Description</th>
+          <th style="width:12%" class="num">Qty</th>
+          <th style="width:18%" class="num">Rate ($)</th>
+          <th style="width:18%" class="num">Amount ($)</th>
+          <th class="row-actions"></th>
+        </tr>
+      </thead>
+      <tbody id="services-body">
+      </tbody>
+    </table>
+    <div class="actions-bar no-print">
+      <button class="btn" onclick="addRow('services-body')">+ Add Service Line</button>
+    </div>
+
+    <div class="section-title">Parts</div>
+    <table id="parts-table">
+      <thead>
+        <tr>
+          <th style="width:34%">Description</th>
+          <th style="width:16%">Part #</th>
+          <th style="width:10%" class="num">Qty</th>
+          <th style="width:18%" class="num">Rate ($)</th>
+          <th style="width:18%" class="num">Amount ($)</th>
+          <th class="row-actions"></th>
+        </tr>
+      </thead>
+      <tbody id="parts-body">
+      </tbody>
+    </table>
+    <div class="actions-bar no-print">
+      <button class="btn" onclick="addRow('parts-body')">+ Add Part Line</button>
+    </div>
+
+    <div class="totals-wrap">
+      <div class="totals">
+        <div class="totals-row"><span>Subtotal</span><span>$<span id="subtotal">0.00</span></span></div>
+        <div class="totals-row"><span>Tax Rate (%)</span><input type="number" id="taxRate" value="8.65" min="0" step="0.01" oninput="recalc()" onchange="saveDefaultTaxRate(this.value)"></div>
+        <div class="totals-row"><span>Tax</span><span>$<span id="taxAmt">0.00</span></span></div>
+        <div class="totals-row grand"><span>Total Due</span><span>$<span id="grandTotal">0.00</span></span></div>
+        <div class="totals-row" id="paidRow" style="display:none;color:var(--ok);"><span>Amount Paid</span><span>-$<span id="amountPaidDisplay">0.00</span></span></div>
+        <div class="totals-row grand" id="balanceRow" style="display:none;"><span>Balance Due</span><span>$<span id="balanceDueDisplay">0.00</span></span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Payment</div>
+    <div class="grid-2">
+      <div>
+        <div class="field"><label>Payment Method</label>
+          <select id="paymentMethod">
+            <option>-- Select --</option>
+            <option>Cash</option>
+            <option>Card</option>
+            <option>Check</option>
+            <option>Zelle</option>
+            <option>Venmo</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Payment Terms</label><input type="text" id="paymentTerms" value="Due upon completion of service"></div>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Warranty info, follow-up recommendations, thank-you note..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-title">Attachments</div>
+    <div class="photo-block">
+      <label class="btn-photo no-print">
+        <input type="file" accept="image/*,application/pdf" multiple onchange="addAttachments(this)" style="display:none">
+        📎 Attach Scan / Photo
+      </label>
+      <span class="no-print" style="font-size:11px;color:var(--muted);margin-left:8px;">Photos or PDFs (a signed estimate, ID, etc.) &mdash; PDFs are converted to images so they show up on the printed copy.</span>
+      <div class="photo-grid" id="attachments-grid"></div>
+    </div>
+
+    <div class="sig-row">
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Customer Signature</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-caption">Date</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Thank you for trusting Roamadic Mechanic with your vehicle. Questions about this invoice? Reach out using the contact info below.
+    </div>
+
+    <div class="actions-bar no-print" style="margin-top:18px;">
+      <button class="btn" onclick="saveInvoiceForm()">Save</button>
+      <button class="btn btn-primary" onclick="finalizeAndPrint()">Print / Save as PDF</button>
+    </div>
+    <div id="saveStatus" class="no-print" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  
+  <div class="contact-bar no-print-color">
+    <div><b>Phone:</b> [Your Phone Number] &nbsp;|&nbsp; <b>Email:</b> [your@email.com]</div>
+    <div>Serving [Your Service Area] &bull; Est. 2016</div>
+  </div>
+
+
+</div>
+<script>
+let _currentTicketId = '';
+function prefillFromTicket(){const params=new URLSearchParams(window.location.search);_currentTicketId=params.get('ticket')||'';const customer=params.get('customer');const phone=params.get('phone');const address=params.get('address');const vehicle=params.get('vehicle');if(customer)document.getElementById('customerName').value=customer;if(phone)document.getElementById('customerPhone').value=phone;if(address)document.getElementById('serviceAddress').value=address;if(vehicle){const parts=vehicle.trim().split(/\s+/).filter(Boolean);if(parts.length&&/^\d{4}$/.test(parts[0]))document.getElementById('vehYear').value=parts.shift();if(parts.length)document.getElementById('vehMake').value=parts.shift();if(parts.length)document.getElementById('vehModel').value=parts.join(' ');}}function toUpper(el){
+  // Force License Plate / VIN to caps as you type, without kicking the cursor to the end.
+  const start = el.selectionStart, end = el.selectionEnd;
+  el.value = el.value.toUpperCase();
+  if(start !== null && end !== null) el.setSelectionRange(start, end);
+}
+// Customer / vehicle fields print as compact "Label: value" text instead of boxed
+// inputs. Text inputs don't naturally shrink to their content, so right before printing we
+// size each one to its actual value width in pixels — measured with a canvas using the same
+// font, since a plain character count ('ch' units) undersizes strings with wide characters
+// like uppercase VIN letters and clips them.
+let _measureCanvas = null;
+function measureTextPx(text, font){
+  if(!_measureCanvas) _measureCanvas = document.createElement('canvas');
+  const ctx = _measureCanvas.getContext('2d');
+  ctx.font = font;
+  return ctx.measureText(text).width;
+}
+function sizeInfoFieldsForPrint(){
+  // Only the Vehicle panel needs this — its inputs sit inline next to a fixed-width label
+  // (Year: 2018) so they must shrink/grow to fit their value. The Customer panel's inputs
+  // are full-width block lines (one per row) and don't need per-content sizing.
+  document.querySelectorAll('.info-panel:nth-child(2) .info-panel-body .field input').forEach(function(inp){
+    const text = inp.value || inp.placeholder || '';
+    const font = window.getComputedStyle(inp).font || '11px -apple-system, sans-serif';
+    const px = measureTextPx(text || 'M', font);
+    inp.style.width = Math.max(px + 6, 16) + 'px';
+  });
+}
+function clearInfoFieldSizing(){
+  document.querySelectorAll('.info-panel:nth-child(2) .info-panel-body .field input').forEach(function(inp){
+    inp.style.width = '';
+  });
+}
+window.addEventListener('beforeprint', sizeInfoFieldsForPrint);
+window.addEventListener('afterprint', clearInfoFieldSizing);
+function hideEmptyRowsForPrint(){
+  document.querySelectorAll('#services-body tr, #parts-body tr').forEach(function(tr){
+    const descInput = tr.querySelector('td:first-child input');
+    if(descInput && !descInput.value.trim()){
+      tr.dataset.printHidden = '1';
+      tr.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('select').forEach(function(sel){
+    if(!sel.value || sel.value === '-- Select --'){
+      sel.dataset.printBlanked = '1';
+      sel.style.color = 'transparent';
+    }
+  });
+}
+function restoreEmptyRowsAfterPrint(){
+  document.querySelectorAll('[data-print-hidden]').forEach(function(tr){
+    tr.style.display = '';
+    delete tr.dataset.printHidden;
+  });
+  document.querySelectorAll('[data-print-blanked]').forEach(function(sel){
+    sel.style.color = '';
+    delete sel.dataset.printBlanked;
+  });
+}
+window.addEventListener('beforeprint', hideEmptyRowsForPrint);
+window.addEventListener('afterprint', restoreEmptyRowsAfterPrint);
+const ROW_PLACEHOLDERS = {
+  'services-body': 'e.g. Front brake pad replacement (labor)',
+  'parts-body': 'e.g. Front brake pads, set of 4'
+};
+function addRow(tbodyId, desc, qty, rate, partNum){
+  const tbody = document.getElementById(tbodyId);
+  const tr = document.createElement('tr');
+  const isParts = tbodyId === 'parts-body';
+  tr.innerHTML = `
+    <td><input type="text" value="${desc||''}" placeholder="${ROW_PLACEHOLDERS[tbodyId]||'Description'}" oninput="handleDescInput(event)"></td>
+    ${isParts ? `<td><input type="text" class="partnum" value="${partNum||''}" placeholder="Part #"></td>` : ''}
+    <td><input type="number" class="num qty" value="${qty!==undefined?qty:1}" min="0" step="1" oninput="recalc()"></td>
+    <td><input type="number" class="num rate" value="${rate!==undefined?rate:0}" min="0" step="0.01" oninput="recalc()"></td>
+    <td class="num amount">$0.00</td>
+    <td class="row-actions"><button class="icon-btn" onclick="this.closest('tr').remove(); recalc();" title="Remove row">🗑️</button></td>
+  `;
+  tbody.appendChild(tr);
+  recalc();
+}
+function handleDescInput(e){
+  // Auto-expand: once you start typing in the bottom-most row of a section,
+  // a fresh blank row appears below it so there's always a spare line ready.
+  const input = e.target;
+  const row = input.closest('tr');
+  const tbody = row.parentElement;
+  const rows = Array.from(tbody.children);
+  const isLastRow = rows.length > 0 && rows[rows.length - 1] === row;
+  if(isLastRow && input.value.trim() !== ''){
+    addRow(tbody.id);
+  }
+}
+function recalc(){
+  let subtotal = 0;
+  document.querySelectorAll('#services-body tr, #parts-body tr').forEach(tr=>{
+    const qty = parseFloat(tr.querySelector('.qty').value) || 0;
+    const rate = parseFloat(tr.querySelector('.rate').value) || 0;
+    const amt = qty * rate;
+    tr.querySelector('.amount').textContent = '$' + amt.toFixed(2);
+    subtotal += amt;
+  });
+  const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+  const taxAmt = subtotal * (taxRate/100);
+  const grand = subtotal + taxAmt;
+  document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+  document.getElementById('taxAmt').textContent = taxAmt.toFixed(2);
+  document.getElementById('grandTotal').textContent = grand.toFixed(2);
+  updateBalanceDisplay(grand);
+}
+let _amountPaid = 0;
+function updateBalanceDisplay(grand){
+  const paidRow = document.getElementById('paidRow');
+  const balanceRow = document.getElementById('balanceRow');
+  if(!paidRow || !balanceRow) return;
+  if(_amountPaid > 0){
+    document.getElementById('amountPaidDisplay').textContent = _amountPaid.toFixed(2);
+    document.getElementById('balanceDueDisplay').textContent = Math.max(0, grand - _amountPaid).toFixed(2);
+    paidRow.style.display = '';
+    balanceRow.style.display = '';
+  } else {
+    paidRow.style.display = 'none';
+    balanceRow.style.display = 'none';
+  }
+}
+async function loadPaymentStatus(){
+  if(!_currentTicketId) return;
+  try{
+    const res = await fetch(SHEET_API_URL + '?action=tickets&_=' + Date.now() + '_' + Math.random().toString(36).slice(2), { cache: 'no-store' });
+    const json = await res.json();
+    const t = (json.tickets||[]).find(function(x){ return x.id === _currentTicketId; });
+    if(t && Number(t.amountPaid) > 0){
+      _amountPaid = Number(t.amountPaid);
+      const grand = parseFloat(document.getElementById('grandTotal').textContent) || 0;
+      updateBalanceDisplay(grand);
+    }
+  }catch(e){
+    console.warn('Could not load payment status:', e);
+  }
+}
+// Tax rate isn't looked up automatically (no free/offline-friendly address-based tax API
+// exists that doesn't need a signup+API key and a live internet connection at the job
+// site). Instead, the rate you enter is remembered locally and auto-fills next time, so
+// you only ever have to type it once per service area.
+const TAX_RATE_KEY = 'roamadic_default_tax_rate';
+function saveDefaultTaxRate(val){
+  const n = parseFloat(val);
+  if(!isNaN(n) && n > 0) localStorage.setItem(TAX_RATE_KEY, n);
+}
+function loadDefaultTaxRate(){
+  // 8.65% is San Juan County's Friday Harbor rate (state 6.5% + local 2.15%, WA DOR Q2 2026) --
+  // the right default for most jobs since that's where the business is based. A saved rate
+  // (set by editing the field once) always takes priority; this is just the fallback.
+  const DEFAULT_TAX_RATE = '8.65';
+  const saved = localStorage.getItem(TAX_RATE_KEY);
+  const field = document.getElementById('taxRate');
+  if(field && (!field.value || field.value === '0')){
+    field.value = saved || DEFAULT_TAX_RATE;
+    recalc();
+  }
+}
+// ---- Invoice numbering: Google Sheet is the source of truth, local storage is the offline fallback ----
+// Paste the Web App URL from your Apps Script deployment here (see setup guide). Leave blank to run
+// in local-only mode.
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx7wI_uamzamAxBJ6BoFUmnLR4OAqk3tH0SyKh43Zozr7NdYf0m-gq2-7mYj5loSFGSWw/exec";
+
+const INV_SEQ_KEY = 'roamadic_invoice_seq';
+const INV_SEQ_START = 1001;
+
+function localNextInvoiceNumber(){
+  try{
+    const stored = localStorage.getItem(INV_SEQ_KEY);
+    return stored ? (parseInt(stored, 10) + 1) : INV_SEQ_START;
+  }catch(e){
+    return INV_SEQ_START;
+  }
+}
+function rememberLocalNumber(n){
+  try{ localStorage.setItem(INV_SEQ_KEY, String(n)); }catch(e){}
+}
+function syncInvoiceNum(val){
+  // If the technician edits the number by hand, remember that as the new "last used"
+  // so future local fallback numbers continue from the corrected value.
+  const n = parseInt(val, 10);
+  if(!isNaN(n)) rememberLocalNumber(n);
+}
+function isSheetConfigured(){
+  return SHEET_API_URL && SHEET_API_URL.indexOf('PASTE_YOUR') === -1;
+}
+async function loadInvoiceNumber(){
+  // IMPORTANT: this only *peeks* at what the next number would be. It must never write to
+  // localStorage or the Sheet on its own — the number is only committed (saved) when an
+  // invoice is actually finalized, in commitInvoiceNumber() below. Otherwise just opening
+  // the file repeatedly would burn through numbers with nothing ever actually recorded.
+  const statusEl = document.getElementById('syncStatus');
+  const fallback = localNextInvoiceNumber();
+  if(!isSheetConfigured()){
+    document.getElementById('invoiceNum').value = fallback;
+    statusEl.textContent = 'not connected to Drive log';
+    return;
+  }
+  try{
+    const controller = new AbortController();
+    const timeoutId = setTimeout(function(){ controller.abort(); }, 10000);
+    let res;
+    try{
+      res = await fetch(SHEET_API_URL + '?action=next&doc=invoice', {method:'GET', signal:controller.signal});
+    } finally {
+      clearTimeout(timeoutId);
+    }
+    if(!res.ok){
+      throw new Error('HTTP ' + res.status);
+    }
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(parseErr){
+      throw new Error('non-JSON response: "' + text.slice(0,80).replace(/\s+/g,' ') + '"');
+    }
+    if(data && data.nextNumber){
+      document.getElementById('invoiceNum').value = data.nextNumber;
+      statusEl.textContent = 'synced with Drive log';
+      statusEl.style.color = 'var(--ok)';
+      statusEl.style.fontStyle = 'normal';
+    }else{
+      throw new Error('response missing nextNumber: ' + text.slice(0,80));
+    }
+  }catch(e){
+    console.warn('Invoice Drive sync failed:', e.message);
+    document.getElementById('invoiceNum').value = fallback;
+    statusEl.textContent = 'offline — using local #, will re-sync next time';
+    statusEl.style.color = 'var(--warn)';
+    statusEl.style.fontStyle = 'normal';
+  }
+}
+function logInvoiceToSheet(){
+  if(!isSheetConfigured()) return Promise.resolve(false);
+  const payload = {
+    doc: 'invoice',
+    number: document.getElementById('invoiceNum').value,
+    date: document.getElementById('invoiceDate').value,
+    customer: document.getElementById('customerName').value,
+    vehicle: [document.getElementById('vehYear').value, document.getElementById('vehMake').value, document.getElementById('vehModel').value].filter(Boolean).join(' '),
+    total: document.getElementById('grandTotal').textContent
+  };
+  // text/plain avoids a CORS preflight that Apps Script web apps don't handle by default
+  return fetch(SHEET_API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  }).then(function(){ return true; })
+    .catch(function(){ return false; /* offline - the invoice still prints, it just won't be logged this time */ });
+}
+// ---- Form draft persistence (localStorage) ----
+// Scoped per-ticket (falls back to a generic key when opened without a ticket link) so a
+// draft from one customer's invoice never bleeds into a different ticket's blank form.
+function invFormStorageKey(){
+  return 'roamadic_invoice_form_draft' + (_currentTicketId ? (':' + _currentTicketId) : '');
+}
+function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function setVal(id, v){ const el = document.getElementById(id); if(el && v !== undefined && v !== null) el.value = v; }
+// Used only for fields that "New Ticket" may have already prefilled via the URL — a saved
+// draft should never silently clobber a value that just came in from the ticket link.
+function setValIfEmpty(id, v){ const el = document.getElementById(id); if(el && !el.value && v !== undefined && v !== null) el.value = v; }
+function getTableRows(tbodyId){
+  return Array.from(document.querySelectorAll('#' + tbodyId + ' tr')).map(function(tr){
+    const partnumEl = tr.querySelector('.partnum');
+    return {
+      desc: tr.children[0].querySelector('input').value,
+      partnum: partnumEl ? partnumEl.value : '',
+      qty: tr.querySelector('.qty').value,
+      rate: tr.querySelector('.rate').value
+    };
+  });
+}
+// ---- Pin-drop location map (Leaflet) ----
+let _locationMap, _locationMarker, _pinLat = null, _pinLng = null;
+function initLocationMap(){
+  const mapEl = document.getElementById('locationMap');
+  if(!mapEl || typeof L === 'undefined') return;
+  _locationMap = L.map('locationMap').setView([39.5, -98.35], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(_locationMap);
+  // Prefer the actual job address over the device's live GPS position -- this map is for
+  // the customer's location, not wherever the tech happens to be standing when the form
+  // loads. Only fall back to device location if no address is known yet.
+  const addr = val('serviceAddress');
+  if(addr){
+    geocodeServiceAddress_(addr);
+  } else if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+    }, function(){ /* ignore denial, keep default view */ });
+  }
+  _locationMap.on('click', function(e){
+    dropPin(e.latlng.lat, e.latlng.lng);
+  });
+}
+async function geocodeServiceAddress_(address){
+  try{
+    const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address));
+    const results = await res.json();
+    if(results && results[0]){
+      const lat = parseFloat(results[0].lat), lng = parseFloat(results[0].lon);
+      dropPin(lat, lng);
+      _locationMap.setView([lat, lng], 14);
+    } else if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        _locationMap.setView([pos.coords.latitude, pos.coords.longitude], 12);
+      }, function(){});
+    }
+  }catch(e){
+    console.warn('Could not geocode service address:', e);
+  }
+}
+function geocodeFromAddressField(){
+  const addr = val('serviceAddress');
+  if(addr) geocodeServiceAddress_(addr);
+}
+function dropPin(lat, lng){
+  _pinLat = lat; _pinLng = lng;
+  if(_locationMarker){ _locationMap.removeLayer(_locationMarker); }
+  _locationMarker = L.marker([lat, lng]).addTo(_locationMap);
+  document.getElementById('locationSummary').textContent =
+    'Pinned location: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+  const navBtn = document.getElementById('navigateBtn');
+  if(navBtn){
+    navBtn.href = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+    navBtn.style.display = 'inline-block';
+  }
+}
+
+function saveInvoiceForm(){
+  const data = {
+    invoiceNum: val('invoiceNum'), invoiceDate: val('invoiceDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'), customerEmail: val('customerEmail'),
+    serviceAddress: val('serviceAddress'),
+    vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+    vehPlate: val('vehPlate'), vehVIN: val('vehVIN'), vehMileage: val('vehMileage'),
+    taxRate: val('taxRate'), paymentMethod: val('paymentMethod'), paymentTerms: val('paymentTerms'), notes: val('notes'),
+    services: getTableRows('services-body'), parts: getTableRows('parts-body')
+  };
+  try{
+    localStorage.setItem(invFormStorageKey(), JSON.stringify(data));
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'Saved ' + new Date().toLocaleTimeString();
+    statusEl.style.color = 'var(--ok)';
+    // Also push the current form state to the permanent Drive record (if this page was
+    // opened from a ticket), so hitting Save keeps that record current -- not just this
+    // browser's local draft. Fire-and-forget: local save has already succeeded either way.
+    saveRecordToBackend();
+  }catch(e){
+    document.getElementById('saveStatus').textContent = 'Could not save: ' + e.message;
+  }
+}
+async function fetchBackendFormData_(){
+  if(!_currentTicketId) return null;
+  try{
+    if(window.rmSupabase && /^[0-9a-f-]{36}$/i.test(_currentTicketId)){
+      await window.rmAuthReady;
+      const result = await window.rmSupabase.from('jobs').select('source_payload').eq('id', _currentTicketId).maybeSingle();
+      if(result.error) throw result.error;
+      if(result.data && result.data.source_payload && result.data.source_payload.formData){
+        return result.data.source_payload.formData;
+      }
+    }
+    const res = await fetch(SHEET_API_URL + '?action=tickets&_=' + Date.now() + '_' + Math.random().toString(36).slice(2), { cache: 'no-store' });
+    const json = await res.json();
+    const t = (json.tickets||[]).find(function(x){ return x.id === _currentTicketId; });
+    if(t && t.formData){
+      return JSON.parse(t.formData);
+    }
+  }catch(e){
+    console.warn('Could not load saved form data from backend:', e);
+  }
+  return null;
+}
+async function loadInvoiceForm(){
+  let data = await fetchBackendFormData_();
+  if(!data){
+    let raw;
+    try{ raw = localStorage.getItem(invFormStorageKey()); }catch(e){ return null; }
+    if(!raw) return null;
+    try{ data = JSON.parse(raw); }catch(e){ return null; }
+  }
+  if(data.invoiceNum){
+    setVal('invoiceNum', data.invoiceNum);
+    const statusEl = document.getElementById('syncStatus');
+    statusEl.textContent = 'existing invoice number';
+    statusEl.style.color = 'var(--ok)';
+    statusEl.style.fontStyle = 'normal';
+  }
+  if(data.invoiceDate) setVal('invoiceDate', data.invoiceDate);
+  setValIfEmpty('customerName', data.customerName); setValIfEmpty('customerPhone', data.customerPhone); setVal('customerEmail', data.customerEmail);
+  setValIfEmpty('serviceAddress', data.serviceAddress);
+  setValIfEmpty('vehYear', data.vehYear); setValIfEmpty('vehMake', data.vehMake); setValIfEmpty('vehModel', data.vehModel);
+  setVal('vehPlate', data.vehPlate); setVal('vehVIN', data.vehVIN); setVal('vehMileage', data.vehMileage);
+  if(data.taxRate) setVal('taxRate', data.taxRate);
+  if(data.paymentMethod) setVal('paymentMethod', data.paymentMethod);
+  setVal('paymentTerms', data.paymentTerms); setVal('notes', data.notes);
+  if(data.services && data.services.length){
+    document.getElementById('services-body').innerHTML = '';
+    data.services.forEach(function(r){ addRow('services-body', r.desc, r.qty, r.rate); });
+  }
+  if(data.parts && data.parts.length){
+    document.getElementById('parts-body').innerHTML = '';
+    data.parts.forEach(function(r){ addRow('parts-body', r.desc, r.qty, r.rate, r.partnum); });
+  }
+  recalc();
+  return data;
+}
+// ---- Attachments: scan/attach a photo or PDF so it becomes part of this record. PDFs are
+// rasterized into images (via pdf.js, loaded in <head>) so they show up on the printed/PDF
+// copy the same way a photo does. If pdf.js can't load (no signal at the job site), a PDF
+// still attaches — it just shows as an "open PDF" link instead of an inline image. Not
+// included in the Save draft: scans can be large enough to blow past localStorage's quota,
+// so Print/finalize (which doesn't depend on localStorage) is the safe way to keep one with
+// the record.
+function escAtt(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function blobToDataUrl(blob){
+  return new Promise(function(resolve, reject){
+    const r = new FileReader();
+    r.onload = function(){ resolve(r.result); };
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+let _pdfjsReadyPromise = null;
+function ensurePdfJs(){
+  if(window.pdfjsLib) return Promise.resolve(true);
+  if(_pdfjsReadyPromise) return _pdfjsReadyPromise;
+  _pdfjsReadyPromise = new Promise(function(resolve){
+    let done = false;
+    window.addEventListener('pdfjs-ready', function(){ if(!done){ done = true; resolve(true); } }, { once:true });
+    setTimeout(function(){ if(!done){ done = true; resolve(!!window.pdfjsLib); } }, 7000);
+  });
+  return _pdfjsReadyPromise;
+}
+async function renderPdfToImages(file){
+  const arrayBuf = await file.arrayBuffer();
+  const ok = await ensurePdfJs();
+  if(!ok || !window.pdfjsLib){
+    const dataUrl = await blobToDataUrl(new Blob([arrayBuf], { type:'application/pdf' }));
+    return [{ kind:'pdf-raw', name:file.name, dataUrl:dataUrl }];
+  }
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuf }).promise;
+  const images = [];
+  for(let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+    images.push({ kind:'image', name: file.name + (pdf.numPages > 1 ? ' (p.' + p + ')' : ''), dataUrl: canvas.toDataURL('image/jpeg', 0.85) });
+  }
+  return images;
+}
+function renderAttachment(item){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return;
+  if(item.kind === 'pdf-raw'){
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb att-thumb-pdf';
+    const link = document.createElement('a');
+    link.href = item.dataUrl; link.target = '_blank'; link.rel = 'noopener';
+    link.innerHTML = '📄<br>' + escAtt(item.name);
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.onclick = function(){ thumb.remove(); };
+    thumb.appendChild(link); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+  } else {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    const img = document.createElement('img');
+    img.src = item.dataUrl; img.alt = item.name;
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button'; removeBtn.className = 'remove-photo no-print';
+    removeBtn.innerHTML = '&times;';
+    const printPage = document.createElement('div');
+    printPage.className = 'att-print-page';
+    const printLabel = document.createElement('div');
+    printLabel.className = 'att-print-label';
+    printLabel.textContent = item.name;
+    const printImg = document.createElement('img');
+    printImg.src = item.dataUrl;
+    printPage.appendChild(printLabel); printPage.appendChild(printImg);
+    removeBtn.onclick = function(){ thumb.remove(); printPage.remove(); };
+    thumb.appendChild(img); thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+    grid.appendChild(printPage);
+  }
+}
+async function addAttachments(input){
+  const files = Array.from(input.files || []);
+  for(const file of files){
+    try{
+      if(file.type === 'application/pdf' || /\.pdf$/i.test(file.name)){
+        const items = await renderPdfToImages(file);
+        items.forEach(renderAttachment);
+      } else {
+        const dataUrl = await blobToDataUrl(file);
+        renderAttachment({ kind:'image', name:file.name, dataUrl:dataUrl });
+      }
+    }catch(e){
+      console.warn('Could not attach', file.name, e);
+      alert('Could not attach "' + file.name + '": ' + e.message);
+    }
+  }
+  input.value = '';
+}
+function printDoc(){ window.print(); }
+// ---- Permanent record: on Print/Finalize, save a snapshot of this form (plus any
+// attached scans) to a private Drive folder linked to the ticket, so it survives after
+// this tab is closed. No-op if this page wasn't opened from a ticket. ----
+function collectAttachmentsForRecord(){
+  const grid = document.getElementById('attachments-grid');
+  if(!grid) return [];
+  const out = [];
+  Array.from(grid.querySelectorAll('.photo-thumb')).forEach(function(thumb){
+    if(thumb.classList.contains('att-thumb-pdf')){
+      const link = thumb.querySelector('a');
+      if(link) out.push({ name: (link.textContent||'attachment.pdf').trim(), dataUrl: link.href });
+    } else {
+      const img = thumb.querySelector('img');
+      if(img) out.push({ name: img.alt || 'attachment', dataUrl: img.src });
+    }
+  });
+  return out;
+}
+function summarizeTableForRecord(tbodyId){
+  const tbody = document.getElementById(tbodyId);
+  if(!tbody) return '';
+  return Array.from(tbody.querySelectorAll('tr')).map(function(tr){
+    const descInput = tr.querySelector('td:first-child input');
+    const partInput = tr.querySelector('.partnum');
+    const qtyInput = tr.querySelector('.qty');
+    const rateInput = tr.querySelector('.rate');
+    const desc = descInput ? descInput.value : '';
+    const qty = qtyInput ? qtyInput.value : '';
+    const rate = rateInput ? rateInput.value : '';
+    const partTag = (partInput && partInput.value) ? (' [Part ' + partInput.value + ']') : '';
+    var priceTag = 'at ' + rate + ' per unit';
+    return desc ? (desc + partTag + ' (qty ' + qty + ' ' + priceTag + ')') : '';
+  }).filter(Boolean).join('; ');
+}
+function buildFormSnapshotForRecord(){
+  return {
+    invoiceNum: val('invoiceNum'), invoiceDate: val('invoiceDate'),
+    customerName: val('customerName'), customerPhone: val('customerPhone'),
+    serviceAddress: val('serviceAddress'),
+    vehicle: [val('vehYear'), val('vehMake'), val('vehModel')].filter(Boolean).join(' '),
+    services: summarizeTableForRecord('services-body'),
+    parts: summarizeTableForRecord('parts-body'),
+    taxRate: val('taxRate'), subtotal: val('subtotal'), taxAmt: val('taxAmt'), grandTotal: val('grandTotal'),
+    notes: val('notes')
+  };
+}
+async function saveRecordToBackend(){
+  if(!_currentTicketId) return;
+  try{
+    // The structured data (matching localStorage's shape) is what lets the form correctly
+    // repopulate itself when reopened -- the human-readable summary is only for the Drive .txt file.
+    const structuredData = {
+      invoiceNum: val('invoiceNum'), invoiceDate: val('invoiceDate'),
+      customerName: val('customerName'), customerPhone: val('customerPhone'), customerEmail: val('customerEmail'),
+      serviceAddress: val('serviceAddress'),
+      vehYear: val('vehYear'), vehMake: val('vehMake'), vehModel: val('vehModel'),
+      vehPlate: val('vehPlate'), vehVIN: val('vehVIN'), vehMileage: val('vehMileage'),
+      taxRate: val('taxRate'), paymentMethod: val('paymentMethod'), paymentTerms: val('paymentTerms'), notes: val('notes'),
+      services: getTableRows('services-body'), parts: getTableRows('parts-body')
+    };
+    await fetch(SHEET_API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action:'saveRecord',
+        id:_currentTicketId,
+        number: val('invoiceNum'),
+        customer: val('customerName'),
+        formData: structuredData,
+        attachments: collectAttachmentsForRecord()
+      })
+    });
+  }catch(e){
+    console.warn('Could not save permanent record:', e);
+  }
+}
+async function finalizeAndPrint(){
+  // This is the one moment the invoice number actually gets "used up" — logged to the
+  // Sheet if we're online, and always committed locally so the fallback counter only
+  // advances for invoices that were actually finalized, not just opened/viewed.
+  const usedNumber = document.getElementById('invoiceNum').value;
+  await logInvoiceToSheet();
+  rememberLocalNumber(usedNumber);
+  await saveRecordToBackend();
+  printDoc();
+}
+window.onload = async function(){
+  addRow('services-body', '', 1, 0);
+  addRow('parts-body', '', 1, 0);
+  prefillFromTicket();
+  const savedData = await loadInvoiceForm();
+  if(!savedData || !savedData.invoiceNum){
+    await loadInvoiceNumber();
+  }
+  loadDefaultTaxRate();initLocationMap();loadPaymentStatus();
+  if(!document.getElementById('invoiceDate').value){
+    const d = new Date();
+    document.getElementById('invoiceDate').value = d.toISOString().slice(0,10);
+  }
+};
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('../sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="/shop/rm-enhancements.js?v=6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="../supabase-auth.js?v=6"></script>
+</body>
+</html>
+
