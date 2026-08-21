@@ -5,6 +5,8 @@ Static site for roamadicmechanic.com. No build step — plain HTML/CSS/JS, ready
 ## Files
 
 - `index.html` — the whole homepage
+- `thank-you.html` — standalone "thanks / leave a review" page. Not linked from
+  the site; text or email the URL to a customer after a job.
 - `assets/css/style.css` — all styles
 - `assets/js/main.js` — one small script (auto-updates the footer year)
 - `assets/img/` — photos (logo, hero, recent-work gallery)
@@ -18,6 +20,10 @@ Everything on the page is in `index.html` — service cards, hours, phone number
 
 The booking link used throughout is the Google Calendar appointment page:
 `https://calendar.app.google/qG533FuFE7YUvCbU6`
+
+(A Housecall Pro booking link was trialled here and has been reverted. Google
+Calendar has no post-booking redirect, which is why `thank-you.html` is not
+linked from anywhere.)
 
 ## Deploying
 
