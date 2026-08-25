@@ -475,6 +475,14 @@ a {
   font-size: 0.88rem;
 }
 
+.site-footer::before {
+  content: "Accepted payments: credit/debit card • Venmo • Cash App • Zelle • PayPal • cash • check";
+  display: block;
+  color: #d7deea;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
 @media (max-width: 640px) {
   .site-header .container {
     justify-content: center;
