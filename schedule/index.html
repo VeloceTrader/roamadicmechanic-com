@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule Service | Roamadic Mechanic</title>
+<meta name="description" content="Tell Roamadic Mechanic what your vehicle needs, then choose an available appointment time.">
+<link rel="canonical" href="https://roamadicmechanic.com/schedule/">
+<link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#13213c">
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>
+.booking-wrap{max-width:760px;margin:0 auto;padding:36px 20px 64px}.booking-card{background:#fff;border:1px solid #d9dee7;border-radius:18px;padding:22px;margin:0 0 18px;box-shadow:0 12px 36px rgba(19,33,60,.08)}.booking-card h1,.booking-card h2{color:#13213c;margin-top:0}.booking-step{font-size:.75rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#c9983e;margin-bottom:6px}.booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.booking-field{margin-bottom:14px}.booking-field label{display:block;font-weight:750;color:#13213c;margin-bottom:6px;font-size:.9rem}.booking-field input,.booking-field select,.booking-field textarea{width:100%;padding:12px;border:1px solid #ccd3dd;border-radius:10px;background:#f7f8fa;color:#1d2738;font:inherit}.booking-field textarea{min-height:100px;resize:vertical}.parts-row{display:flex;gap:10px;flex-wrap:wrap}.parts-row label{display:flex;align-items:center;gap:6px;border:1px solid #ccd3dd;border-radius:10px;padding:9px 12px;background:#f7f8fa;font-weight:650}.appointment-preview{background:#13213c;color:#fff;border-radius:14px;padding:18px}.appointment-preview .preview-label{font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#e0b861}.appointment-preview .preview-title{font-size:1.2rem;font-weight:850;line-height:1.35;margin:7px 0 14px}.appointment-preview dl{display:grid;grid-template-columns:90px 1fr;gap:7px 10px;margin:0}.appointment-preview dt{color:#bdc8d9}.appointment-preview dd{margin:0;font-weight:650;overflow-wrap:anywhere}.booking-note,.booking-status{font-size:.9rem;line-height:1.5;color:#5d6877}.booking-status{background:#f5f1e7;border-radius:10px;padding:11px 13px;margin-top:12px;color:#6b572e}.booking-actions{display:grid;gap:10px;margin-top:16px}.booking-actions .btn{width:100%;text-align:center}.booking-actions button.btn{border:0}.back-link{display:inline-block;margin-bottom:16px;color:#13213c;font-weight:700;text-decoration:none}.back-link:hover{text-decoration:underline}@media(max-width:620px){.booking-grid{grid-template-columns:1fr}.booking-wrap{padding:24px 14px 48px}.booking-card{padding:17px}.appointment-preview dl{grid-template-columns:76px 1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <a href="/" class="brand">
+      <img src="/assets/img/logo.png" alt="Roamadic Mechanic logo" width="44" height="44">
+      <span class="brand-text"><span class="brand-name">Roamadic Mechanic</span><br><span class="brand-tagline">Mobile Auto Repair &middot; San Juan County, WA</span></span>
+    </a>
+    <div class="header-actions"><a class="btn btn-outline-light" href="tel:+13607391884">Call (360) 739-1884</a></div>
+  </div>
+</header>
+
+<main class="booking-wrap">
+  <a class="back-link" href="/">&larr; Back to Roamadic Mechanic</a>
+
+  <section class="booking-card">
+    <div class="booking-step">Step 1</div>
+    <h1>Tell me what the vehicle needs</h1>
+    <p class="booking-note">Enter the job details first. After you review them, you&rsquo;ll continue to the live Google calendar to choose an available time.</p>
+
+    <div class="booking-field">
+      <label for="service">Service / job type</label>
+      <select id="service" required>
+        <option value="">Select service&hellip;</option>
+        <option>Diagnostic / Check Engine Light</option>
+        <option>Oil Change / Maintenance</option>
+        <option>Brake Service</option>
+        <option>Spark Plug / Tune-Up Service</option>
+        <option>Battery / Charging System</option>
+        <option>Cooling System</option>
+        <option>Steering / Suspension</option>
+        <option>Pre-Purchase Inspection</option>
+        <option>General Repair / Other</option>
+      </select>
+    </div>
+
+    <div class="booking-grid">
+      <div class="booking-field"><label for="name">Name</label><input id="name" autocomplete="name" placeholder="Customer name"></div>
+      <div class="booking-field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+    </div>
+    <div class="booking-grid">
+      <div class="booking-field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel" placeholder="(360) 555-1234"></div>
+      <div class="booking-field"><label for="vehicle">Vehicle</label><input id="vehicle" placeholder="2006 Chevrolet Corvette"></div>
+    </div>
+    <div class="booking-field"><label for="address">Service address</label><input id="address" autocomplete="street-address" placeholder="Street address / vehicle location"></div>
+    <div class="booking-field">
+      <label>Customer-supplied parts?</label>
+      <div class="parts-row">
+        <label><input type="radio" name="parts" value="No" checked> No</label>
+        <label><input type="radio" name="parts" value="Yes"> Yes</label>
+        <label><input type="radio" name="parts" value="Not sure"> Not sure</label>
+      </div>
+    </div>
+    <div class="booking-field"><label for="details">What needs to be done / symptoms</label><textarea id="details" placeholder="Example: Replace spark plugs; I already have the plugs."></textarea></div>
+  </section>
+
+  <section class="booking-card">
+    <div class="booking-step">Step 2</div>
+    <h2>Review your appointment details</h2>
+    <div class="appointment-preview" aria-live="polite">
+      <div class="preview-label">What Roamadic Mechanic will see</div>
+      <div class="preview-title" id="preview-title">Service &mdash; Customer &mdash; Vehicle</div>
+      <dl>
+        <dt>Service</dt><dd id="p-service">Not selected</dd>
+        <dt>Customer</dt><dd id="p-name">Not entered</dd>
+        <dt>Email</dt><dd id="p-email">Not entered</dd>
+        <dt>Vehicle</dt><dd id="p-vehicle">Not entered</dd>
+        <dt>Parts</dt><dd id="p-parts">No</dd>
+        <dt>Address</dt><dd id="p-address">Not entered</dd>
+        <dt>Details</dt><dd id="p-details">Not entered</dd>
+      </dl>
+    </div>
+    <p class="booking-note">Use the same email address on the Google booking page. That is how the appointment is matched to these service details and labeled correctly on the shop calendar.</p>
+    <div class="booking-actions">
+      <button class="btn btn-primary" id="schedule" type="button">Continue to Appointment Times</button>
+    </div>
+    <div class="booking-status" id="status">Complete the service, name, email, and vehicle fields above to continue.</div>
+  </section>
+</main>
+
+<footer class="site-footer"><p>&copy; <span id="year">2026</span> Roamadic Mechanic &middot; Friday Harbor, WA &middot; Mobile Auto Repair</p></footer>
+
+<script>
+(function(){
+  const BOOKING_URL='https://calendar.app.google/qG533FuFE7YUvCbU6';
+  const SUPABASE_URL='https://rnozbhxadrpkaxggjlks.supabase.co';
+  const SUPABASE_KEY='sb_publishable_lP6zq23Nqj22NAfQs0bMew_4cXvmtYS';
+  const ids=['service','name','email','phone','vehicle','address','details'];
+  const el=id=>document.getElementById(id);
+  const parts=()=>((document.querySelector('input[name="parts"]:checked')||{}).value||'No');
+  const shortService=v=>({'Diagnostic / Check Engine Light':'Diagnostic','Oil Change / Maintenance':'Oil Change','Brake Service':'Brake Service','Spark Plug / Tune-Up Service':'Spark Plug Service','Battery / Charging System':'Battery / Charging','Cooling System':'Cooling System','Steering / Suspension':'Steering / Suspension','Pre-Purchase Inspection':'Pre-Purchase Inspection','General Repair / Other':'General Repair'}[v]||'Service');
+  const value=(id,fallback)=>el(id).value.trim()||fallback;
+
+  function render(){
+    el('preview-title').textContent=shortService(el('service').value)+' — '+value('name','Customer')+' — '+value('vehicle','Vehicle');
+    el('p-service').textContent=value('service','Not selected');
+    el('p-name').textContent=value('name','Not entered');
+    el('p-email').textContent=value('email','Not entered');
+    el('p-vehicle').textContent=value('vehicle','Not entered');
+    el('p-parts').textContent=parts();
+    el('p-address').textContent=value('address','Not entered');
+    el('p-details').textContent=value('details','Not entered');
+  }
+
+  function draft(){return {service:el('service').value,name:el('name').value.trim(),email:el('email').value.trim().toLowerCase(),phone:el('phone').value.trim(),vehicle:el('vehicle').value.trim(),address:el('address').value.trim(),parts:parts(),details:el('details').value.trim(),calendarTitle:el('preview-title').textContent,updatedAt:new Date().toISOString()}}
+
+  function validate(){
+    for(const [id,label] of [['service','service'],['name','name'],['email','email'],['vehicle','vehicle']]){
+      if(!el(id).value.trim()){el('status').textContent='Please enter the '+label+' before choosing an appointment time.';el(id).focus();return false}
+    }
+    if(!el('email').checkValidity()){el('status').textContent='Please enter a valid email address and use that same email on the Google appointment page.';el('email').focus();return false}
+    return true;
+  }
+
+  async function saveIntake(){
+    const d=draft();
+    localStorage.setItem('roamadicBookingDraft',JSON.stringify(d));
+    const payload={service_type:d.service,customer_name:d.name,customer_email:d.email,phone:d.phone||null,vehicle:d.vehicle,service_address:d.address||null,customer_supplied_parts:d.parts,details:d.details||null,calendar_title:d.calendarTitle};
+    const response=await fetch(SUPABASE_URL+'/rest/v1/booking_intake',{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});
+    if(!response.ok) throw new Error('Unable to save booking details');
+  }
+
+  ids.forEach(id=>{el(id).addEventListener('input',render);el(id).addEventListener('change',render)});
+  document.querySelectorAll('input[name="parts"]').forEach(x=>x.addEventListener('change',render));
+
+  el('schedule').addEventListener('click',async function(){
+    if(!validate()) return;
+    this.disabled=true;
+    el('status').textContent='Saving the service details…';
+    try{
+      await saveIntake();
+      el('status').textContent='Saved. Opening the live appointment calendar…';
+      window.location.href=BOOKING_URL;
+    }catch(error){
+      this.disabled=false;
+      el('status').textContent='The service details could not be saved. Check the connection and try again so the appointment can be labeled correctly.';
+    }
+  });
+
+  try{
+    const d=JSON.parse(localStorage.getItem('roamadicBookingDraft')||'null');
+    if(d){ids.forEach(id=>{if(d[id]!=null)el(id).value=d[id]});const r=[...document.querySelectorAll('input[name="parts"]')].find(x=>x.value===d.parts);if(r)r.checked=true}
+  }catch(e){}
+  document.getElementById('year').textContent=new Date().getFullYear();
+  render();
+})();
+</script>
+</body>
+</html>
