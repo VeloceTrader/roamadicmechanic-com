@@ -19,7 +19,6 @@ function doPost(e) {
 }
 
 function findSlots_(p) {
-  var calendar = CalendarApp.getDefaultCalendar();
   var durationMs = positiveInt_(p.durationMinutes, 90) * 60000;
   var incrementMs = positiveInt_(p.slotIncrementMinutes, 30) * 60000;
   var bufferMs = Math.max(0, positiveInt_(p.bufferMinutes, 30)) * 60000;
@@ -27,6 +26,7 @@ function findSlots_(p) {
   var end = new Date(p.windowEnd);
   var workStart = parseClock_(p.workdayStart || '09:00');
   var workEnd = parseClock_(p.workdayEnd || '18:00');
+  var busy = readBusy_(new Date(start.getTime() - bufferMs), new Date(end.getTime() + bufferMs), bufferMs);
   var slots = [];
   var cursor = startOfLocalDay_(start);
   var lastDay = startOfLocalDay_(end);
@@ -36,13 +36,6 @@ function findSlots_(p) {
     var dayEnd = atLocalClock_(cursor, workEnd.h, workEnd.m);
     var effectiveStart = new Date(Math.max(dayStart.getTime(), start.getTime()));
     var candidate = ceilToIncrement_(effectiveStart, incrementMs);
-    var events = calendar.getEvents(new Date(dayStart.getTime() - bufferMs), new Date(dayEnd.getTime() + bufferMs));
-    var busy = events.map(function(ev) {
-      return {
-        start: ev.getStartTime().getTime() - bufferMs,
-        end: ev.getEndTime().getTime() + bufferMs
-      };
-    });
 
     while (candidate.getTime() + durationMs <= dayEnd.getTime() && candidate.getTime() < end.getTime() && slots.length < 60) {
       var cStart = candidate.getTime();
@@ -68,7 +61,6 @@ function book_(p) {
   if (!lock.tryLock(15000)) return { ok: false, code: 'calendar_busy' };
 
   try {
-    var calendar = CalendarApp.getDefaultCalendar();
     var start = new Date(p.start);
     var end = new Date(p.end);
     if (!isFinite(start.getTime()) || !isFinite(end.getTime()) || end <= start) return { ok: false, code: 'invalid_time' };
@@ -76,35 +68,51 @@ function book_(p) {
     var bufferMs = Math.max(0, positiveInt_(p.bufferMinutes, 30)) * 60000;
     var workStart = parseClock_(p.workdayStart || '09:00');
     var workEnd = parseClock_(p.workdayEnd || '18:00');
-    var dayStart = atLocalClock_(startOfLocalDay_(start), workStart.h, workStart.m);
-    var dayEnd = atLocalClock_(startOfLocalDay_(start), workEnd.h, workEnd.m);
+    var localDay = startOfLocalDay_(start);
+    var dayStart = atLocalClock_(localDay, workStart.h, workStart.m);
+    var dayEnd = atLocalClock_(localDay, workEnd.h, workEnd.m);
     if (start.getTime() < dayStart.getTime() || end.getTime() > dayEnd.getTime()) return { ok: false, code: 'outside_workday' };
 
-    var conflicts = calendar.getEvents(new Date(start.getTime() - bufferMs), new Date(end.getTime() + bufferMs));
-    var overlap = conflicts.some(function(ev) {
-      var s = ev.getStartTime().getTime() - bufferMs;
-      var e = ev.getEndTime().getTime() + bufferMs;
-      return start.getTime() < e && end.getTime() > s;
-    });
+    var busy = readBusy_(new Date(start.getTime() - bufferMs), new Date(end.getTime() + bufferMs), bufferMs);
+    var overlap = busy.some(function(b) { return start.getTime() < b.end && end.getTime() > b.start; });
     if (overlap) return { ok: false, code: 'slot_conflict' };
 
-    var options = {
+    var event = {
+      summary: String(p.title || 'Roamadic Mechanic Service').slice(0, 200),
       description: String(p.description || '').slice(0, 8000),
       location: String(p.location || '').slice(0, 500),
-      sendInvites: true
+      start: { dateTime: start.toISOString(), timeZone: SCRIPT_TZ },
+      end: { dateTime: end.toISOString(), timeZone: SCRIPT_TZ }
     };
-    if (p.guestEmail) options.guests = String(p.guestEmail).trim();
+    if (p.guestEmail) event.attendees = [{ email: String(p.guestEmail).trim() }];
 
-    var event = calendar.createEvent(String(p.title || 'Roamadic Mechanic Service').slice(0, 200), start, end, options);
+    var created = Calendar.Events.insert(event, 'primary', { sendUpdates: 'all' });
     return {
       ok: true,
-      eventId: event.getId(),
-      start: event.getStartTime().toISOString(),
-      end: event.getEndTime().toISOString()
+      eventId: created.id,
+      eventUrl: created.htmlLink || null,
+      start: created.start && created.start.dateTime ? created.start.dateTime : start.toISOString(),
+      end: created.end && created.end.dateTime ? created.end.dateTime : end.toISOString()
     };
   } finally {
     lock.releaseLock();
   }
+}
+
+function readBusy_(start, end, bufferMs) {
+  var response = Calendar.Freebusy.query({
+    timeMin: start.toISOString(),
+    timeMax: end.toISOString(),
+    timeZone: SCRIPT_TZ,
+    items: [{ id: 'primary' }]
+  });
+  var blocks = (((response || {}).calendars || {}).primary || {}).busy || [];
+  return blocks.map(function(b) {
+    return {
+      start: new Date(b.start).getTime() - bufferMs,
+      end: new Date(b.end).getTime() + bufferMs
+    };
+  });
 }
 
 function parseClock_(value) {
