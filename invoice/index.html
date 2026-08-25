@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#0f172a">
+<title>Invoice | Roamadic Mechanic</title>
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#111827;--muted:#64748b;--line:#dbe3ed;--navy:#0f172a;--gold:#c99a3e;--green:#15803d;--shadow:0 14px 36px rgba(15,23,42,.10)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}.shell{max-width:780px;margin:0 auto;padding:18px 14px 48px}.brand{display:flex;align-items:center;gap:13px;margin:6px 0 18px}.brand img{width:62px;height:62px;object-fit:contain;border-radius:50%;background:#fff}.brand h1{font-size:21px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px}.loading{text-align:center;padding:52px 24px}.spinner{width:34px;height:34px;border:4px solid #dbe3ed;border-top-color:var(--navy);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.hidden{display:none!important}.title-row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.eyebrow{text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-size:12px;font-weight:800}.title{font-size:28px;line-height:1.1;margin:4px 0 3px}.status{font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;background:#e2e8f0;text-transform:uppercase;white-space:nowrap}.status.paid{background:#ecfdf3;color:var(--green)}.small{font-size:12px;color:var(--muted)}.meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.meta-box{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px}.meta-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}.meta-value{margin-top:3px;font-weight:750}.section-title{font-size:18px;margin:0 0 12px}table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:8px;border-bottom:2px solid var(--line)}td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}.num{text-align:right;white-space:nowrap}.desc{font-weight:650}.type{font-size:11px;color:var(--muted);text-transform:uppercase}.totals{margin-left:auto;max-width:360px;margin-top:16px}.line{display:flex;justify-content:space-between;gap:16px;padding:6px 0}.line.grand{border-top:2px solid var(--navy);margin-top:4px;padding-top:12px;font-size:19px;font-weight:900}.line.balance{color:var(--navy)}.paidline{color:var(--green)}.notes{white-space:pre-wrap;color:#334155}.methods{display:flex;flex-wrap:wrap;gap:8px}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:#f8fafc;font-weight:700;font-size:13px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:850;cursor:pointer}.btn.primary{background:var(--navy);color:#fff}.btn.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}.privacy{font-size:12px;color:var(--muted);text-align:center;margin:18px 10px}.error{text-align:center}.error h2{margin-top:0}@media(max-width:540px){.meta{grid-template-columns:1fr}.title{font-size:24px}.card{padding:16px}.hide-mobile{display:none}.shell{padding:10px 10px 34px}}@media print{body{background:#fff}.shell{max-width:none;padding:0}.card{box-shadow:none;border-radius:0;border-left:0;border-right:0}.actions,.privacy{display:none!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="brand"><img src="../assets/img/logo.png" alt="Roamadic Mechanic"><div><h1>Roamadic Mechanic</h1><p>Mobile automotive service • Friday Harbor, WA</p></div></div>
+  <section id="loading" class="card loading"><div class="spinner"></div><strong>Loading your invoice…</strong></section>
+  <section id="error" class="card error hidden"><h2>Invoice unavailable</h2><p id="errorText">We couldn't load this invoice.</p></section>
+  <div id="app" class="hidden">
+    <section class="card">
+      <div class="title-row"><div><div class="eyebrow">Customer invoice</div><h2 class="title">Invoice #<span id="number"></span></h2><div id="issued" class="small"></div></div><div id="status" class="status"></div></div>
+      <div class="meta"><div class="meta-box"><div class="meta-label">Customer</div><div id="customer" class="meta-value"></div></div><div class="meta-box"><div class="meta-label">Vehicle</div><div id="vehicle" class="meta-value"></div><div id="vin" class="small"></div></div></div>
+    </section>
+    <section class="card"><h3 class="section-title">Invoice details</h3><div style="overflow:auto"><table><thead><tr><th>Description</th><th class="hide-mobile">Type</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead><tbody id="items"></tbody></table></div><div class="totals"><div class="line"><span>Subtotal</span><span id="subtotal"></span></div><div id="taxLine" class="line"><span>Tax <span id="taxRate" class="small"></span></span><span id="tax"></span></div><div class="line grand"><span>Total</span><span id="total"></span></div><div id="paidLine" class="line paidline"><span>Paid</span><span id="paid"></span></div><div class="line grand balance"><span>Balance due</span><span id="balance"></span></div></div></section>
+    <section id="notesCard" class="card"><h3 class="section-title">Notes</h3><div id="notes" class="notes"></div></section>
+    <section class="card"><h3 class="section-title">Payment options</h3><p class="small">Contact Roamadic Mechanic if you need payment details or a receipt.</p><div id="methods" class="methods"></div></section>
+    <section class="card actions"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><a class="btn secondary" href="tel:+13607391884" style="text-decoration:none">Call</a><a class="btn secondary" href="sms:+13607391884" style="text-decoration:none">Text</a></section>
+    <div class="privacy">This private link is tied to this invoice. Please don't post it publicly.</div>
+  </div>
+</main>
+<script>
+(() => {
+  const ENDPOINT='https://rnozbhxadrpkaxggjlks.supabase.co/functions/v1/invoice-share';
+  const qs=new URLSearchParams(location.search);
+  let token=qs.get('token')||sessionStorage.getItem('rm_invoice_token');
+  if(qs.get('token')){sessionStorage.setItem('rm_invoice_token',qs.get('token'));history.replaceState({},'',location.pathname)}
+  const $=id=>document.getElementById(id);
+  const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(n||0));
+  const date=s=>s?new Date(s+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
+  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  function fail(msg){$('loading').classList.add('hidden');$('app').classList.add('hidden');$('error').classList.remove('hidden');$('errorText').textContent=msg}
+  function render(d){
+    $('number').textContent=d.invoice.number;$('issued').textContent=d.invoice.issued_on?'Issued '+date(d.invoice.issued_on):'';$('status').textContent=d.invoice.status||'issued';$('status').className='status '+(d.invoice.status||'');
+    $('customer').textContent=d.customer?.name||'Customer';const v=d.vehicle||{};$('vehicle').textContent=[v.year,v.make,v.model,v.trim].filter(Boolean).join(' ');$('vin').textContent=v.vin_last8?'VIN ending '+v.vin_last8:'';
+    $('items').innerHTML=(d.items||[]).map(i=>`<tr><td><div class="desc">${esc(i.description)}</div></td><td class="hide-mobile"><span class="type">${esc(i.item_type)}</span></td><td class="num">${Number(i.quantity).toLocaleString(undefined,{maximumFractionDigits:3})}</td><td class="num">${money(i.unit_price)}</td><td class="num">${money(i.amount)}</td></tr>`).join('');
+    $('subtotal').textContent=money(d.subtotal);$('tax').textContent=money(d.tax);$('taxRate').textContent=d.tax_rate?`(${d.tax_rate}%)`:'';$('taxLine').style.display=Number(d.tax)>0?'flex':'none';$('total').textContent=money(d.total);$('paid').textContent='−'+money(d.paid);$('paidLine').style.display=Number(d.paid)>0?'flex':'none';$('balance').textContent=money(d.balance);
+    const notes=d.invoice.notes||d.job?.work_performed||'';$('notes').textContent=notes;$('notesCard').style.display=notes?'block':'none';$('methods').innerHTML=(d.payment_methods||[]).map(m=>`<span class="pill">${esc(m)}</span>`).join('');
+    $('loading').classList.add('hidden');$('error').classList.add('hidden');$('app').classList.remove('hidden');
+  }
+  if(!token){fail('This invoice link is missing its secure token. Ask Roamadic Mechanic for a new link.');return}
+  fetch(ENDPOINT+'?token='+encodeURIComponent(token),{cache:'no-store'}).then(async r=>{const d=await r.json().catch(()=>({error:'Unexpected response.'}));if(!r.ok)throw new Error(d.error||'Unable to load invoice.');return d}).then(render).catch(e=>fail(e.message));
+})();
+</script>
+</body>
+</html>
