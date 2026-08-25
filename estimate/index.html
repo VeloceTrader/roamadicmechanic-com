@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#0f172a">
+  <title>Estimate Approval | Roamadic Mechanic</title>
+  <style>
+    :root{--bg:#eef2f7;--card:#fff;--ink:#111827;--muted:#64748b;--line:#dbe3ed;--navy:#0f172a;--blue:#1d4ed8;--green:#15803d;--green-bg:#ecfdf3;--red:#b91c1c;--red-bg:#fff1f2;--amber:#a16207;--amber-bg:#fffbeb;--shadow:0 14px 36px rgba(15,23,42,.10)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+    .shell{max-width:760px;margin:0 auto;padding:18px 14px 48px}.brand{display:flex;align-items:center;gap:13px;margin:6px 0 18px}.brand img{width:64px;height:64px;object-fit:contain;border-radius:50%;background:#fff}.brand h1{font-size:21px;line-height:1.1;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px}.loading{text-align:center;padding:52px 24px}.spinner{width:34px;height:34px;border:4px solid #dbe3ed;border-top-color:var(--blue);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.eyebrow{text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-size:12px;font-weight:800}.title{font-size:28px;line-height:1.1;margin:4px 0 3px}.status{font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;background:#e2e8f0;text-transform:uppercase;white-space:nowrap}.status.approved{background:var(--green-bg);color:var(--green)}.status.declined{background:var(--red-bg);color:var(--red)}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.meta-box{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px}.meta-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}.meta-value{margin-top:3px;font-weight:750}.concern{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:#334155}
+    .section-title{font-size:18px;margin:0 0 4px}.section-sub{color:var(--muted);font-size:14px;margin:0 0 16px}.group{border:1px solid var(--line);border-radius:15px;padding:16px;margin:12px 0}.group-head{display:flex;justify-content:space-between;gap:14px}.group-title{font-weight:800;font-size:17px}.amount{font-weight:900;font-size:17px;white-space:nowrap}.group-desc{color:#475569;margin:6px 0 12px;font-size:14px}.items{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.item{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#475569;padding:5px 0}.item span:last-child{font-weight:700;color:#334155;white-space:nowrap}
+    .choice{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.choice button{appearance:none;border:2px solid var(--line);background:#fff;border-radius:11px;padding:12px 10px;font-weight:850;font-size:15px;cursor:pointer}.choice .approve.selected{border-color:var(--green);background:var(--green-bg);color:var(--green)}.choice .decline.selected{border-color:var(--red);background:var(--red-bg);color:var(--red)}.info-pill{margin-top:12px;display:inline-block;border-radius:999px;background:var(--amber-bg);color:var(--amber);font-size:12px;font-weight:800;padding:6px 9px}
+    .totals{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}.total-line{display:flex;justify-content:space-between;gap:14px;padding:4px 0}.total-line strong{font-size:19px}.small{font-size:12px;color:var(--muted);margin-top:6px}
+    label{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}input,textarea{width:100%;border:1px solid #cbd5e1;border-radius:11px;padding:12px;font:inherit;background:#fff;color:var(--ink)}textarea{min-height:86px;resize:vertical}.submit{width:100%;margin-top:16px;border:0;background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:900;cursor:pointer}.submit:disabled{opacity:.55;cursor:not-allowed}.message{display:none;border-radius:12px;padding:12px 14px;margin-top:12px;font-weight:700}.message.ok{display:block;background:var(--green-bg);color:var(--green)}.message.err{display:block;background:var(--red-bg);color:var(--red)}
+    .privacy{font-size:12px;color:var(--muted);text-align:center;margin:18px 10px}.error-card{text-align:center}.error-card h2{margin-top:0}.retry{border:0;background:var(--navy);color:#fff;border-radius:10px;padding:11px 18px;font-weight:800}.hidden{display:none!important}
+    @media(max-width:520px){.shell{padding:10px 10px 34px}.card{padding:16px;border-radius:15px}.brand img{width:52px;height:52px}.title{font-size:24px}.meta{grid-template-columns:1fr}.group-head{align-items:flex-start}.choice{grid-template-columns:1fr 1fr}.item{font-size:12px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="brand">
+      <img src="../assets/img/logo.png" alt="Roamadic Mechanic">
+      <div><h1>Roamadic Mechanic</h1><p>Mobile automotive service • Friday Harbor, WA</p></div>
+    </div>
+
+    <section id="loading" class="card loading"><div class="spinner"></div><strong>Loading your estimate…</strong></section>
+    <section id="error" class="card error-card hidden"><h2>Estimate unavailable</h2><p id="errorText">We couldn't load this estimate.</p><button class="retry" onclick="location.reload()">Try again</button></section>
+
+    <div id="app" class="hidden">
+      <section class="card">
+        <div class="title-row">
+          <div><div class="eyebrow">Customer estimate</div><h2 class="title">Estimate #<span id="estimateNumber"></span></h2><div id="issuedDate" class="small"></div></div>
+          <div id="status" class="status">Sent</div>
+        </div>
+        <div class="meta">
+          <div class="meta-box"><div class="meta-label">Customer</div><div id="customerName" class="meta-value"></div></div>
+          <div class="meta-box"><div class="meta-label">Vehicle</div><div id="vehicle" class="meta-value"></div><div id="vin" class="small"></div></div>
+        </div>
+        <div id="concern" class="concern"></div>
+      </section>
+
+      <section class="card">
+        <h3 class="section-title">Review recommended work</h3>
+        <p class="section-sub">Choose Approve or Decline on the items that require a decision. You can change your selection before submitting.</p>
+        <div id="groups"></div>
+        <div class="totals">
+          <div class="total-line"><span>Full estimate subtotal</span><strong id="subtotal"></strong></div>
+          <div class="total-line"><span>Currently authorized</span><strong id="authorized"></strong></div>
+          <div id="taxNote" class="small"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3 class="section-title">Submit authorization</h3>
+        <p class="section-sub">Your choices are time-stamped and recorded with the estimate.</p>
+        <label for="authName">Your name</label>
+        <input id="authName" autocomplete="name" maxlength="200">
+        <label for="note">Comment or question (optional)</label>
+        <textarea id="note" maxlength="2000" placeholder="Anything you'd like us to know before we proceed"></textarea>
+        <button id="submitBtn" class="submit">Submit approval choices</button>
+        <div id="message" class="message"></div>
+      </section>
+      <div class="privacy">This private link is tied to this estimate. Please don't post or forward it publicly.</div>
+    </div>
+  </main>
+
+<script>
+(() => {
+  const ENDPOINT = 'https://rnozbhxadrpkaxggjlks.supabase.co/functions/v1/estimate-approval';
+  const qs = new URLSearchParams(location.search);
+  let token = qs.get('token') || sessionStorage.getItem('rm_estimate_token');
+  if (qs.get('token')) {
+    sessionStorage.setItem('rm_estimate_token', qs.get('token'));
+    history.replaceState({}, '', location.pathname);
+  }
+  const state = { data:null, decisions:{} };
+  const $ = id => document.getElementById(id);
+  const money = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(n||0));
+  const date = s => s ? new Date(s+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : '';
+  const esc = s => String(s??'').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+  function showError(msg){ $('loading').classList.add('hidden'); $('app').classList.add('hidden'); $('error').classList.remove('hidden'); $('errorText').textContent = msg; }
+  function setMsg(text,type){ const el=$('message'); el.textContent=text; el.className='message '+type; }
+
+  async function api(method='GET', body=null){
+    const res = await fetch(ENDPOINT+'?token='+encodeURIComponent(token), {method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):null});
+    const data = await res.json().catch(()=>({error:'Unexpected response from server.'}));
+    if(!res.ok) throw new Error(data.error || 'Unable to process estimate.');
+    return data;
+  }
+
+  function render(data){
+    state.data=data;
+    data.groups.filter(g=>g.actionable).forEach(g=>{ if(g.status==='approved'||g.status==='declined') state.decisions[g.group_key]=g.status; });
+    $('estimateNumber').textContent=data.estimate.number;
+    $('issuedDate').textContent=data.estimate.issued_on ? 'Issued '+date(data.estimate.issued_on) : '';
+    $('customerName').textContent=data.customer?.name || 'Customer';
+    const v=data.vehicle||{};
+    $('vehicle').textContent=[v.year,v.make,v.model,v.trim].filter(Boolean).join(' ');
+    $('vin').textContent=v.vin_last8 ? 'VIN ending '+v.vin_last8 : '';
+    $('concern').textContent=data.job?.concern ? 'Concern: '+data.job.concern : '';
+    const status=$('status'); status.textContent=data.estimate.status||'sent'; status.className='status '+(data.estimate.status||'');
+    $('subtotal').textContent=money(data.subtotal);
+    $('authorized').textContent=money(data.authorized_total);
+    $('taxNote').textContent=data.tax_note||'';
+    $('authName').value=data.estimate.customer_authorized_name || data.customer?.name || '';
+    $('note').value=data.estimate.customer_authorization_note || '';
+
+    $('groups').innerHTML=data.groups.map(g=>{
+      const items=(g.items||[]).map(i=>`<div class="item"><span>${esc(i.description)}</span><span>${money(i.amount)}</span></div>`).join('');
+      const selected=state.decisions[g.group_key]||g.status;
+      const controls=g.actionable ? `<div class="choice">
+        <button type="button" class="approve ${selected==='approved'?'selected':''}" data-key="${esc(g.group_key)}" data-choice="approved">✓ Approve</button>
+        <button type="button" class="decline ${selected==='declined'?'selected':''}" data-key="${esc(g.group_key)}" data-choice="declined">Decline</button>
+      </div>` : `<span class="info-pill">${g.group_key==='diagnostic'?'Already performed / included':'Information only — pricing pending'}</span>`;
+      return `<article class="group"><div class="group-head"><div class="group-title">${esc(g.title)}</div><div class="amount">${money(g.amount)}</div></div><div class="group-desc">${esc(g.description||'')}</div><div class="items">${items}</div>${controls}</article>`;
+    }).join('');
+
+    document.querySelectorAll('[data-choice]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.decisions[btn.dataset.key]=btn.dataset.choice;
+      document.querySelectorAll(`[data-key="${CSS.escape(btn.dataset.key)}"]`).forEach(b=>b.classList.toggle('selected', b.dataset.choice===btn.dataset.choice));
+      recalc(); setMsg('','');
+    }));
+
+    $('loading').classList.add('hidden'); $('error').classList.add('hidden'); $('app').classList.remove('hidden');
+  }
+
+  function recalc(){
+    if(!state.data) return;
+    let total=0;
+    state.data.groups.forEach(g=>{
+      if(!g.actionable || state.decisions[g.group_key]==='approved') total+=Number(g.amount||0);
+    });
+    $('authorized').textContent=money(total);
+  }
+
+  async function submit(){
+    const actionable=state.data.groups.filter(g=>g.actionable);
+    if(!actionable.some(g=>state.decisions[g.group_key])){ setMsg('Choose Approve or Decline for at least one item.','err'); return; }
+    const name=$('authName').value.trim();
+    if(!name){ setMsg('Please enter your name before submitting.','err'); $('authName').focus(); return; }
+    const btn=$('submitBtn'); btn.disabled=true; btn.textContent='Saving…'; setMsg('','');
+    try{
+      const updated=await api('POST',{name,note:$('note').value.trim(),decisions:state.decisions});
+      render(updated); recalc(); setMsg('Saved. Your approval choices have been recorded and sent to Roamadic Mechanic.','ok');
+      window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+    }catch(e){ setMsg(e.message,'err'); }
+    finally{ btn.disabled=false; btn.textContent='Submit approval choices'; }
+  }
+
+  $('submitBtn').addEventListener('click',submit);
+  if(!token){ showError('This approval link is missing its secure token. Ask Roamadic Mechanic for a new link.'); return; }
+  api().then(render).catch(e=>showError(e.message));
+})();
+</script>
+</body>
+</html>
