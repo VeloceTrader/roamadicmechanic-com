@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>General Delivery — Roamadic Mechanic</title>
+<meta name="theme-color" content="#1c3a52">
+<style>
+:root{--navy:#1c3a52;--navy2:#12283b;--gold:#c99a3e;--cream:#f6f1e6;--page:#eee8da;--ink:#23262b;--muted:#6b7280;--line:#ddd6c6;--ok:#2e7d4f;--bad:#a83b2a}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:20px 14px 60px}.wrap{max-width:640px;margin:auto}.head{text-align:center;margin-bottom:16px}.head h1{margin:6px 0 4px;color:var(--navy);font-size:22px}.head p{margin:0;color:var(--muted);font-size:13px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}.field{margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--cream);padding:12px;font:inherit;font-size:15px}.field textarea{min-height:88px;resize:vertical}.filebox{border:2px dashed var(--line);border-radius:12px;padding:18px;background:#fdfcf9}.filebox input{background:#fff}.btn{width:100%;border:0;border-radius:10px;padding:13px 16px;font-weight:800;font-size:15px;cursor:pointer}.btn-primary{background:var(--navy);color:#fff}.btn-primary:active{background:var(--navy2)}.btn:disabled{opacity:.45;cursor:not-allowed}.status{min-height:22px;margin-top:12px;font-size:13px;font-weight:700}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.note{font-size:12px;color:var(--muted);line-height:1.45}.recent-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:20px 0 8px}.delivery{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:8px}.delivery b{display:block;font-size:13px}.delivery span{display:block;color:var(--muted);font-size:11px;margin-top:3px;word-break:break-word}.back{display:inline-block;color:var(--navy);font-weight:800;text-decoration:none;font-size:13px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../">← Shop Dashboard</a>
+<div class="head"><h1>General Delivery</h1><p>Upload first. Assign to a customer, vehicle, or job later.</p></div>
+<div class="card">
+  <div class="field filebox"><label for="file">File</label><input id="file" type="file" accept="image/*,application/pdf,text/plain,text/csv,application/json"></div>
+  <div class="field"><label for="title">Title — optional</label><input id="title" placeholder="Defaults to the file name"></div>
+  <div class="field"><label for="notes">Notes — optional</label><textarea id="notes" placeholder="Who/what this may belong to, if known"></textarea></div>
+  <button id="upload" class="btn btn-primary" disabled>Upload to General Delivery</button>
+  <div id="status" class="status" aria-live="polite"></div>
+  <div class="note">Files sent here stay unassigned in the shop cloud inbox until they are linked to a customer, vehicle, or job.</div>
+</div>
+<div class="recent-title">Recent General Delivery</div>
+<div id="recent"><div class="note">Sign in to load recent uploads.</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="../supabase-auth.js?v=8"></script>
+<script>
+(function(){
+'use strict';
+const fileEl=document.getElementById('file'), titleEl=document.getElementById('title'), notesEl=document.getElementById('notes'), uploadBtn=document.getElementById('upload'), statusEl=document.getElementById('status'), recentEl=document.getElementById('recent');
+function setStatus(text,state){statusEl.textContent=text||'';statusEl.className='status'+(state?' '+state:'');}
+function safeName(name){return String(name||'upload').replace(/[^A-Za-z0-9._-]+/g,'_').replace(/^_+|_+$/g,'').slice(-120)||'upload';}
+function token(){if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);}
+function fmtDate(v){try{return new Date(v).toLocaleString();}catch(e){return v||'';}}
+async function refresh(){
+  const sb=window.rmSupabase;if(!sb||!window.rmShopId)return;
+  const r=await sb.from('service_documents').select('id,title,original_filename,mime_type,file_size_bytes,created_at,notes').eq('shop_id',window.rmShopId).eq('document_type','general_delivery').is('customer_id',null).is('vehicle_id',null).is('job_id',null).order('created_at',{ascending:false}).limit(20);
+  if(r.error){recentEl.innerHTML='<div class="note">Could not load recent deliveries.</div>';return;}
+  if(!r.data||!r.data.length){recentEl.innerHTML='<div class="note">No general-delivery uploads yet.</div>';return;}
+  recentEl.innerHTML='';
+  r.data.forEach(function(d){const div=document.createElement('div');div.className='delivery';const b=document.createElement('b');b.textContent=d.title||d.original_filename||'Upload';const s=document.createElement('span');s.textContent=[fmtDate(d.created_at),d.original_filename,d.file_size_bytes?Math.round(d.file_size_bytes/1024)+' KB':''].filter(Boolean).join(' · ');div.appendChild(b);div.appendChild(s);recentEl.appendChild(div);});
+}
+fileEl.addEventListener('change',function(){uploadBtn.disabled=!fileEl.files||!fileEl.files.length;if(fileEl.files&&fileEl.files[0]&&!titleEl.value)titleEl.value=fileEl.files[0].name;});
+uploadBtn.addEventListener('click',async function(){
+  const file=fileEl.files&&fileEl.files[0];if(!file)return;
+  uploadBtn.disabled=true;setStatus('Uploading…','');
+  try{
+    await window.rmAuthReady;
+    const sb=window.rmSupabase, shopId=window.rmShopId;
+    if(!sb||!shopId)throw new Error('Shop sign-in is not ready.');
+    const path=shopId+'/general-delivery/'+Date.now()+'-'+token()+'-'+safeName(file.name);
+    const up=await sb.storage.from('service-documents').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+    if(up.error)throw up.error;
+    const row={shop_id:shopId,customer_id:null,vehicle_id:null,job_id:null,document_type:'general_delivery',title:(titleEl.value||file.name||'General Delivery').trim(),original_filename:file.name||null,storage_bucket:'service-documents',storage_path:path,mime_type:file.type||null,file_size_bytes:file.size||null,document_date:new Date().toISOString(),notes:notesEl.value.trim()||null};
+    const ins=await sb.from('service_documents').insert(row).select('id').single();
+    if(ins.error){await sb.storage.from('service-documents').remove([path]);throw ins.error;}
+    setStatus('Upload complete — saved in General Delivery.','ok');fileEl.value='';titleEl.value='';notesEl.value='';await refresh();
+  }catch(e){console.error(e);setStatus('Upload failed: '+(e&&e.message?e.message:'unknown error'),'bad');}
+  uploadBtn.disabled=!fileEl.files||!fileEl.files.length;
+});
+window.rmAuthReady.then(function(){refresh();}).catch(function(){});
+})();
+</script>
+</body>
+</html>
