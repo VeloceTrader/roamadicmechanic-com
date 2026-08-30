@@ -56,7 +56,7 @@
     </div>
     <div class="booking-grid">
       <div class="booking-field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel" placeholder="(360) 555-1234"></div>
-      <div class="booking-field"><label for="vin">VIN</label><input id="vin" maxlength="17" autocomplete="off" placeholder="17-character VIN"></div>
+      <div class="booking-field"><label for="vin">VIN <span class="optional">(optional)</span></label><input id="vin" maxlength="17" autocomplete="off" placeholder="17-character VIN, if handy"></div>
     </div>
     <div class="booking-grid three">
       <div class="booking-field"><label for="vehicle-year">Year</label><input id="vehicle-year" inputmode="numeric" maxlength="4" placeholder="2012"></div>
@@ -65,9 +65,14 @@
     </div>
     <div class="booking-grid three">
       <div class="booking-field"><label for="vehicle-trim">Trim <span class="optional">(optional)</span></label><input id="vehicle-trim" placeholder="XLT"></div>
-      <div class="booking-field"><label for="vehicle-engine">Engine <span class="optional">(if known)</span></label><input id="vehicle-engine" placeholder="3.5L V6"></div>
+      <div class="booking-field"><label for="vehicle-engine">Engine size</label><input id="vehicle-engine" placeholder="3.5L V6"></div>
       <div class="booking-field"><label for="mileage">Mileage <span class="optional">(optional)</span></label><input id="mileage" inputmode="numeric" placeholder="125000"></div>
     </div>
+    <div class="booking-grid">
+      <div class="booking-field"><label for="license-plate">License plate</label><input id="license-plate" maxlength="12" autocomplete="off" placeholder="ABC1234" style="text-transform:uppercase"></div>
+      <div class="booking-field"><label for="plate-state">Plate state</label><input id="plate-state" maxlength="2" value="WA" autocomplete="off" style="text-transform:uppercase"></div>
+    </div>
+    <p class="booking-note">Enter either the license plate and state or the engine size. VIN is optional.</p>
 
     <div class="booking-field door-tag-box">
       <label for="door-tag">Driver-door vehicle label photo <span class="optional">(optional)</span></label>
@@ -99,6 +104,7 @@
         <dt>Customer</dt><dd id="p-name">Not entered</dd>
         <dt>Email</dt><dd id="p-email">Not entered</dd>
         <dt>Vehicle</dt><dd id="p-vehicle">Not entered</dd>
+        <dt>Plate</dt><dd id="p-plate">Not entered</dd>
         <dt>VIN</dt><dd id="p-vin">Not entered</dd>
         <dt>Door tag</dt><dd id="p-door-tag">Not provided</dd>
         <dt>Parts</dt><dd id="p-parts">No</dd>
@@ -149,7 +155,7 @@
   const SCHEDULER_URL=SUPABASE_URL+'/functions/v1/booking-scheduler';
   const MAX_DOOR_TAG_BYTES=10*1024*1024;
   const MIME_EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/heic':'heic','image/heif':'heif'};
-  const ids=['service','name','email','phone','vin','vehicle-year','vehicle-make','vehicle-model','vehicle-trim','vehicle-engine','mileage','address','details'];
+  const ids=['service','name','email','phone','vin','license-plate','plate-state','vehicle-year','vehicle-make','vehicle-model','vehicle-trim','vehicle-engine','mileage','address','details'];
   const el=id=>document.getElementById(id);
   const parts=()=>((document.querySelector('input[name="parts"]:checked')||{}).value||'No');
   const doorTagFile=()=>((el('door-tag').files||[])[0]||null);
@@ -175,6 +181,7 @@
     el('p-name').textContent=value('name','Not entered');
     el('p-email').textContent=value('email','Not entered');
     el('p-vehicle').textContent=vehicle||'Not entered';
+    el('p-plate').textContent=[el('license-plate').value.trim().toUpperCase(),el('plate-state').value.trim().toUpperCase()].filter(Boolean).join(' · ')||'Not entered';
     el('p-vin').textContent=value('vin','Not entered');
     el('p-door-tag').textContent=fileLabel();
     el('p-parts').textContent=parts();
@@ -182,7 +189,7 @@
     el('p-details').textContent=value('details','Not entered');
   }
 
-  function draft(){return {service:el('service').value,name:el('name').value.trim(),email:el('email').value.trim().toLowerCase(),phone:el('phone').value.trim(),vin:el('vin').value.trim().toUpperCase(),vehicleYear:el('vehicle-year').value.trim(),vehicleMake:el('vehicle-make').value.trim(),vehicleModel:el('vehicle-model').value.trim(),vehicleTrim:el('vehicle-trim').value.trim(),vehicleEngine:el('vehicle-engine').value.trim(),mileage:el('mileage').value.trim(),address:el('address').value.trim(),parts:parts(),details:el('details').value.trim(),calendarTitle:el('preview-title').textContent,updatedAt:new Date().toISOString()}}
+  function draft(){return {service:el('service').value,name:el('name').value.trim(),email:el('email').value.trim().toLowerCase(),phone:el('phone').value.trim(),vin:el('vin').value.trim().toUpperCase(),licensePlate:el('license-plate').value.trim().toUpperCase(),plateState:el('plate-state').value.trim().toUpperCase(),vehicleYear:el('vehicle-year').value.trim(),vehicleMake:el('vehicle-make').value.trim(),vehicleModel:el('vehicle-model').value.trim(),vehicleTrim:el('vehicle-trim').value.trim(),vehicleEngine:el('vehicle-engine').value.trim(),mileage:el('mileage').value.trim(),address:el('address').value.trim(),parts:parts(),details:el('details').value.trim(),calendarTitle:el('preview-title').textContent,updatedAt:new Date().toISOString()}}
 
   function setStatus(text,kind){
     el('status').textContent=text;
@@ -202,8 +209,10 @@
       if(!el(id).value.trim()){setStatus('Please enter the '+label+' before planning the appointment.','error');el(id).focus();return false}
     }
     if(!el('email').checkValidity()){setStatus('Please enter a valid email address.','error');el('email').focus();return false}
-    for(const [id,label] of [['vin','VIN'],['vehicle-year','vehicle year'],['vehicle-make','vehicle make'],['vehicle-model','vehicle model']]){if(!el(id).value.trim()){setStatus('Please enter the '+label+' so parts can be checked before confirmation.','error');el(id).focus();return false}}
-    if(!/^[A-HJ-NPR-Z0-9]{17}$/i.test(el('vin').value.trim())){setStatus('Please enter a valid 17-character VIN.','error');el('vin').focus();return false}
+    for(const [id,label] of [['vehicle-year','vehicle year'],['vehicle-make','vehicle make'],['vehicle-model','vehicle model']]){if(!el(id).value.trim()){setStatus('Please enter the '+label+' so parts can be checked before confirmation.','error');el(id).focus();return false}}
+    if(el('vin').value.trim()&&!/^[A-HJ-NPR-Z0-9]{17}$/i.test(el('vin').value.trim())){setStatus('The VIN should be 17 characters, or leave it blank.','error');el('vin').focus();return false}
+    if(!el('license-plate').value.trim()&&!el('vehicle-engine').value.trim()){setStatus('Please enter either the license plate or the engine size so parts can be checked.','error');el('license-plate').focus();return false}
+    if(el('license-plate').value.trim()&&!/^[A-Z]{2}$/i.test(el('plate-state').value.trim())){setStatus('Please enter the two-letter plate state.','error');el('plate-state').focus();return false}
     return validateDoorTag();
   }
 
@@ -228,7 +237,7 @@
     }
 
     const vehicle=[d.vehicleYear,d.vehicleMake,d.vehicleModel,d.vehicleTrim].filter(Boolean).join(' ');
-    const payload={id:bookingId,shop_id:SHOP_ID,service_type:d.service,customer_name:d.name,customer_email:d.email,phone:d.phone||null,vehicle:vehicle,vehicle_year:Number(d.vehicleYear),vehicle_make:d.vehicleMake,vehicle_model:d.vehicleModel,vehicle_trim:d.vehicleTrim||null,vehicle_engine:d.vehicleEngine||null,vin:d.vin,mileage:d.mileage?Number(d.mileage):null,service_address:d.address||null,customer_supplied_parts:d.parts,details:d.details||null,calendar_title:d.calendarTitle,status:'pending',matched_event_id:null,source:'website',door_tag_photo_path:photoPath,door_tag_review_status:photoPath?'pending_review':'not_provided'};
+    const payload={id:bookingId,shop_id:SHOP_ID,service_type:d.service,customer_name:d.name,customer_email:d.email,phone:d.phone||null,vehicle:vehicle,vehicle_year:Number(d.vehicleYear),vehicle_make:d.vehicleMake,vehicle_model:d.vehicleModel,vehicle_trim:d.vehicleTrim||null,vehicle_engine:d.vehicleEngine||null,vin:d.vin||null,license_plate:d.licensePlate||null,plate_state:d.licensePlate?(d.plateState||'WA'):null,mileage:d.mileage?Number(d.mileage):null,service_address:d.address||null,customer_supplied_parts:d.parts,details:d.details||null,calendar_title:d.calendarTitle,status:'pending',matched_event_id:null,source:'website',door_tag_photo_path:photoPath,door_tag_review_status:photoPath?'pending_review':'not_provided'};
     const response=await fetch(SCHEDULER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({action:'intake',intakeId:bookingId,email:d.email,intake:payload})});
     let saved={};try{saved=await response.json()}catch(e){}
     if(!response.ok||saved.ok===false) throw new Error(saved.error||'Unable to save booking details.');
