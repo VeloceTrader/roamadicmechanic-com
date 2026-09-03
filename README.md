@@ -18,12 +18,9 @@ Static site for roamadicmechanic.com. No build step — plain HTML/CSS/JS, ready
 
 Everything on the page is in `index.html` — service cards, hours, phone number, gallery captions. Open it in any text editor, change the text between the tags, save, and re-upload (or `git push` if using the command line).
 
-The booking link used throughout is the Google Calendar appointment page:
-`https://calendar.app.google/qG533FuFE7YUvCbU6`
-
-(A Housecall Pro booking link was trialled here and has been reverted. Google
-Calendar has no post-booking redirect, which is why `thank-you.html` is not
-linked from anywhere.)
+Every public booking button opens `/schedule/`, Roamadic Mechanic's own intake
+and scheduling flow. Availability and confirmed appointments are synchronized
+with the business calendar by the private booking bridge.
 
 ## Deploying
 
