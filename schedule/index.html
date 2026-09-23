@@ -161,7 +161,7 @@
   const doorTagFile=()=>((el('door-tag').files||[])[0]||null);
   const shortService=v=>({'Diagnostic / Check Engine Light':'Diagnostic','Oil Change / Maintenance':'Oil Change','Brake Service':'Brake Service','Spark Plug / Tune-Up Service':'Spark Plug Service','Battery / Charging System':'Battery / Charging','Cooling System':'Cooling System','Steering / Suspension':'Steering / Suspension','Pre-Purchase Inspection':'Pre-Purchase Inspection','General Repair / Other':'General Repair'}[v]||'Service');
   const value=(id,fallback)=>el(id).value.trim()||fallback;
-  const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+  let sb=null; function supabaseClient(){if(!window.supabase)throw new Error('Photo upload service did not load. Remove the photo and try again.');return sb||(sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}));}
   let activeIntake=null;
   let activePlan=null;
   let preferredStart=null;
@@ -226,13 +226,13 @@
     if(activeIntake) return activeIntake;
     const d=draft();
     localStorage.setItem('roamadicBookingDraft',JSON.stringify(d));
-    const bookingId=crypto.randomUUID();
+    const bookingId=(crypto.randomUUID?crypto.randomUUID():('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(ch){const r=crypto.getRandomValues(new Uint8Array(1))[0]&15,v=ch==='x'?r:(r&3|8);return v.toString(16)})));
     const f=doorTagFile();
     let photoPath=null;
 
     if(f){
       photoPath=SHOP_ID+'/door-tags/'+bookingId+'/door-tag.'+MIME_EXT[f.type];
-      const upload=await sb.storage.from('booking-intake').upload(photoPath,f,{contentType:f.type,upsert:false});
+      const upload=await supabaseClient().storage.from('booking-intake').upload(photoPath,f,{contentType:f.type,upsert:false});
       if(upload.error) throw new Error('Door-label photo upload failed: '+upload.error.message);
     }
 
@@ -371,7 +371,7 @@
       await loadSlots();
     }catch(error){
       this.disabled=false;
-      setStatus('The service request could not be completed. Check the connection and try again.','error');
+      setStatus(error&&error.message?error.message:'The service request could not be completed. Check the connection and try again.','error');
     }
   });
   el('request-times').addEventListener('click',requestTimes);
