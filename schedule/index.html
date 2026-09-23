@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Schedule Service | Roamadic Mechanic</title>
-<meta name="description" content="Tell Roamadic Mechanic what your vehicle needs. The system plans the job length and finds an appointment block that fits.">
+<meta name="description" content="Book one or several vehicles for mobile auto repair with Roamadic Mechanic.">
 <link rel="canonical" href="https://roamadicmechanic.com/schedule/">
 <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
@@ -12,376 +12,166 @@
 <meta name="theme-color" content="#13213c">
 <link rel="stylesheet" href="/assets/css/style.css">
 <style>
-.booking-wrap{max-width:780px;margin:0 auto;padding:36px 20px 64px}.booking-card{background:#fff;border:1px solid #d9dee7;border-radius:18px;padding:22px;margin:0 0 18px;box-shadow:0 12px 36px rgba(19,33,60,.08)}.booking-card h1,.booking-card h2{color:#13213c;margin-top:0}.booking-step{font-size:.75rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#c9983e;margin-bottom:6px}.booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.booking-grid.three{grid-template-columns:repeat(3,1fr)}.booking-field{margin-bottom:14px}.booking-field label{display:block;font-weight:750;color:#13213c;margin-bottom:6px;font-size:.9rem}.booking-field input,.booking-field select,.booking-field textarea{width:100%;padding:12px;border:1px solid #ccd3dd;border-radius:10px;background:#f7f8fa;color:#1d2738;font:inherit}.booking-field textarea{min-height:100px;resize:vertical}.parts-row{display:flex;gap:10px;flex-wrap:wrap}.parts-row label{display:flex;align-items:center;gap:6px;border:1px solid #ccd3dd;border-radius:10px;padding:9px 12px;background:#f7f8fa;font-weight:650}.appointment-preview{background:#13213c;color:#fff;border-radius:14px;padding:18px}.appointment-preview .preview-label,.plan-box .preview-label{font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#e0b861}.appointment-preview .preview-title{font-size:1.2rem;font-weight:850;line-height:1.35;margin:7px 0 14px}.appointment-preview dl{display:grid;grid-template-columns:90px 1fr;gap:7px 10px;margin:0}.appointment-preview dt{color:#bdc8d9}.appointment-preview dd{margin:0;font-weight:650;overflow-wrap:anywhere}.booking-note,.booking-status{font-size:.9rem;line-height:1.5;color:#5d6877}.booking-status{background:#f5f1e7;border-radius:10px;padding:11px 13px;margin-top:12px;color:#6b572e}.booking-status.success{background:#edf6ee;color:#2f6037}.booking-status.error{background:#faeeee;color:#7c3434}.booking-actions{display:grid;gap:10px;margin-top:16px}.booking-actions .btn{width:100%;text-align:center}.booking-actions button.btn{border:0;cursor:pointer}.booking-actions button.btn:disabled{opacity:.55;cursor:wait}.back-link{display:inline-block;margin-bottom:16px;color:#13213c;font-weight:700;text-decoration:none}.back-link:hover{text-decoration:underline}.door-tag-box{border:1px dashed #b8c1cf;border-radius:12px;padding:14px;background:#fbfcfd}.door-tag-box input[type=file]{background:#fff}.door-tag-status{margin-top:8px;font-size:.86rem;color:#5d6877}.optional{font-weight:600;color:#6d7785}.plan-box{display:none;margin-top:16px;background:#13213c;color:#fff;border-radius:14px;padding:18px}.plan-box.show{display:block}.plan-duration{font-size:1.65rem;font-weight:850;margin:5px 0}.plan-reason{color:#d9e0ea;line-height:1.45}.times-card{display:none}.times-card.show{display:block}.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.slot-btn{border:1px solid #c7ced9;background:#f8f9fb;color:#13213c;border-radius:11px;padding:12px 10px;font:inherit;font-weight:750;cursor:pointer;text-align:center}.slot-btn:hover{border-color:#c9983e;background:#fffaf0}.slot-btn.preferred{border:2px solid #13213c;background:#eef2f7}.slot-btn.backup{border:2px solid #c9983e;background:#fff7e8}.slot-btn:disabled{opacity:.5}.choice-summary{margin-top:14px;padding:12px;border:1px solid #d9dee7;border-radius:11px;line-height:1.7}.fallback-link{display:inline-block;margin-top:10px;font-weight:750}.confirmation{display:none}.confirmation.show{display:block}.confirmation strong{color:#13213c}.hidden{display:none!important}@media(max-width:620px){.booking-grid,.booking-grid.three,.slots{grid-template-columns:1fr}.booking-wrap{padding:24px 14px 48px}.booking-card{padding:17px}.appointment-preview dl{grid-template-columns:76px 1fr}}
+.booking-wrap{max-width:780px;margin:0 auto;padding:36px 20px 64px}.booking-card{background:#fff;border:1px solid #d9dee7;border-radius:18px;padding:22px;margin:0 0 18px;box-shadow:0 12px 36px rgba(19,33,60,.08)}.booking-card h1,.booking-card h2,.booking-card h3{color:#13213c;margin-top:0}.booking-step{font-size:.75rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#a8751f;margin-bottom:6px}.booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.booking-grid.three{grid-template-columns:repeat(3,1fr)}.booking-field{margin-bottom:14px}.booking-field label{display:block;font-weight:750;color:#13213c;margin-bottom:6px;font-size:.9rem}.booking-field input,.booking-field select,.booking-field textarea{width:100%;padding:12px;border:1px solid #ccd3dd;border-radius:10px;background:#f7f8fa;color:#1d2738;font:inherit}.booking-field textarea{min-height:90px;resize:vertical}.booking-note,.booking-status{font-size:.9rem;line-height:1.5;color:#5d6877}.booking-status{background:#f5f1e7;border-radius:10px;padding:11px 13px;margin-top:12px;color:#6b572e}.booking-status.success{background:#edf6ee;color:#2f6037}.booking-status.error{background:#faeeee;color:#7c3434}.booking-actions{display:grid;gap:10px;margin-top:16px}.booking-actions .btn{width:100%;text-align:center}.booking-actions button.btn{border:0;cursor:pointer}.booking-actions button.btn:disabled{opacity:.55;cursor:wait}.back-link{display:inline-block;margin-bottom:16px;color:#13213c;font-weight:700;text-decoration:none}.vehicle-card{border:1px solid #cfd6e1;border-radius:15px;padding:18px;margin:16px 0;background:#fbfcfd}.vehicle-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.vehicle-head h3{margin:0}.remove-vehicle{border:0;background:transparent;color:#8a3d3d;font:inherit;font-weight:750;cursor:pointer}.photo-box{border:2px solid #d8b46e;border-radius:12px;padding:14px;background:#fffaf0}.photo-box input[type=file]{background:#fff}.photo-status{margin-top:8px;font-size:.86rem;color:#5d6877}.preferred{display:inline-block;background:#13213c;color:#fff;border-radius:999px;padding:2px 8px;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.optional-details{border-top:1px solid #d9dee7;margin-top:12px;padding-top:12px}.optional-details summary{cursor:pointer;color:#13213c;font-weight:800;padding:6px 0}.optional-details[open] summary{margin-bottom:12px}.parts-row{display:flex;gap:10px;flex-wrap:wrap}.parts-row label{display:flex;align-items:center;gap:6px;border:1px solid #ccd3dd;border-radius:10px;padding:9px 12px;background:#f7f8fa;font-weight:650}.address-check{display:grid;gap:9px;margin-top:9px}.address-check button{border:1px solid #9ca9ba;background:#fff;color:#13213c;border-radius:9px;padding:9px 11px;font:inherit;font-weight:750;cursor:pointer}.address-check label{display:flex;align-items:flex-start;gap:8px;color:#334158;font-size:.88rem;font-weight:650}.address-check input{width:auto;margin-top:3px}.add-vehicle{background:#fff;border:2px dashed #9ca9ba;color:#13213c;border-radius:12px;padding:12px;font:inherit;font-weight:800;cursor:pointer;width:100%}.appointment-preview,.plan-box{background:#13213c;color:#fff;border-radius:14px;padding:18px}.preview-label{font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#e0b861}.preview-title{font-size:1.2rem;font-weight:850;line-height:1.35;margin:7px 0 12px}.preview-list{margin:0;padding-left:20px;line-height:1.6}.plan-box{display:none;margin-top:16px}.plan-box.show{display:block}.plan-duration{font-size:1.65rem;font-weight:850;margin:5px 0}.times-card,.confirmation{display:none}.times-card.show,.confirmation.show{display:block}.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.slot-btn{border:1px solid #c7ced9;background:#f8f9fb;color:#13213c;border-radius:11px;padding:12px 10px;font:inherit;font-weight:750;cursor:pointer}.slot-btn.preferred-slot{border:2px solid #13213c;background:#eef2f7}.slot-btn.backup-slot{border:2px solid #c9983e;background:#fff7e8}.choice-summary{margin-top:14px;padding:12px;border:1px solid #d9dee7;border-radius:11px;line-height:1.7}.hidden{display:none!important}@media(max-width:620px){.booking-grid,.booking-grid.three,.slots{grid-template-columns:1fr}.booking-wrap{padding:24px 14px 48px}.booking-card,.vehicle-card{padding:17px}.vehicle-head{align-items:flex-start}}
 </style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container">
-    <a href="/" class="brand">
-      <img src="/assets/img/logo.png" alt="Roamadic Mechanic logo" width="44" height="44">
-      <span class="brand-text"><span class="brand-name">Roamadic Mechanic</span><br><span class="brand-tagline">Mobile Auto Repair &middot; San Juan County, WA</span></span>
-    </a>
-    <div class="header-actions"><a class="btn btn-outline-light" href="tel:+13607391884">Call (360) 739-1884</a></div>
-  </div>
-</header>
-
+<header class="site-header"><div class="container"><a href="/" class="brand"><img src="/assets/img/logo.png" alt="Roamadic Mechanic logo" width="44" height="44"><span class="brand-text"><span class="brand-name">Roamadic Mechanic</span><br><span class="brand-tagline">Mobile Auto Repair &middot; San Juan County, WA</span></span></a><div class="header-actions"><a class="btn btn-outline-light" href="tel:+13607391884">Call (360) 739-1884</a></div></div></header>
 <main class="booking-wrap">
-  <a class="back-link" href="/">&larr; Back to Roamadic Mechanic</a>
-
-  <section class="booking-card" id="intake-card">
-    <div class="booking-step">Step 1</div>
-    <h1>Tell me what the vehicle needs</h1>
-    <p class="booking-note">The job details are used to plan a realistic appointment length first. You will only be offered times where that whole block fits.</p>
-
-    <div class="booking-field">
-      <label for="service">Service / job type</label>
-      <select id="service" required>
-        <option value="">Select service&hellip;</option>
-        <option>Diagnostic / Check Engine Light</option>
-        <option>Oil Change / Maintenance</option>
-        <option>Brake Service</option>
-        <option>Spark Plug / Tune-Up Service</option>
-        <option>Battery / Charging System</option>
-        <option>Cooling System</option>
-        <option>Steering / Suspension</option>
-        <option>Pre-Purchase Inspection</option>
-        <option>General Repair / Other</option>
-      </select>
-    </div>
-
-    <div class="booking-grid">
-      <div class="booking-field"><label for="name">Name</label><input id="name" autocomplete="name" placeholder="Customer name"></div>
-      <div class="booking-field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
-    </div>
-    <div class="booking-grid">
-      <div class="booking-field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel" placeholder="(360) 555-1234"></div>
-      <div class="booking-field"><label for="vin">VIN <span class="optional">(optional)</span></label><input id="vin" maxlength="17" autocomplete="off" placeholder="17-character VIN, if handy"></div>
-    </div>
-    <div class="booking-grid three">
-      <div class="booking-field"><label for="vehicle-year">Year</label><input id="vehicle-year" inputmode="numeric" maxlength="4" placeholder="2012"></div>
-      <div class="booking-field"><label for="vehicle-make">Make</label><input id="vehicle-make" placeholder="Ford"></div>
-      <div class="booking-field"><label for="vehicle-model">Model</label><input id="vehicle-model" placeholder="F-150"></div>
-    </div>
-    <div class="booking-grid three">
-      <div class="booking-field"><label for="vehicle-trim">Trim <span class="optional">(optional)</span></label><input id="vehicle-trim" placeholder="XLT"></div>
-      <div class="booking-field"><label for="vehicle-engine">Engine size</label><input id="vehicle-engine" placeholder="3.5L V6"></div>
-      <div class="booking-field"><label for="mileage">Mileage <span class="optional">(optional)</span></label><input id="mileage" inputmode="numeric" placeholder="125000"></div>
-    </div>
-    <div class="booking-grid">
-      <div class="booking-field"><label for="license-plate">License plate</label><input id="license-plate" maxlength="12" autocomplete="off" placeholder="ABC1234" style="text-transform:uppercase"></div>
-      <div class="booking-field"><label for="plate-state">Plate state</label><input id="plate-state" maxlength="2" value="WA" autocomplete="off" style="text-transform:uppercase"></div>
-    </div>
-    <p class="booking-note">Enter either the license plate and state or the engine size. VIN is optional.</p>
-
-    <div class="booking-field door-tag-box">
-      <label for="door-tag">Driver-door vehicle label photo <span class="optional">(optional)</span></label>
-      <input id="door-tag" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif">
-      <p class="booking-note">Choose an existing photo or take a new one. A clear manufacturer / tire-information label photo is stored privately with this request and follows the ticket. It can help verify VIN/build information, tire size and recommended tire pressures.</p>
-      <div class="door-tag-status" id="door-tag-status">No photo selected. You can type the vehicle above instead.</div>
-    </div>
-
-    <div class="booking-field"><label for="address">Service address / vehicle location</label><input id="address" autocomplete="street-address" placeholder="Street address / vehicle location"></div>
-    <div class="booking-field">
-      <label>Customer-supplied parts?</label>
-      <div class="parts-row">
-        <label><input type="radio" name="parts" value="No" checked> No</label>
-        <label><input type="radio" name="parts" value="Yes"> Yes</label>
-        <label><input type="radio" name="parts" value="Not sure"> Not sure</label>
-      </div>
-    </div>
-    <div class="booking-field"><label for="details">What needs to be done / symptoms</label><textarea id="details" placeholder="Example: Front brake pads and rotors. Grinding from the right front."></textarea></div>
-  </section>
-
-  <section class="booking-card" id="review-card">
-    <div class="booking-step">Step 2</div>
-    <h2>Review &amp; plan the appointment</h2>
-    <div class="appointment-preview" aria-live="polite">
-      <div class="preview-label">What Roamadic Mechanic will see</div>
-      <div class="preview-title" id="preview-title">Service &mdash; Customer &mdash; Vehicle</div>
-      <dl>
-        <dt>Service</dt><dd id="p-service">Not selected</dd>
-        <dt>Customer</dt><dd id="p-name">Not entered</dd>
-        <dt>Email</dt><dd id="p-email">Not entered</dd>
-        <dt>Vehicle</dt><dd id="p-vehicle">Not entered</dd>
-        <dt>Plate</dt><dd id="p-plate">Not entered</dd>
-        <dt>VIN</dt><dd id="p-vin">Not entered</dd>
-        <dt>Door tag</dt><dd id="p-door-tag">Not provided</dd>
-        <dt>Parts</dt><dd id="p-parts">No</dd>
-        <dt>Address</dt><dd id="p-address">Not entered</dd>
-        <dt>Details</dt><dd id="p-details">Not entered</dd>
-      </dl>
-    </div>
-
-    <div class="plan-box" id="plan-box" aria-live="polite">
-      <div class="preview-label">Planned appointment block</div>
-      <div class="plan-duration" id="plan-duration">&mdash;</div>
-      <div class="plan-reason" id="plan-reason"></div>
-    </div>
-
-    <div class="booking-actions">
-      <button class="btn btn-primary" id="plan" type="button">Plan Appointment &amp; Find Times</button>
-    </div>
-    <div class="booking-status" id="status">Complete the service, name, email, and vehicle information above to continue.</div>
-  </section>
-
-  <section class="booking-card times-card" id="times-card">
-    <div class="booking-step">Step 3</div>
-    <h2>Choose preferred and backup times</h2>
-    <p class="booking-note" id="times-note">Choose two different times. Your preferred time is held for up to one hour while vehicle and parts availability are reviewed. Only one appointment will be confirmed.</p>
-    <div class="slots" id="slots"></div>
-    <div class="choice-summary" id="choice-summary"><strong>Preferred:</strong> Not selected<br><strong>Backup:</strong> Not selected</div>
-    <div class="booking-actions"><button class="btn btn-primary" id="request-times" type="button" disabled>Request These Times</button></div>
-    <div class="booking-status" id="times-status"></div>
-  </section>
-
-  <section class="booking-card confirmation" id="confirmation">
-    <div class="booking-step">Request received</div>
-    <h2>Your preferred time is temporarily held</h2>
-    <p id="confirmation-text"></p>
-    <p class="booking-note">The service details and any door-label photo remain attached to the booking and follow the job ticket.</p>
-  </section>
+<a class="back-link" href="/">&larr; Back to Roamadic Mechanic</a>
+<section class="booking-card" id="intake-card">
+<div class="booking-step">Step 1</div>
+<h1>Tell me about the visit</h1>
+<p class="booking-note">Enter your contact information once, then add every vehicle or piece of equipment you want handled during the same visit.</p>
+<div class="booking-grid"><div class="booking-field"><label for="name">Name</label><input id="name" autocomplete="name"></div><div class="booking-field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div></div>
+<div class="booking-grid"><div class="booking-field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel"></div><div class="booking-field"><label for="address">Service location</label><input id="address" autocomplete="street-address"><div class="address-check"><button type="button" id="check-address">Check address in Maps</button><label><input type="checkbox" id="address-confirmed"> This is the correct service location</label></div></div></div>
+<div id="vehicles"></div>
+<button class="add-vehicle" id="add-vehicle" type="button">+ Add another vehicle or equipment</button>
+</section>
+<section class="booking-card" id="review-card">
+<div class="booking-step">Step 2</div><h2>Review &amp; plan the appointment</h2>
+<div class="appointment-preview" aria-live="polite"><div class="preview-label">What Roamadic Mechanic will see</div><div class="preview-title" id="preview-title">Customer — 1 vehicle</div><ul class="preview-list" id="preview-list"></ul></div>
+<div class="plan-box" id="plan-box" aria-live="polite"><div class="preview-label">Combined appointment block</div><div class="plan-duration" id="plan-duration">&mdash;</div><div id="plan-reason"></div></div>
+<div class="booking-actions"><button class="btn btn-primary" id="plan" type="button">Plan Visit &amp; Find Times</button></div>
+<div class="booking-status" id="status">Add the customer and first vehicle to continue.</div>
+</section>
+<section class="booking-card times-card" id="times-card"><div class="booking-step">Step 3</div><h2>Choose preferred and backup times</h2><p class="booking-note">Each option fits the combined service time for every item above. Only one appointment will be confirmed.</p><div class="slots" id="slots"></div><div class="choice-summary" id="choice-summary"><strong>Preferred:</strong> Not selected<br><strong>Backup:</strong> Not selected</div><div class="booking-actions"><button class="btn btn-primary" id="request-times" type="button" disabled>Request These Times</button></div><div class="booking-status" id="times-status"></div></section>
+<section class="booking-card confirmation" id="confirmation"><div class="booking-step">Request received</div><h2>Your preferred time is temporarily held</h2><p id="confirmation-text"></p><p class="booking-note">Each item will receive its own service ticket under this visit.</p></section>
 </main>
-
 <footer class="site-footer"><p>&copy; <span id="year">2026</span> Roamadic Mechanic &middot; Friday Harbor, WA &middot; Mobile Auto Repair</p></footer>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
 <script>
 (function(){
-  const LEGACY_PPI_URL='https://calendar.app.google/qG533FuFE7YUvCbU6';
-  const SUPABASE_URL='https://rnozbhxadrpkaxggjlks.supabase.co';
-  const SUPABASE_KEY='sb_publishable_lP6zq23Nqj22NAfQs0bMew_4cXvmtYS';
-  const SHOP_ID='c07e3d0e-0c7a-436c-97fc-cb8ccb0afa73';
-  const SCHEDULER_URL=SUPABASE_URL+'/functions/v1/booking-scheduler';
-  const MAX_DOOR_TAG_BYTES=10*1024*1024;
-  const MIME_EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/heic':'heic','image/heif':'heif'};
-  const ids=['service','name','email','phone','vin','license-plate','plate-state','vehicle-year','vehicle-make','vehicle-model','vehicle-trim','vehicle-engine','mileage','address','details'];
-  const el=id=>document.getElementById(id);
-  const parts=()=>((document.querySelector('input[name="parts"]:checked')||{}).value||'No');
-  const doorTagFile=()=>((el('door-tag').files||[])[0]||null);
-  const shortService=v=>({'Diagnostic / Check Engine Light':'Diagnostic','Oil Change / Maintenance':'Oil Change','Brake Service':'Brake Service','Spark Plug / Tune-Up Service':'Spark Plug Service','Battery / Charging System':'Battery / Charging','Cooling System':'Cooling System','Steering / Suspension':'Steering / Suspension','Pre-Purchase Inspection':'Pre-Purchase Inspection','General Repair / Other':'General Repair'}[v]||'Service');
-  const value=(id,fallback)=>el(id).value.trim()||fallback;
-  let sb=null; function supabaseClient(){if(!window.supabase)throw new Error('Photo upload service did not load. Remove the photo and try again.');return sb||(sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}));}
-  let activeIntake=null;
-  let activePlan=null;
-  let preferredStart=null;
-  let backupStart=null;
+const SUPABASE_URL='https://rnozbhxadrpkaxggjlks.supabase.co';
+const SUPABASE_KEY='sb_publishable_lP6zq23Nqj22NAfQs0bMew_4cXvmtYS';
+const SHOP_ID='c07e3d0e-0c7a-436c-97fc-cb8ccb0afa73';
+const SCHEDULER_URL=SUPABASE_URL+'/functions/v1/booking-scheduler-v2';
+const MAX_PHOTO_BYTES=10*1024*1024;
+const MIME_EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/heic':'heic','image/heif':'heif'};
+const services=['Diagnostic / Check Engine Light','Oil Change / Maintenance','Brake Service','Spark Plug / Tune-Up Service','Battery / Charging System','Cooling System','Steering / Suspension','Pre-Purchase Inspection','General Repair / Other'];
+const el=function(id){return document.getElementById(id)};
+let sb=null; function supabaseClient(){if(!window.supabase)throw new Error('Photo upload service did not load. Remove the photo and try again.');return sb||(sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}));}
+const tagParams=new URLSearchParams(location.search);
+const tagKind=tagParams.get('kind')==='equipment'?'equipment':'vehicle';
+const tagToken=tagParams.get('token')||'';
+let tagLoading=!!tagToken;
+let vehicleSeq=0,activeIntake=null,activePlan=null,preferredStart=null,backupStart=null;
 
-  function fileLabel(){
-    const f=doorTagFile();
-    if(!f) return 'Not provided';
-    return f.name+' ('+(f.size/1024/1024).toFixed(1)+' MB)';
-  }
-
-  function render(){
-    const vehicle=[el('vehicle-year').value.trim(),el('vehicle-make').value.trim(),el('vehicle-model').value.trim(),el('vehicle-trim').value.trim()].filter(Boolean).join(' ');
-    const vehicleFallback=doorTagFile()?'Vehicle from door label':'Vehicle';
-    el('preview-title').textContent=shortService(el('service').value)+' — '+value('name','Customer')+' — '+(vehicle||vehicleFallback);
-    el('p-service').textContent=value('service','Not selected');
-    el('p-name').textContent=value('name','Not entered');
-    el('p-email').textContent=value('email','Not entered');
-    el('p-vehicle').textContent=vehicle||'Not entered';
-    el('p-plate').textContent=[el('license-plate').value.trim().toUpperCase(),el('plate-state').value.trim().toUpperCase()].filter(Boolean).join(' · ')||'Not entered';
-    el('p-vin').textContent=value('vin','Not entered');
-    el('p-door-tag').textContent=fileLabel();
-    el('p-parts').textContent=parts();
-    el('p-address').textContent=value('address','Not entered');
-    el('p-details').textContent=value('details','Not entered');
-  }
-
-  function draft(){return {service:el('service').value,name:el('name').value.trim(),email:el('email').value.trim().toLowerCase(),phone:el('phone').value.trim(),vin:el('vin').value.trim().toUpperCase(),licensePlate:el('license-plate').value.trim().toUpperCase(),plateState:el('plate-state').value.trim().toUpperCase(),vehicleYear:el('vehicle-year').value.trim(),vehicleMake:el('vehicle-make').value.trim(),vehicleModel:el('vehicle-model').value.trim(),vehicleTrim:el('vehicle-trim').value.trim(),vehicleEngine:el('vehicle-engine').value.trim(),mileage:el('mileage').value.trim(),address:el('address').value.trim(),parts:parts(),details:el('details').value.trim(),calendarTitle:el('preview-title').textContent,updatedAt:new Date().toISOString()}}
-
-  function setStatus(text,kind){
-    el('status').textContent=text;
-    el('status').className='booking-status'+(kind?' '+kind:'');
-  }
-
-  function validateDoorTag(){
-    const f=doorTagFile();
-    if(!f) return true;
-    if(f.size>MAX_DOOR_TAG_BYTES){setStatus('The door-label photo must be 10 MB or smaller.','error');return false}
-    if(!MIME_EXT[f.type]){setStatus('Please use a JPG, PNG, WebP, HEIC, or HEIF photo for the door label.','error');return false}
-    return true;
-  }
-
-  function validate(){
-    for(const [id,label] of [['service','service'],['name','name'],['email','email']]){
-      if(!el(id).value.trim()){setStatus('Please enter the '+label+' before planning the appointment.','error');el(id).focus();return false}
-    }
-    if(!el('email').checkValidity()){setStatus('Please enter a valid email address.','error');el('email').focus();return false}
-    for(const [id,label] of [['vehicle-year','vehicle year'],['vehicle-make','vehicle make'],['vehicle-model','vehicle model']]){if(!el(id).value.trim()){setStatus('Please enter the '+label+' so parts can be checked before confirmation.','error');el(id).focus();return false}}
-    if(el('vin').value.trim()&&!/^[A-HJ-NPR-Z0-9]{17}$/i.test(el('vin').value.trim())){setStatus('The VIN should be 17 characters, or leave it blank.','error');el('vin').focus();return false}
-    if(!el('license-plate').value.trim()&&!el('vehicle-engine').value.trim()){setStatus('Please enter either the license plate or the engine size so parts can be checked.','error');el('license-plate').focus();return false}
-    if(el('license-plate').value.trim()&&!/^[A-Z]{2}$/i.test(el('plate-state').value.trim())){setStatus('Please enter the two-letter plate state.','error');el('plate-state').focus();return false}
-    return validateDoorTag();
-  }
-
-  function lockForm(){
-    ids.forEach(id=>el(id).disabled=true);
-    el('door-tag').disabled=true;
-    document.querySelectorAll('input[name="parts"]').forEach(x=>x.disabled=true);
-  }
-
-  async function saveIntake(){
-    if(activeIntake) return activeIntake;
-    const d=draft();
-    localStorage.setItem('roamadicBookingDraft',JSON.stringify(d));
-    const bookingId=(crypto.randomUUID?crypto.randomUUID():('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(ch){const r=crypto.getRandomValues(new Uint8Array(1))[0]&15,v=ch==='x'?r:(r&3|8);return v.toString(16)})));
-    const f=doorTagFile();
-    let photoPath=null;
-
-    if(f){
-      photoPath=SHOP_ID+'/door-tags/'+bookingId+'/door-tag.'+MIME_EXT[f.type];
-      const upload=await supabaseClient().storage.from('booking-intake').upload(photoPath,f,{contentType:f.type,upsert:false});
-      if(upload.error) throw new Error('Door-label photo upload failed: '+upload.error.message);
-    }
-
-    const vehicle=[d.vehicleYear,d.vehicleMake,d.vehicleModel,d.vehicleTrim].filter(Boolean).join(' ');
-    const payload={id:bookingId,shop_id:SHOP_ID,service_type:d.service,customer_name:d.name,customer_email:d.email,phone:d.phone||null,vehicle:vehicle,vehicle_year:Number(d.vehicleYear),vehicle_make:d.vehicleMake,vehicle_model:d.vehicleModel,vehicle_trim:d.vehicleTrim||null,vehicle_engine:d.vehicleEngine||null,vin:d.vin||null,license_plate:d.licensePlate||null,plate_state:d.licensePlate?(d.plateState||'WA'):null,mileage:d.mileage?Number(d.mileage):null,service_address:d.address||null,customer_supplied_parts:d.parts,details:d.details||null,calendar_title:d.calendarTitle,status:'pending',matched_event_id:null,source:'website',door_tag_photo_path:photoPath,door_tag_review_status:photoPath?'pending_review':'not_provided'};
-    const response=await fetch(SCHEDULER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({action:'intake',intakeId:bookingId,email:d.email,intake:payload})});
-    let saved={};try{saved=await response.json()}catch(e){}
-    if(!response.ok||saved.ok===false) throw new Error(saved.error||'Unable to save booking details.');
-    activeIntake={id:bookingId,email:d.email,service:d.service};
-    lockForm();
-    return activeIntake;
-  }
-
-  async function scheduler(action,extra){
-    const payload=Object.assign({action:action,intakeId:activeIntake.id,email:activeIntake.email},extra||{});
-    const response=await fetch(SCHEDULER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(payload)});
-    let data={};
-    try{data=await response.json()}catch(e){}
-    if(!response.ok||data.ok===false){const err=new Error(data.error||'Scheduling request failed');err.detail=data.detail;err.status=response.status;throw err}
-    return data;
-  }
-
-  function formatDuration(minutes){
-    const h=Math.floor(minutes/60),m=minutes%60;
-    if(h&&m) return h+' hr '+m+' min';
-    if(h) return h+(h===1?' hour':' hours');
-    return m+' minutes';
-  }
-
-  function showPlan(plan){
-    activePlan=plan;
-    el('plan-duration').textContent=formatDuration(plan.minutes);
-    el('plan-reason').textContent=plan.reason+(plan.confidence?' · planning confidence: '+plan.confidence:'');
-    el('plan-box').classList.add('show');
-  }
-
-  function formatSlot(iso){
-    return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date(iso));
-  }
-
-  function renderChoices(){
-    el('choice-summary').innerHTML='<strong>Preferred:</strong> '+(preferredStart?formatSlot(preferredStart):'Not selected')+'<br><strong>Backup:</strong> '+(backupStart?formatSlot(backupStart):'Not selected');
-    el('request-times').disabled=!(preferredStart&&backupStart);
-    document.querySelectorAll('.slot-btn').forEach(b=>{b.classList.toggle('preferred',b.dataset.start===preferredStart);b.classList.toggle('backup',b.dataset.start===backupStart)});
-  }
-
-  function chooseSlot(start){
-    if(start===preferredStart){preferredStart=null;if(backupStart){preferredStart=backupStart;backupStart=null}}
-    else if(start===backupStart){backupStart=null}
-    else if(!preferredStart){preferredStart=start}
-    else if(!backupStart){backupStart=start}
-    else{preferredStart=start;backupStart=null}
-    renderChoices();
-  }
-
-  async function loadSlots(){
-    el('times-card').classList.add('show');
-    el('times-status').textContent='Checking the calendar for blocks long enough for this job…';
-    el('slots').innerHTML='';
-    const data=await scheduler('slots');
-    if(data.plan) showPlan(data.plan);
-
-    if(data.needsReview){
-      el('times-note').textContent='This is a larger job that should be reviewed before a time is locked in.';
-      el('times-status').textContent=data.message||'Your service request is saved. Roamadic Mechanic will confirm the schedule.';
-      return;
-    }
-
-    if(data.calendarConnected===false){
-      el('times-note').textContent='The job duration is planned and your service request is saved.';
-      let html='The variable-duration calendar connection is being finished. You will not be forced into a 90-minute repair slot.';
-      if(activeIntake.service==='Pre-Purchase Inspection') html+=' <a class="fallback-link" href="'+LEGACY_PPI_URL+'" target="_blank" rel="noopener">Standard 90-minute inspection times are still available here.</a>';
-      el('times-status').innerHTML=html;
-      return;
-    }
-
-    const slots=data.slots||[];
-    if(!slots.length){
-      el('times-status').textContent='No open block large enough was found in the current scheduling window. Your request is saved; contact Roamadic Mechanic for another time.';
-      return;
-    }
-
-    preferredStart=null;backupStart=null;
-    el('times-status').textContent='Select your preferred time first, then a backup. Each option fits the full '+formatDuration(activePlan.minutes)+' service block.';
-    slots.slice(0,24).forEach(slot=>{
-      const b=document.createElement('button');
-      b.type='button';b.className='slot-btn';b.textContent=slot.label||formatSlot(slot.start);b.dataset.start=slot.start;
-      b.addEventListener('click',()=>chooseSlot(slot.start));
-      el('slots').appendChild(b);
-    });
-    renderChoices();
-  }
-
-  async function requestTimes(){
-    if(!preferredStart||!backupStart)return;
-    document.querySelectorAll('.slot-btn').forEach(x=>x.disabled=true);
-    el('request-times').disabled=true;el('request-times').textContent='Holding preferred time…';
-    try{
-      const data=await scheduler('request',{preferredStart:preferredStart,backupStart:backupStart});
-      const expires=new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date(data.holdExpiresAt));
-      el('confirmation-text').innerHTML='<strong>Preferred:</strong> '+formatSlot(data.preferredStart)+'<br><strong>Backup:</strong> '+formatSlot(data.backupStart)+'<br><br>Your preferred time is held until <strong>'+expires+'</strong> while Roamadic Mechanic verifies the vehicle and parts. You will receive confirmation of one appointment—not both.';
-      el('confirmation').classList.add('show');
-      el('times-card').classList.remove('show');
-      el('plan').disabled=true;
-      setStatus('Appointment request saved. Confirmation is pending vehicle and parts review.','success');
-      localStorage.removeItem('roamadicBookingDraft');
-      el('confirmation').scrollIntoView({behavior:'smooth',block:'start'});
-    }catch(error){
-      document.querySelectorAll('.slot-btn').forEach(x=>x.disabled=false);
-      el('request-times').disabled=false;el('request-times').textContent='Request These Times';
-      el('times-status').textContent=error.status===409?'One of those times is no longer available. Refreshing the choices…':'Your request is saved, but the time hold could not be completed. Please try again.';
-      if(error.status===409){try{await loadSlots()}catch(e){}}
-    }
-  }
-
-  ids.forEach(id=>{el(id).addEventListener('input',render);el(id).addEventListener('change',render)});
-  document.querySelectorAll('input[name="parts"]').forEach(x=>x.addEventListener('change',render));
-  el('door-tag').addEventListener('change',function(){
-    const f=doorTagFile();
-    if(!f){el('door-tag-status').textContent='No photo selected. You can type the vehicle above instead.';render();return}
-    if(f.size>MAX_DOOR_TAG_BYTES){el('door-tag-status').textContent='That photo is too large. Please choose one 10 MB or smaller.'}
-    else if(!MIME_EXT[f.type]){el('door-tag-status').textContent='Please choose a JPG, PNG, WebP, HEIC, or HEIF photo.'}
-    else{el('door-tag-status').textContent='Selected: '+fileLabel()+'. It will be stored privately with the service request and ticket.'}
-    render();
-  });
-
-  el('plan').addEventListener('click',async function(){
-    if(!validate()) return;
-    this.disabled=true;
-    setStatus('Saving the vehicle/job details and planning the appointment…');
-    try{
-      await saveIntake();
-      const planned=await scheduler('plan');
-      showPlan(planned.plan);
-      setStatus('Planned for '+formatDuration(planned.plan.minutes)+'. Checking for appointment blocks…','success');
-      await loadSlots();
-    }catch(error){
-      this.disabled=false;
-      setStatus(error&&error.message?error.message:'The service request could not be completed. Check the connection and try again.','error');
-    }
-  });
-  el('request-times').addEventListener('click',requestTimes);
-
-  try{
-    const d=JSON.parse(localStorage.getItem('roamadicBookingDraft')||'null');
-    if(d){const map={service:'service',name:'name',email:'email',phone:'phone',vin:'vin',vehicleYear:'vehicle-year',vehicleMake:'vehicle-make',vehicleModel:'vehicle-model',vehicleTrim:'vehicle-trim',vehicleEngine:'vehicle-engine',mileage:'mileage',address:'address',details:'details'};Object.keys(map).forEach(k=>{if(d[k]!=null)el(map[k]).value=d[k]});const r=[...document.querySelectorAll('input[name="parts"]')].find(x=>x.value===d.parts);if(r)r.checked=true}
-  }catch(e){}
-  document.getElementById('year').textContent=new Date().getFullYear();
+function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function serviceOptions(){return '<option value="">Select service…</option>'+services.map(function(s){return '<option>'+s+'</option>'}).join('')}
+function vehicleCard(){
+  vehicleSeq+=1;
+  const id=vehicleSeq;
+  const card=document.createElement('article');
+  card.className='vehicle-card';
+  card.dataset.vehicleId=String(id);
+  card.innerHTML='<div class="vehicle-head"><h3>Item <span class="vehicle-number"></span></h3><button type="button" class="remove-vehicle">Remove</button></div>'+
+  '<div class="booking-field"><label>Item type</label><select data-field="kind"><option value="vehicle">Vehicle</option><option value="equipment">Equipment</option></select></div><p class="booking-note tag-note hidden"></p><div class="booking-field"><label>Service / job type</label><select data-field="service">'+serviceOptions()+'</select></div>'+
+  '<div class="booking-grid three"><div class="booking-field"><label>Year</label><input data-field="year" inputmode="numeric" maxlength="4"></div><div class="booking-field"><label>Make</label><input data-field="make"></div><div class="booking-field"><label>Model</label><input data-field="model"></div></div>'+
+  '<div class="booking-field"><label>What needs to be done / symptoms</label><textarea data-field="details"></textarea></div>'+
+  '<div class="booking-field photo-box"><label>VIN or driver-door label photo <span class="preferred">Preferred</span></label><input data-field="photo" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment"><p class="booking-note">Helps identify the correct parts. Take a clear photo of the VIN plate or manufacturer label.</p><div class="photo-status">No photo selected. You can still submit without one.</div></div>'+
+  '<details class="optional-details"><summary>Add vehicle details (optional)</summary>'+
+  '<div class="booking-field"><label>VIN</label><input data-field="vin" maxlength="17" autocomplete="off"></div>'+
+  '<div class="booking-grid three"><div class="booking-field"><label>Trim</label><input data-field="trim"></div><div class="booking-field"><label>Engine size</label><input data-field="engine"></div><div class="booking-field"><label>Mileage</label><input data-field="mileage" inputmode="numeric"></div></div>'+
+  '<div class="booking-grid"><div class="booking-field"><label>License plate</label><input data-field="plate" maxlength="12" style="text-transform:uppercase"></div><div class="booking-field"><label>Plate state</label><input data-field="plateState" maxlength="2" value="WA" style="text-transform:uppercase"></div></div>'+
+  '<div class="booking-field"><label>Additional work this visit</label><input data-field="additional"></div>'+
+  '<div class="booking-field"><label>Customer-supplied parts?</label><div class="parts-row"><label><input type="radio" name="parts-'+id+'" value="No" checked> No</label><label><input type="radio" name="parts-'+id+'" value="Yes"> Yes</label><label><input type="radio" name="parts-'+id+'" value="Not sure"> Not sure</label></div></div></details>';
+  el('vehicles').appendChild(card);
+  card.querySelector('[data-field="kind"]').addEventListener('change',function(){updateKind(card)});
+  updateKind(card);
+  renumber();
   render();
+  return card;
+}
+function updateKind(card){
+  const equipment=field(card,'kind')==='equipment';
+  card.querySelector('[data-field="year"]').previousElementSibling.textContent=equipment?'Year (optional)':'Year';
+  card.querySelector('.photo-box label').textContent=equipment?'Equipment ID / model label photo (optional)':'VIN or driver-door label photo (optional)';
+  card.querySelector('.optional-details summary').textContent=equipment?'Add equipment details (optional)':'Add vehicle details (optional)';
+  ['vin','plate','plateState','mileage','trim'].forEach(function(name){card.querySelector('[data-field="'+name+'"]').closest('.booking-field').classList.toggle('hidden',equipment)});
+}
+function cards(){return Array.from(document.querySelectorAll('.vehicle-card'))}
+function field(card,name){const n=card.querySelector('[data-field="'+name+'"]');return n?String(n.value||'').trim():''}
+function photo(card){const n=card.querySelector('[data-field="photo"]');return n&&n.files?n.files[0]||null:null}
+function parts(card){const n=card.querySelector('input[type="radio"]:checked');return n?n.value:'No'}
+function renumber(){cards().forEach(function(card,i){card.querySelector('.vehicle-number').textContent=String(i+1);card.querySelector('.remove-vehicle').classList.toggle('hidden',cards().length===1)})}
+function label(card){return card.dataset.tagLabel||[field(card,'year'),field(card,'make'),field(card,'model'),field(card,'trim')].filter(Boolean).join(' ')||'Vehicle'}
+function render(){
+  const list=cards();
+  el('preview-title').textContent=(el('name').value.trim()||'Customer')+' — '+list.length+' item'+(list.length===1?'':'s');
+  el('preview-list').innerHTML=list.map(function(card,i){const s=field(card,'service')||'Service not selected';const hasPhoto=photo(card)?' · VIN photo attached':'';return '<li><strong>'+escapeHtml(label(card))+'</strong> — '+escapeHtml(s)+hasPhoto+'</li>'}).join('');
+}
+function validate(){
+  if(tagLoading){setStatus('Loading the scanned item…');return false}
+  if(!el('name').value.trim()){return focusError(el('name'),'Please enter the customer name.')}
+  if(!el('email').value.trim()||!el('email').checkValidity()){return focusError(el('email'),'Please enter a valid email address.')}
+  if(!el('address').value.trim()){return focusError(el('address'),'Please enter the service location.')}
+  if(!el('address-confirmed').checked){return focusError(el('check-address'),'Please check the address in Maps and confirm the service location.')}
+  for(const [i,card] of cards().entries()){
+    if(!field(card,'service'))return focusError(card.querySelector('[data-field="service"]'),'Select a service for item '+(i+1)+'.');
+    if(!card.dataset.nfcToken&&((field(card,'kind')==='vehicle'&&!field(card,'year'))||!field(card,'make')||!field(card,'model')))return focusError(card.querySelector('[data-field="year"]'),'Enter the year, make, and model for item '+(i+1)+'.');
+    const year=Number(field(card,'year'));if(field(card,'year')&&(!Number.isInteger(year)||year<1886||year>2100))return focusError(card.querySelector('[data-field="year"]'),'Enter a valid four-digit year for item '+(i+1)+'.');
+    const vin=field(card,'vin');if(vin&&!/^[A-HJ-NPR-Z0-9]{17}$/i.test(vin)){card.querySelector('details').open=true;return focusError(card.querySelector('[data-field="vin"]'),'The VIN for item '+(i+1)+' should be 17 characters, or left blank.')}
+    const f=photo(card);if(f&&f.size>MAX_PHOTO_BYTES)return focusError(card.querySelector('[data-field="photo"]'),'The photo for item '+(i+1)+' must be 10 MB or smaller.');
+    if(f&&!MIME_EXT[f.type])return focusError(card.querySelector('[data-field="photo"]'),'Use a JPG, PNG, WebP, HEIC, or HEIF photo for item '+(i+1)+'.');
+  }
+  return true;
+}
+function focusError(node,message){setStatus(message,'error');node.focus();return false}
+function setStatus(text,kind){el('status').textContent=text;el('status').className='booking-status'+(kind?' '+kind:'')}
+function makeItems(){return cards().map(function(card){const jobs=[{service:field(card,'service'),details:field(card,'details')}];if(field(card,'additional'))jobs.push({service:'General Repair / Other',details:field(card,'additional')});return {kind:field(card,'kind'),asset_kind:field(card,'kind'),nfc_token:card.dataset.nfcToken||null,year:field(card,'year'),make:field(card,'make'),model:field(card,'model'),trim:field(card,'trim')||null,engine:field(card,'engine')||null,vin:field(card,'vin').toUpperCase()||null,plate:field(card,'plate').toUpperCase()||null,plate_state:field(card,'plateState').toUpperCase()||null,mileage:field(card,'mileage')||null,customer_supplied_parts:parts(card),label:label(card),notes:field(card,'details')||null,jobs:jobs,door_tag_photo_path:null}})}
+async function uploadPhotos(items,bookingId){for(const [i,card] of cards().entries()){const f=photo(card);if(!f)continue;const path=SHOP_ID+'/door-tags/'+bookingId+'/vehicle-'+(i+1)+'.'+MIME_EXT[f.type];const result=await supabaseClient().storage.from('booking-intake').upload(path,f,{contentType:f.type,upsert:false});if(result.error)throw new Error('Vehicle '+(i+1)+' photo upload failed: '+result.error.message);items[i].door_tag_photo_path=path}}
+function draft(){return {name:el('name').value.trim(),email:el('email').value.trim(),phone:el('phone').value.trim(),address:el('address').value.trim(),vehicles:cards().map(function(card){return {kind:field(card,'kind'),service:field(card,'service'),year:field(card,'year'),make:field(card,'make'),model:field(card,'model'),trim:field(card,'trim'),engine:field(card,'engine'),vin:field(card,'vin'),plate:field(card,'plate'),plateState:field(card,'plateState'),mileage:field(card,'mileage'),additional:field(card,'additional'),details:field(card,'details'),parts:parts(card)}})}}
+async function api(action,extra){const payload=Object.assign({action:action,intakeId:activeIntake.id,email:activeIntake.email},extra||{});const response=await fetch(SCHEDULER_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(payload)});let data={};try{data=await response.json()}catch(e){}if(!response.ok||data.ok===false)throw new Error(data.error||'Scheduling request failed');return data}
+async function saveIntake(){
+  if(activeIntake)return activeIntake;
+  const bookingId=(crypto.randomUUID?crypto.randomUUID():('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(ch){const r=crypto.getRandomValues(new Uint8Array(1))[0]&15,v=ch==='x'?r:(r&3|8);return v.toString(16)})));const items=makeItems();await uploadPhotos(items,bookingId);
+  const d=draft();localStorage.setItem('roamadicMultiVehicleDraft',JSON.stringify(d));
+  activeIntake={id:bookingId,email:d.email.toLowerCase()};
+  const first=items[0];const firstJob=first.jobs[0];const title=(items.length>1?items.length+' items':first.label)+' — '+d.name;
+  try{await api('intake',{intake:{customer_name:d.name,customer_email:activeIntake.email,phone:d.phone||null,service_address:d.address||null,booking_items:items,asset_kind:first.kind,booking_group_label:items.length+' item visit',service_type:firstJob.service,vehicle:first.label,vehicle_year:first.year?Number(first.year):null,vehicle_make:first.make,vehicle_model:first.model,vehicle_trim:first.trim,vehicle_engine:first.engine,vin:first.vin,license_plate:first.plate,plate_state:first.plate_state,mileage:first.mileage?Number(first.mileage):null,customer_supplied_parts:first.customer_supplied_parts,details:firstJob.details||'Vehicle service',calendar_title:title,door_tag_photo_path:first.door_tag_photo_path}})}catch(error){activeIntake=null;throw error}
+  cards().forEach(function(card){card.querySelectorAll('input,select,textarea,button').forEach(function(n){n.disabled=true})});el('add-vehicle').disabled=true;
+  return activeIntake;
+}
+function formatDuration(minutes){const h=Math.floor(minutes/60),m=minutes%60;return h?(h+' hr'+(m?' '+m+' min':'')):(m+' minutes')}
+function formatSlot(iso){return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date(iso))}
+function showPlan(plan){activePlan=plan;el('plan-duration').textContent=formatDuration(plan.minutes);el('plan-reason').textContent=plan.reason;el('plan-box').classList.add('show')}
+function renderChoices(){el('choice-summary').innerHTML='<strong>Preferred:</strong> '+(preferredStart?formatSlot(preferredStart):'Not selected')+'<br><strong>Backup:</strong> '+(backupStart?formatSlot(backupStart):'Not selected');el('request-times').disabled=!(preferredStart&&backupStart);document.querySelectorAll('.slot-btn').forEach(function(b){b.classList.toggle('preferred-slot',b.dataset.start===preferredStart);b.classList.toggle('backup-slot',b.dataset.start===backupStart)})}
+function chooseSlot(start){if(start===preferredStart){preferredStart=null}else if(start===backupStart){backupStart=null}else if(!preferredStart){preferredStart=start}else if(!backupStart){backupStart=start}else{backupStart=start}renderChoices()}
+async function loadSlots(){const data=await api('slots');if(data.plan)showPlan(data.plan);if(data.needsReview){setStatus('Request saved. This visit needs schedule review before a time is held.','success');return}if(data.calendarConnected===false){setStatus('Request saved. Calendar availability will be confirmed manually.','success');return}el('slots').innerHTML='';(data.slots||[]).slice(0,24).forEach(function(slot){const b=document.createElement('button');b.type='button';b.className='slot-btn';b.textContent=slot.label||formatSlot(slot.start);b.dataset.start=slot.start;b.addEventListener('click',function(){chooseSlot(slot.start)});el('slots').appendChild(b)});el('times-card').classList.add('show');el('times-status').textContent='Choose your preferred time first, then a backup.';renderChoices()}
+el('add-vehicle').addEventListener('click',vehicleCard);
+el('vehicles').addEventListener('click',function(e){if(e.target.classList.contains('remove-vehicle')&&cards().length>1){e.target.closest('.vehicle-card').remove();renumber();render()}});
+el('vehicles').addEventListener('input',render);
+el('vehicles').addEventListener('change',function(e){const card=e.target.closest('.vehicle-card');if(e.target.matches('[data-field="photo"]')){const f=photo(card);const s=card.querySelector('.photo-status');s.textContent=f?'Selected: '+f.name+' ('+(f.size/1024/1024).toFixed(1)+' MB). It will stay with this vehicle ticket.':'No photo selected. You can still submit without one.'}render()});
+['name','email','phone'].forEach(function(id){el(id).addEventListener('input',render)});
+el('address').addEventListener('input',function(){el('address-confirmed').checked=false;render()});
+el('check-address').addEventListener('click',function(){const address=el('address').value.trim();if(!address){focusError(el('address'),'Enter the service location before checking it.');return}window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address),'_blank','noopener')});
+el('plan').addEventListener('click',async function(){if(!validate())return;this.disabled=true;setStatus('Saving '+cards().length+' item'+(cards().length===1?'':'s')+' and planning the combined visit…');try{await saveIntake();const planned=await api('plan');showPlan(planned.plan);setStatus('Combined visit planned for '+formatDuration(planned.plan.minutes)+'. Checking available times…','success');await loadSlots()}catch(error){this.disabled=false;setStatus(error.message||'The service request could not be completed.','error')}});
+el('request-times').addEventListener('click',async function(){this.disabled=true;try{const data=await api('request',{preferredStart:preferredStart,backupStart:backupStart});el('confirmation-text').innerHTML='<strong>Preferred:</strong> '+formatSlot(data.preferredStart)+'<br><strong>Backup:</strong> '+formatSlot(data.backupStart)+'<br><br>Roamadic Mechanic will confirm one appointment after reviewing the items and parts needs.';el('confirmation').classList.add('show');el('times-card').classList.remove('show');setStatus('Appointment request saved for '+cards().length+' item'+(cards().length===1?'':'s')+'.','success');localStorage.removeItem('roamadicMultiVehicleDraft')}catch(error){this.disabled=false;el('times-status').className='booking-status error';el('times-status').textContent=error.message}});
+function restore(){let d=null;try{d=JSON.parse(localStorage.getItem('roamadicMultiVehicleDraft')||'null')}catch(e){}if(!d||!Array.isArray(d.vehicles)||!d.vehicles.length){vehicleCard();return}el('name').value=d.name||'';el('email').value=d.email||'';el('phone').value=d.phone||'';el('address').value=d.address||'';el('address-confirmed').checked=false;d.vehicles.forEach(function(v){const card=vehicleCard();Object.keys(v).forEach(function(k){const n=card.querySelector('[data-field="'+k+'"]');if(n)n.value=v[k]||''});const r=Array.from(card.querySelectorAll('input[type="radio"]')).find(function(n){return n.value===v.parts});if(r)r.checked=true});render()}
+async function start(){
+  document.getElementById('year').textContent=new Date().getFullYear();
+  if(!tagToken){restore();cards().forEach(updateKind);return}
+  el('plan').disabled=true;el('add-vehicle').disabled=true;
+  setStatus('Loading the scanned item…');
+  try{
+    if(!/^[a-f0-9]{48}$/.test(tagToken))throw new Error('This tag link is invalid.');
+    const saved=JSON.parse(sessionStorage.getItem('rm_nfc_booking_context')||'null');
+    if(!saved||saved.token!==tagToken||saved.kind!==tagKind){
+      location.replace('/'+tagKind+'/?token='+encodeURIComponent(tagToken));return;
+    }
+    const asset=saved.asset;
+    const card=vehicleCard();card.dataset.nfcToken=tagToken;card.dataset.tagLabel=asset.label||'';
+    card.querySelector('[data-field="kind"]').value=tagKind;
+    card.querySelector('[data-field="kind"]').disabled=true;
+    ['year','make','model','trim'].forEach(function(name){card.querySelector('[data-field="'+name+'"]').value=asset[name]||''});
+    if(asset.label&&!asset.make){['year','make','model','trim'].forEach(function(name){card.querySelector('[data-field="'+name+'"]').closest('.booking-field').classList.add('hidden')});}
+    const note=card.querySelector('.tag-note');note.classList.remove('hidden');note.textContent='From your NFC tag: '+(asset.name||label(card))+(asset.rmAssetId?' · '+asset.rmAssetId:'')+'. Add other items below for the same visit.';
+    updateKind(card);render();tagLoading=false;el('plan').disabled=false;el('add-vehicle').disabled=false;
+    setStatus('Your scanned item is ready. Choose its service and add any other items for this visit.');
+  }catch(error){setStatus(error.message,'error')}
+}
+start();
 })();
 </script>
 </body>
