@@ -20,7 +20,7 @@
   if (bookingCta) {
     bookingCta.innerHTML = [
       '<a class="btn btn-primary" href="' + serviceIntakeUrl + '">Schedule Mobile Service</a>',
-      '<p>Select the service, enter the vehicle and job details, review what Roamadic Mechanic will see, then choose an available appointment time.</p>'
+      '<p>Select the service, add the vehicle or equipment details and any helpful photos, review the visit, then choose an available appointment time.</p>'
     ].join('');
   }
 })();
